@@ -1,0 +1,47 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    /*justify-content: center;*/
+    height: 100vh;
+    padding: 30rpx;
+}
+
+.avatar {
+    border-radius: 50%;
+    margin-top: 100px;
+    object-fit: contain;  /* 确保内容被缩放而保持其比例 */
+}
+
+.greeting {
+    font-size: 36rpx;
+    color: #5b5858ff;
+    margin-top: 50rpx;
+    margin-bottom: 50rpx;
+    align-self: center;
+    font-weight: bold; 
+}
+
+.button-container {
+    display: block; /* 修改为block，让按钮按块级元素排列 */
+    width: 100%; /* 使按钮容器宽度充满父容器 */
+    text-align: center; /* 文本居中，使得按钮在容器中居中 */
+}
+
+button {
+    width: 100%; /* 保持或调整按钮宽度 */
+    height: 80rpx;
+    margin: 10rpx auto; /* 上下外边距10rpx，左右自动对齐以居中 */
+    background-color: #007AFF;
+    color: #fff;
+    font-size: 32rpx;
+    border-radius: 5rpx;
+    text-align: center;
+    line-height: 80rpx;
+}
+
+/* 自定义粗字体按钮样式 */
+.bold-button-text {
+    font-weight: bold !important;
+    font-size: 32rpx !important;
+}

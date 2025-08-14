@@ -1,0 +1,40 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/aiChat/aiChat",
+    "pages/logs/logs",
+    "pages/mine/mine",
+    "custom-tab-bar/index"
+  ],
+  "window": {
+    "navigationBarTextStyle": "black",
+    "navigationBarTitleText": "Weixin",
+    "navigationBarBackgroundColor": "#FFD000"
+  },
+  "tabBar": {
+    "custom": true,
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "text": "首页",
+        "iconPath": "/static/icon/left.png",
+        "selectedIconPath": "/static/icon/ai.png"
+      },
+      {
+        "pagePath": "pages/aiChat/aiChat",
+        "text": "聊天",
+        "iconPath": "/static/icon/left.png",
+        "selectedIconPath": "/static/icon/ai.png"
+      },
+      {
+        "pagePath": "pages/mine/mine",
+        "text": "我的",
+        "iconPath": "/static/icon/left.png",
+        "selectedIconPath": "/static/icon/ai.png"
+      }
+    ]
+  },
+  "componentFramework": "glass-easel",
+  "sitemapLocation": "sitemap.json",
+  "lazyCodeLoading": "requiredComponents"
+}

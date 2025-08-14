@@ -1,0 +1,6 @@
+{
+  "usingComponents": {
+    "wemark": "../../components/wemark/wemark"
+  },
+  "navigationBarTitleText": "AI聊天"
+}

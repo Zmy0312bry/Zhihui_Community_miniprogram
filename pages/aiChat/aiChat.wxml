@@ -1,0 +1,149 @@
+<view doc navBg="bg-gradient-green" title="{{typePage}}" ui="text-white">
+    <!--内容区域-->
+    <view class="bottom-height content-view">
+        <scroll-view
+            class="scroll-text"
+            type="list"
+            scroll-y
+            enable-passive
+            scroll-top="{{scrollTop}}"
+            upper-threshold="50"
+            enhanced="true"
+            bounces="true"
+            show-scrollbar="false"
+        >
+            <view>
+                <!-- 欢迎页面 -->
+                <view wx:if="{{chatList.length<=0}}" class="begin">
+                    <view class="welcome-header">
+                        <image src="/static/icon/ai.png" class="welcome-avatar"/>
+                    </view>
+                    <view class="begin-title">{{beginTitle}}</view>
+                    <view class="begin-tips">{{beginTips}}</view>
+                    <view class="suggestion-list">
+                        <view wx:for="{{beginList}}" wx:for-item="item" wx:key="id">
+                            <view bindtap="beginChatSend" data-title="{{item.tips}}" class="begin-item">
+                                <text>{{item.tips}}</text>
+                                <view class="open-icon">
+                                    <text class="arrow">→</text>
+                                </view>
+                            </view>
+                        </view>
+                    </view>
+                </view>
+                
+                <!-- 对话内容 -->
+                <view wx:else class="chatcontent">
+                    <block wx:for="{{chatList}}" wx:for-item="item" wx:key="id">
+                        <view class="chat-item">
+                            <view class="item-time" wx:if="{{item.time}}">{{item.time}}</view>
+                            
+                            <!-- AI回复 -->
+                            <view wx:if="{{item.role == 'assistant'}}" class="message-container ai-message">
+                                <view class="item-left">
+                                    <view class="item-img">
+                                        <image src="/static/icon/ai.png" mode="aspectFill" class="item-photo ai-avatar"/>
+                                    </view>
+                                    <view class="item-content ai-content">
+                                        <wemark md="{{item.content}}" highlight type="wemark"></wemark>
+                                        <view class="copy-button" data-content="{{item.content}}"
+                                              bindtap="copyChatContent">
+                                            <image src="/static/icon/copy.svg" mode="aspectFit"/>
+                                        </view>
+                                    </view>
+                                </view>
+                            </view>
+                            
+                            <!-- 用户消息 -->
+                            <view wx:if="{{item.role == 'user'}}" class="message-container user-message">
+                                <view class="item-right">
+                                    <view class="item-content user-content">{{item.content}}</view>
+                                    <view class="item-img">
+                                        <image src="/static/icon/default.png" mode="aspectFill" class="item-photo user-avatar"/>
+                                    </view>
+                                </view>
+                            </view>
+                        </view>
+                    </block>
+                    
+                    <!-- AI正在回复 -->
+                    <view wx:if="{{answer_loading}}" class="message-container ai-message">
+                        <view class="item-left">
+                            <view class="item-img">
+                                <image src="/static/icon/ai.png" mode="aspectFill" class="item-photo ai-avatar"/>
+                            </view>
+                            <view class="item-content ai-content">
+                                <view class="typing-indicator" wx:if="{{!answerDesc}}">
+                                    <view class="typing-dot"></view>
+                                    <view class="typing-dot"></view>
+                                    <view class="typing-dot"></view>
+                                </view>
+                                <wemark md="{{answerDesc}}" highlight type="wemark"></wemark>
+                                <view class="copy-button" wx:if="{{answerDesc}}" data-content="{{answerDesc}}" bindtap="copyChatContent">
+                                    <image src="/static/icon/copy.svg" mode="aspectFit"/>
+                                </view>
+                            </view>
+                        </view>
+                    </view>
+                </view>
+            </view>
+            
+            <!-- 底部留白，确保内容不被输入框遮挡 -->
+            <view class="bottom-space"></view>
+        </scroll-view>
+    </view>
+    
+    <!-- 输入区域 -->
+    <view class="title-view">
+        <view class="input-container">
+            <input model:value="{{title}}" 
+                  type="text" 
+                  confirm-type="send" 
+                  placeholder="请输入您想问的问题..." 
+                  bindconfirm="sendChat"
+                  cursor-spacing="30"/>
+            <text bindtap="sendChat" class="send-button">{{'发送'}}</text>
+        </view>
+    </view>
+</view>
+    <!-- 添加会话按钮 -->
+<view bindtap="openAddChat" class="add-chat-btn">
+    <text>+</text>
+</view>
+    <!-- 侧边栏 -->
+<view class="page">
+    <view class="page-top {{open ? 'page-top-show' : ''}}">
+        <view class="pageTitle">
+            对话历史
+        </view>
+        <view class="page-scroll">
+            <view wx:if="{{dialogue_list.length === 0}}" class="empty-history">
+                <view class="empty-text">暂无历史对话</view>
+                <view bindtap="creatChat" class="new-chat-btn">开始新对话</view>
+            </view>
+            <view class="nav-list" wx:for="{{dialogue_list}}" wx:key="dialogueId">
+                <view class="nav-item-item">
+                    <view class="nav-item-con" bindtap="open_chat" data-title="{{item.firstContent}}"
+                          data-id="{{item.dialogueId}}">
+                        <view class="nav-item-title">{{item.firstContent}}</view>
+                        <view class="nav-item-time">{{item.createTime}}</view>
+                    </view>
+                    <view class="nav-item-del">
+                        <text data-id="{{item.dialogueId}}" bindtap="del_chat">×</text>
+                    </view>
+                </view>
+            </view>
+            <view bindtap="creatChat" class="new-chat-btn">
+                <view class="plus-icon">+</view>
+                <text>新对话</text>
+            </view>
+        </view>
+        <view style="width: 100%;">
+            <view bindtap="creatChat" class="creat-chat-btn">{{'新建对话'}}</view>
+            <!--    <view bindtap="cancelChat" class="cancel-chat-btn">{{'关闭弹窗'}}</view>-->
+        </view>
+        <view class="close-icon" bindtap="cancelChat">
+            <image src="/static/icon/left.png" mode="aspectFit"></image>
+        </view>
+    </view>
+</view>

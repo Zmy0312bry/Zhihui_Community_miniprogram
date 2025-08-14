@@ -1,0 +1,14 @@
+<view class="container">
+    <van-notice-bar scrollable style="width:100%"
+        left-icon="volume-o"
+        text="{{scrollText}}"
+    />
+    <image src="{{avatarUrl}}" class="avatar" mode="aspectFit"></image>
+    <text class="greeting">{{greeting}}</text>
+
+    <view class="button-container">
+        <van-button round type="primary" icon="chat-o" bindtap="goChat" custom-class="bold-button-text">文字聊天</van-button>
+<!--        <van-button round type="info" icon="share-o" open-type="share">分享好友</van-button>-->
+        <van-button round type="info" icon="service-o" open-type="contact" custom-class="bold-button-text">联系社区</van-button>
+    </view>
+</view>

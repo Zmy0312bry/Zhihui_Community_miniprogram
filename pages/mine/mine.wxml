@@ -1,0 +1,148 @@
+<view class="ui-container">
+    <view class="mem-top-img"></view>
+    <view class="avatar-box">
+        <button class="avatar-wrapper" open-type="chooseAvatar" bind:chooseavatar="onChooseAvatar">
+            <image class="avatar" src="{{avatarUrl}}"></image>
+        </button>
+    </view>
+    <view class="avatar-nick">
+        <view>
+            <input type="nickname" class="weui-input" placeholder="请输入昵称" bind:change="onChooseNickname"
+                   value="{{nickname}}"/>
+        </view>
+
+    </view>
+
+    <!-- <view class="level share-box">
+        <view>
+            <view class="money">
+                <text>炼气期</text>
+            </view>
+        </view>
+    </view> -->
+
+    <!-- <view class="white-box">
+        <button class="row" style="width: 100%;">
+            <view class="left">
+                <van-icon name="label" color="#14B0BB"/>
+                <text class="text">AI聊天剩余 </text>
+            </view>
+            <view class="right">
+                <text class="text">{{userInfo.chatNum}}次</text>
+            </view>
+        </button>
+        <button class="row" style="width: 100%;" bindtap="watchVideoAd">
+            <view class="left">
+                <van-icon name="video" color="#F05B7A"/>
+                <text class="text">广告激励 </text>
+            </view>
+            <view class="right">
+                <text class="text">+15次</text>
+                <van-icon name="arrow"/>
+            </view>
+        </button>
+    </view> -->
+
+    <view class="white-box">
+        <button class="row" style="width: 100%;" open-type="contact">
+            <view class="left">
+                <van-icon name="audio" color="blue"/>
+                <text class="text">联系客服 </text>
+            </view>
+            <view class="right">
+                <van-icon name="arrow"/>
+            </view>
+        </button>
+        <!-- <button class="row" style="width: 100%;" bindtap="copyGiteeContent">
+            <view class="left">
+                <van-icon name="good-job" color="red"/>
+                <text class="text">开源地址 </text>
+            </view>
+            <view class="right">
+                <van-icon name="arrow"/>
+            </view>
+        </button> -->
+        <button class="row" style="width: 100%;" bindtap="onClickShow">
+            <view class="left">
+                <van-icon name="enlarge" color="green"/>
+                <text class="text">关注公众号 </text>
+            </view>
+            <view class="right">
+                <van-icon name="arrow"/>
+            </view>
+        </button>
+        <button class="row" style="width: 100%;" bindtap="openThemeList">
+            <view class="left">
+                <van-icon name="flower-o" color="#F05B7A"/>
+                <text class="text">切换主题 </text>
+            </view>
+            <view class="right">
+                <van-icon name="arrow"/>
+            </view>
+        </button>
+        <!--            <van-overlay show="{{ show }}" bind:click="onClickHide" custom-style="background-color: black;">-->
+        <!--                <view class="wrapper">-->
+        <!--                    <image src="/static/img/gzh.jpg" mode="公众号" />-->
+        <!--                </view>-->
+        <!--            </van-overlay>-->
+        <van-dialog
+            id="van-dialog"
+            use-slot
+            title="截图扫码关注"
+            show="{{ show }}"
+            bind:close="onClose"
+            showConfirmButton="false"
+        >
+            <image src="/static/img/gzh.jpg"/>
+        </van-dialog>
+
+        <van-dialog
+            id="van-dialog-theme"
+            use-slot
+            title=""
+            show="{{ showThemeList }}"
+            close-on-click-overlay = "true"
+            customStyle="background-color:{{ backgroundColor }}"
+        >
+            <view class="theme-button-content">
+                <block wx:for="{{ themeList }}" wx:key="color">
+                    <van-button
+                        bind:click="changeTheme"
+                        data-theme="{{ item.name }}"
+                        color="{{ item.backgroundColor }}"
+                        customStyle="color:{{ item.textColor }}"
+                    >{{ item.text }}
+                    </van-button>
+                </block>
+            </view>
+
+        </van-dialog>
+
+    </view>
+
+</view>
+<view class="flex-bar fixed-bottom my-4">
+    <view class="flex-sub pl-3">
+        <view wx:if="{{isAuth && !isLogin}}" class="text-xl">
+            <van-button round type="primary" bindtap="setLogin" block>授权登录</van-button>
+            <!--                <button class="ui-btn block bg-blue-gradient shadow shadow-blue" bindtap="setLogin">授权登录</button>-->
+        </view>
+        <view wx:if="{{isAuth && isLogin}}" class="text-xl">
+            <van-button round type="default" bindtap="cancelLogin" block>退出登录</van-button>
+            <!--                <button class="ui-btn block bg-brown-gradient shadow shadow-blue" bindtap="cancelLogin">退出登录</button>-->
+        </view>
+        <view wx:if="{{!isAuth}}">
+            <button class="ui-btn block bg-red-gradient shadow" bindtap="setLogin">登录失败
+            </button>
+        </view>
+
+    </view>
+</view>
+    <!-- <view class="p-4">
+      <button class="ui-btn block bg-blue-gradient shadow shadow-blue" open-type="contact" session-from="weapp">
+            <text class="cicon-popover-o"/>
+            <text class="text-white">在线联系</text>
+          </button>
+      </view> -->
+<app-privacy></app-privacy>
+
