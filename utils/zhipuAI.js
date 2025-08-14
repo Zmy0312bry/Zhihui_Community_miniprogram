@@ -310,241 +310,155 @@ function callZhipuAIStream(messages, onData, onComplete, onError, options = {}) 
     responseType: 'text',
     onChunkReceived: (res) => {
       try {
-        // 智谱AI的SSE响应格式是 "data: {JSON}\n\n"
         const chunk = res.data;
+        console.log('智谱AI流式数据块：', chunk);
         
-        // 记录第一个数据块，帮助调试
-        if (!fullContent && chunk) {
-          console.log('收到第一个数据块:', chunk.substring(0, 200) + (chunk.length > 200 ? '...' : ''));
-        }
+        if (!chunk) return;
         
-        // 特殊处理：检查是否收到错误消息（没有按照SSE格式返回）
-        if (chunk && !chunk.includes('data:') && chunk.includes('error')) {
-          try {
-            const errorData = JSON.parse(chunk);
-            if (errorData.error) {
-              console.error('智谱AI返回错误(非SSE格式):', errorData.error);
-              if (onError && !hasCompleteCalled) {
-                hasCompleteCalled = true;
-                onError({
-                  errorCode: 'API_ERROR',
-                  errorMsg: errorData.error.message || '智谱AI返回错误',
-                  details: errorData.error
-                });
-              }
-              return;
-            }
-          } catch (e) {
-            console.log('非JSON格式响应，继续尝试SSE解析');
-          }
-        }
+        // 处理流式响应数据
+        const lines = chunk.split('\n');
         
-        if (chunk && chunk.includes('data:')) {
-          // 分割数据块以获取每个SSE消息
-          const lines = chunk.split('\n');
+        for (const line of lines) {
+          const trimmedLine = line.trim();
+          if (!trimmedLine) continue;
           
-          for (const line of lines) {
-            // 处理流式响应的结束信号
-            if (line.trim() === 'data: [DONE]') {
-              // 流式响应结束
-              console.log('收到流式响应结束标记[DONE]');
-              isDone = true;
-              if (onComplete && fullContent && !hasCompleteCalled) {
-                hasCompleteCalled = true;
-                onComplete(fullContent);
-              }
-              continue;
+          console.log('处理SSE行：', trimmedLine);
+          
+          // 检查结束标记
+          if (trimmedLine === 'data: [DONE]') {
+            console.log('流式响应结束');
+            isDone = true;
+            if (onComplete && !hasCompleteCalled) {
+              hasCompleteCalled = true;
+              onComplete(fullContent || '');
             }
-            
-            // 处理普通的数据块
-            if (line.startsWith('data:') && !line.includes('[DONE]')) {
-              try {
-                // 提取JSON部分
-                const jsonStr = line.substring(5).trim();
-                if (!jsonStr) continue;
+            return;
+          }
+          
+          // 处理数据行
+          if (trimmedLine.startsWith('data: ')) {
+            try {
+              const jsonStr = trimmedLine.substring(6);
+              if (!jsonStr) continue;
+              
+              const jsonData = JSON.parse(jsonStr);
+              console.log('解析的JSON：', jsonData);
+              
+              // 检查错误
+              if (jsonData.error) {
+                console.error('API错误:', jsonData.error);
+                if (onError && !hasCompleteCalled) {
+                  hasCompleteCalled = true;
+                  onError({
+                    errorCode: 'API_ERROR',
+                    errorMsg: jsonData.error.message || 'API返回错误'
+                  });
+                }
+                return;
+              }
+              
+              // 处理choices数据
+              if (jsonData.choices && jsonData.choices[0]) {
+                const choice = jsonData.choices[0];
                 
-                const jsonData = JSON.parse(jsonStr);
-                
-                // 检查是否有错误
-                if (jsonData.error) {
-                  console.error('智谱AI返回错误:', jsonData.error);
-                  if (onError && !hasCompleteCalled) {
-                    hasCompleteCalled = true;
-                    onError({
-                      errorCode: jsonData.error.type || 'API_ERROR',
-                      errorMsg: jsonData.error.message || '智谱AI返回错误',
-                      details: jsonData.error
-                    });
-                  }
+                // 检查finish_reason
+                if (choice.finish_reason === 'stop') {
+                  console.log('收到stop信号');
+                  isDone = true;
                   continue;
                 }
                 
-                // 检查choices中的消息内容 - 处理新的响应格式
-                if (jsonData.choices && jsonData.choices.length > 0) {
-                  // 获取增量内容 - 基于新格式
-                  const delta = jsonData.choices[0].delta;
+                // 提取delta内容
+                if (choice.delta && choice.delta.content) {
+                  const content = choice.delta.content;
+                  fullContent += content;
+                  console.log('增量内容:', content);
+                  console.log('累积内容长度:', fullContent.length);
                   
-                  // 检查是否有finish_reason，表示结束
-                  if (jsonData.choices[0].finish_reason === "stop") {
-                    console.log('收到finish_reason=stop标记');
-                    isDone = true;
-                    // 不处理内容，等待[DONE]消息
-                    continue;
-                  }
-                  
-                  // 提取content内容
-                  if (delta && delta.content) {
-                    fullContent += delta.content;
-                    // 触发回调，确保UI更新
-                    if (onData) {
-                      onData(delta.content, fullContent);
-                    }
+                  // 触发数据回调
+                  if (onData) {
+                    onData(content, fullContent);
                   }
                 }
-              } catch (e) {
-                console.error('解析SSE消息失败:', e, '原始数据:', line.substring(0, 100));
               }
+            } catch (parseError) {
+              console.error('JSON解析失败:', parseError, '原始数据:', jsonStr);
             }
           }
         }
       } catch (e) {
-        console.error('处理流式响应块失败:', e);
+        console.error('流式处理错误:', e);
         if (onError && !hasCompleteCalled) {
           hasCompleteCalled = true;
           onError({
-            errorCode: 'CHUNK_PROCESSING_ERROR',
-            errorMsg: '处理智谱AI响应数据失败',
-            error: e
+            errorCode: 'STREAM_ERROR',
+            errorMsg: '流式处理失败: ' + e.message
           });
         }
       }
     },
     success: (res) => {
-      // 流式响应的完整处理已在onChunkReceived中完成
-      // 这里只处理异常情况
-      console.log('智谱AI响应状态:', res.statusCode);
+      console.log('请求完成 - 状态码:', res.statusCode);
+      console.log('累积内容长度:', fullContent.length);
+      console.log('是否已完成:', isDone);
       
       if (res.statusCode !== 200) {
-        // 尝试解析错误响应获取更多详细信息
-        let errorDetail = '';
-        try {
-          if (res.data) {
-            errorDetail = typeof res.data === 'string' ? res.data : JSON.stringify(res.data);
-            console.error('智谱AI错误响应详情:', errorDetail);
-          }
-        } catch (e) {
-          console.error('解析错误响应失败:', e);
-        }
-        
-        // 针对500错误特殊处理
-        if (res.statusCode === 500) {
-          console.error('智谱AI服务器内部错误(500)，可能是请求格式问题或服务器问题');
-        }
-        
-        console.error('智谱AI请求状态码异常:', res.statusCode, errorDetail || res.data);
+        console.error('HTTP错误:', res.statusCode);
         if (onError && !hasCompleteCalled) {
           hasCompleteCalled = true;
           onError({
             errorCode: res.statusCode,
-            errorMsg: `请求智谱AI服务失败(${res.statusCode})`,
-            errorDetail: errorDetail,
-            response: res.data
+            errorMsg: `HTTP错误: ${res.statusCode}`
           });
         }
-      } else if (!isDone && fullContent && !hasCompleteCalled) {
-        // 如果没有收到[DONE]标记但请求已完成且有内容，也触发完成回调
-        console.log('请求完成但未收到DONE标记，内容长度:', fullContent.length);
+        return;
+      }
+      
+      // 如果有内容但还没有完成回调，触发完成
+      if (!hasCompleteCalled) {
         hasCompleteCalled = true;
-        if (onComplete) {
-          onComplete(fullContent);
-        }
-      } else if (!fullContent && !hasCompleteCalled) {
-        // 如果没有接收到任何内容，可能是API接口问题，需要检查配置
-        console.error('智谱AI请求未返回任何内容，响应数据:', res.data);
-        
-        try {
-          // 尝试解析响应体，可能是非流式格式返回
-          let errorDetail = '';
-          if (res.data) {
-            try {
-              if (typeof res.data === 'string' && res.data.length > 0) {
-                const jsonData = JSON.parse(res.data);
-                console.log('尝试解析非流式响应:', jsonData);
-                
-                // 检查是否有错误信息
-                if (jsonData.error) {
-                  if (onError) {
-                    hasCompleteCalled = true;
-                    onError({
-                      errorCode: 'API_ERROR',
-                      errorMsg: jsonData.error.message || '智谱AI返回错误',
-                      details: jsonData.error
-                    });
-                  }
-                  return;
-                }
-                
-                // 检查是否是正常的非流式响应
-                if (jsonData.choices && jsonData.choices.length > 0 && jsonData.choices[0].message) {
-                  const content = jsonData.choices[0].message.content;
-                  if (content && typeof content === 'string') {
-                    console.log('收到有效的非流式响应，内容长度:', content.length);
-                    fullContent = content;
-                    hasCompleteCalled = true;
-                    if (onComplete) {
-                      onComplete(content);
-                    }
-                    return;
-                  }
-                }
-              }
-            } catch (e) {
-              console.error('解析响应数据失败:', e);
-            }
+        if (fullContent) {
+          console.log('success中触发完成回调，内容长度:', fullContent.length);
+          if (onComplete) onComplete(fullContent);
+        } else {
+          console.log('success中无内容，触发错误回调');
+          if (onError) {
+            onError({
+              errorCode: 'NO_CONTENT',
+              errorMsg: '未收到任何响应内容'
+            });
           }
-        } catch (e) {
-          console.error('处理响应数据异常:', e);
-        }
-        
-        if (onError && !hasCompleteCalled) {
-          hasCompleteCalled = true;
-          onError({
-            errorCode: 'NO_CONTENT',
-            errorMsg: '智谱AI未返回任何内容，请检查API配置和参数',
-            response: res.data
-          });
         }
       }
     },
     fail: (err) => {
-      console.error('智谱AI请求失败:', err);
-      if (err.errMsg) {
-        console.log('错误信息:', err.errMsg);
-      }
+      console.error('请求失败:', err);
       if (onError && !hasCompleteCalled) {
         hasCompleteCalled = true;
         onError({
-          errorCode: 'REQUEST_FAILED',
-          errorMsg: err.errMsg || '请求智谱AI服务失败',
-          details: err
+          errorCode: 'NETWORK_ERROR',
+          errorMsg: err.errMsg || '网络请求失败'
         });
       }
     },
     complete: () => {
-      // 如果没有正确触发onComplete，确保在这里触发，但避免重复触发
-      if (!isDone && fullContent && !hasCompleteCalled) {
+      console.log('请求完成 - 最终状态');
+      console.log('isDone:', isDone, 'fullContent长度:', fullContent.length, 'hasCompleteCalled:', hasCompleteCalled);
+      
+      // 最后的安全检查
+      if (!hasCompleteCalled) {
         hasCompleteCalled = true;
-        if (onComplete) {
-          onComplete(fullContent);
-        }
-      } else if (!fullContent && !isDone && !hasCompleteCalled) {
-        // 如果整个请求过程没有任何内容返回，并且onError还没被调用
-        console.warn('智谱AI没有返回任何内容，请检查API地址和密钥配置');
-        if (onError) {
-          onError({
-            errorCode: 'REQUEST_FAILED',
-            errorMsg: '请求智谱AI服务失败，请检查网络和API配置',
-          });
+        if (fullContent) {
+          console.log('complete中触发完成回调');
+          if (onComplete) onComplete(fullContent);
+        } else {
+          console.log('complete中无内容，触发错误回调');
+          if (onError) {
+            onError({
+              errorCode: 'NO_RESPONSE',
+              errorMsg: '请求完成但未收到任何响应'
+            });
+          }
         }
       }
     }
