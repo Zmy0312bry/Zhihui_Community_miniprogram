@@ -211,20 +211,20 @@ function callZhipuAIStream(messages, onData, onComplete, onError, options = {}) 
   // 获取配置信息
   const config = app.globalData.config.zhipuAIConfig;
   
-  // 构建请求参数，根据智谱AI对话补全API规范
+  // 构建请求参数，严格按照curl格式
   const requestData = {
     model: options.model || config.model,
-    messages: messages,
-    stream: true, // 必须设置为流式返回
-    do_sample: false, // 按照示例固定值
-    temperature: options.temperature || 0.6,
-    top_p: 0.95,
+    do_sample: false,
+    stream: true,
     thinking: {
       type: "disabled"
     },
+    temperature: options.temperature || 0.6,
+    top_p: 0.95,
     response_format: {
       type: "text"
-    }
+    },
+    messages: messages
   };
 
   // 验证API密钥格式
