@@ -27,6 +27,8 @@ Page({
         isTyping: false, // 是否正在显示消息
         typingContent: '', // 当前正在显示的消息内容
         isThisChatOver: true, // 本轮对话是否结束
+        textareaHeight: 60, // 文本区域高度，默认高度
+        inputAreaHeight: 100, // 整个输入区域的高度
         mockResponses: { // 模拟AI回复内容
             '请介绍一下智慧社区的概念': '智慧社区是运用物联网、云计算、人工智能等技术，为社区居民提供便捷、高效、智能的生活服务平台。它包含社区管理、便民服务、安防监控、环境监测等功能，旨在提高居民生活质量和社区管理效率。',
             '如何使用智慧社区的便民服务？': '使用智慧社区的便民服务很简单：\n1. 在首页找到"便民服务"入口\n2. 选择您需要的服务类型（如水电缴费、快递代收、维修服务等）\n3. 按提示填写相关信息\n4. 提交请求后等待服务完成\n\n您也可以在"我的服务"中查看历史记录和进度。',
@@ -39,8 +41,18 @@ Page({
      * 生命周期函数--监听页面加载
      */
     onLoad() {
+        // 初始化消息队列和流式输出所需变量
         this.setData({
-            newMessageQueue: [], // 初始化消息队列
+            newMessageQueue: [],
+            aiResponseContent: '', // 初始化流式输出内容
+            textareaHeight: 60, // 文本区域初始高度
+            inputAreaHeight: 100 // 输入区域初始高度
+        });
+        
+        // 从缓存读取历史对话
+        const cachedHistory = wx.getStorageSync('aiChatHistory') || [];
+        this.setData({
+            dialogue_list: cachedHistory
         });
     },
     
@@ -61,23 +73,49 @@ Page({
             isTyping: true,
         });
 
+        // 存储当前的typingInterval到this中，方便清除
+        if (this.typingInterval) {
+            clearInterval(this.typingInterval);
+        }
+
         let index = 0;
         let currentMessage = this.data.answerDesc;
-        const typingInterval = setInterval(() => {
+        this.typingInterval = setInterval(() => {
             if (index < this.data.typingContent.length) {
                 this.setData({
                     answerDesc: currentMessage + this.data.typingContent.slice(0, ++index),
                 });
                 this.autoScroll()
             } else {
-                clearInterval(typingInterval);
-                this.setData({
-                    isTyping: false,
-                    typingContent: '', // 清空当前内容，准备下一条消息
-                    isThisChatOver: true // 标记本轮对话结束
-                });
+                clearInterval(this.typingInterval);
+                this.typingInterval = null;
+                
+                // 如果有完整回复内容，则添加到聊天列表
+                if (this.data.aiResponseContent) {
+                    this.setData({
+                        chatList: [...this.data.chatList, {
+                            role: 'assistant',
+                            content: this.data.aiResponseContent,
+                            time: this.formatDate(new Date())
+                        }],
+                        isTyping: false,
+                        typingContent: '', // 清空当前内容，准备下一条消息
+                        aiResponseContent: '', // 清空暂存的回复内容
+                        isThisChatOver: true, // 标记本轮对话结束
+                        answer_loading: false // 关闭加载状态
+                    });
+                } else {
+                    this.setData({
+                        isTyping: false,
+                        typingContent: '', // 清空当前内容，准备下一条消息
+                        isThisChatOver: true, // 标记本轮对话结束
+                        answer_loading: false // 关闭加载状态
+                    });
+                }
+                
+                this.autoScroll(); // 确保滚动到底部
                 // 检查是否有新的消息需要显示
-                if (this.data.newMessageQueue.length > 0) {
+                if (this.data.newMessageQueue && this.data.newMessageQueue.length > 0) {
                     const nextMessage = this.data.newMessageQueue.shift(); // 取出队列中的第一条消息
                     this.setData({
                         typingContent: nextMessage,
@@ -85,7 +123,7 @@ Page({
                     this.showTypingContent(); // 递归调用自己，显示下一条消息
                 }
             }
-        }, 30); // 每30毫秒显示一个字符，调整打字速度
+        }, 30); // 每80毫秒显示一个字符，调整为更慢的打字速度
     },
 
     /**
@@ -140,9 +178,17 @@ Page({
     del_chat(opts){
         const that = this;
         const dialogId = opts.currentTarget.dataset.id;
-        const newDialogueList = that.data.dialogue_list.filter(item => 
+        
+        // 从缓存获取历史记录
+        let dialogueList = wx.getStorageSync('aiChatHistory') || [];
+        
+        // 过滤掉要删除的对话
+        const newDialogueList = dialogueList.filter(item => 
             item.dialogueId !== dialogId
         );
+        
+        // 更新缓存
+        wx.setStorageSync('aiChatHistory', newDialogueList);
         
         that.setData({
             dialogue_list: newDialogueList
@@ -189,23 +235,35 @@ Page({
             this.cancelChat();
             return;
         }
-        this.setData({open: true});
         
-        // 如果没有历史对话，创建几个示例
-        if(this.data.dialogue_list.length === 0) {
+        // 从缓存获取历史对话
+        const cachedHistory = wx.getStorageSync('aiChatHistory') || [];
+        
+        this.setData({
+            open: true,
+            dialogue_list: cachedHistory
+        });
+        
+        // 如果没有历史对话，创建示例
+        if(cachedHistory.length === 0) {
+            const exampleDialogues = [
+                {
+                    dialogueId: 1001,
+                    firstContent: '智慧社区有哪些功能？',
+                    createTime: this.formatDate(new Date())
+                },
+                {
+                    dialogueId: 1002,
+                    firstContent: '如何报名社区活动？',
+                    createTime: this.formatDate(new Date(Date.now() - 86400000))
+                }
+            ];
+            
+            // 保存示例对话到缓存
+            wx.setStorageSync('aiChatHistory', exampleDialogues);
+            
             this.setData({
-                dialogue_list: [
-                    {
-                        dialogueId: 1001,
-                        firstContent: '智慧社区有哪些功能？',
-                        createTime: this.formatDate(new Date())
-                    },
-                    {
-                        dialogueId: 1002,
-                        firstContent: '如何报名社区活动？',
-                        createTime: this.formatDate(new Date(Date.now() - 86400000))
-                    }
-                ]
+                dialogue_list: exampleDialogues
             });
         }
     },
@@ -240,9 +298,12 @@ Page({
     },
     
     /**
-     * 保存当前对话到历史记录
+     * 保存当前对话到历史记录，仅保留最新3条
      */
     saveToHistory(content) {
+        // 先从缓存获取历史记录
+        let dialogueList = wx.getStorageSync('aiChatHistory') || [];
+        
         // 生成新的对话ID
         const newDialogueId = this.data.dialogueId || Date.now();
         
@@ -254,22 +315,28 @@ Page({
         };
         
         // 检查是否已存在该对话
-        const existingIndex = this.data.dialogue_list.findIndex(
+        const existingIndex = dialogueList.findIndex(
             item => item.dialogueId === newDialogueId
         );
         
-        let newList = [...this.data.dialogue_list];
-        
         if (existingIndex >= 0) {
             // 更新现有对话
-            newList[existingIndex] = newDialogue;
+            dialogueList[existingIndex] = newDialogue;
         } else {
             // 添加新对话到列表前端
-            newList.unshift(newDialogue);
+            dialogueList.unshift(newDialogue);
+            
+            // 只保留最新的3条记录
+            if (dialogueList.length > 3) {
+                dialogueList = dialogueList.slice(0, 3);
+            }
         }
         
+        // 保存到本地存储
+        wx.setStorageSync('aiChatHistory', dialogueList);
+        
         this.setData({
-            dialogue_list: newList,
+            dialogue_list: dialogueList,
             dialogueId: newDialogueId
         });
     },
@@ -290,6 +357,94 @@ Page({
         this.setData({
             title: event.detail.value,
         });
+    },
+    
+    /**
+     * 根据输入内容调整文本框高度
+     */
+    adjustTextareaHeight(e) {
+        const text = e.detail.value || '';
+        const lineHeight = 28; // 大约单行文本高度(rpx)
+        const minHeight = 60; // 最小高度(约两行)
+        const maxHeight = 90; // 最大高度(约三行)
+        
+        // 计算文本行数 (粗略估计，每行约20个字符)
+        // 计算换行符数量
+        const newlines = (text.match(/\n/g) || []).length;
+        // 估算文本行数(考虑自然换行和手动换行)
+        const textLines = Math.ceil(text.length / 20);
+        const lines = Math.max(1, Math.min(3, Math.max(newlines + 1, textLines)));
+        
+        // 计算所需高度
+        let height = Math.max(minHeight, Math.min(maxHeight, lines * lineHeight));
+        
+        // 计算整个输入区域高度 (包括padding等)
+        const inputAreaHeight = height + 40; // 增加padding高度
+        
+        this.setData({
+            textareaHeight: height,
+            inputAreaHeight: inputAreaHeight
+        });
+        
+        // 更新底部空间区域，确保聊天内容不被输入框遮挡
+        // 同时更新所有相关按钮位置
+        this.updateBottomSpace();
+    },
+    
+    /**
+     * 更新底部空间
+     */
+    updateBottomSpace() {
+        // 根据输入区域高度调整底部留白
+        const bottomSpace = this.data.inputAreaHeight + 70; // 额外留白，适应新的输入框位置
+        const extraHeight = Math.max(0, this.data.textareaHeight - 60); // 计算额外高度
+        
+        // 更新底部留白高度
+        const bottomSpaceElem = wx.createSelectorQuery().select('.bottom-space');
+        if (bottomSpaceElem) {
+            bottomSpaceElem.fields({
+                computedStyle: ['height'],
+            }, function(res) {
+                if (res) {
+                    wx.createSelectorQuery().select('.bottom-space').node(function(res) {
+                        if (res && res.node) {
+                            res.node.style.height = bottomSpace + 'px';
+                        }
+                    }).exec();
+                }
+            }).exec();
+        }
+        
+        // 更新添加会话按钮位置
+        const addChatBtn = wx.createSelectorQuery().select('.add-chat-btn');
+        if (addChatBtn) {
+            addChatBtn.fields({
+                computedStyle: ['bottom'],
+            }, function(res) {
+                if (res) {
+                    wx.createSelectorQuery().select('.add-chat-btn').node(function(res) {
+                        if (res && res.node) {
+                            // 根据输入框高度调整按钮位置
+                            const newBottom = 330 + extraHeight; // 更新为新的基础位置
+                            res.node.style.bottom = newBottom + 'rpx';
+                        }
+                    }).exec();
+                }
+            }).exec();
+        }
+        
+        // 同样更新样式修复SCSS的语法错误
+        wx.createSelectorQuery().selectAll('.input-textarea').fields({
+            computedStyle: ['max-height'],
+        }, function(res) {
+            if (res && res.length) {
+                wx.createSelectorQuery().selectAll('.input-textarea').node(function(result) {
+                    if (result && result.node) {
+                        result.node.style.maxHeight = '90px';
+                    }
+                }).exec();
+            }
+        }).exec();
     },
     
     /**
@@ -332,17 +487,25 @@ Page({
                 content: that.data.title,
                 time: that.formatDate(new Date())
             }],
-            answer_loading: true // 显示AI正在回复状态
+            answer_loading: true, // 显示AI正在回复状态
+            answerDesc: '' // 清空之前的回答
         });
         
         // 保存到历史对话
         that.saveToHistory(that.data.title);
         
-        // 清空输入框
+        // 清空输入框并重置高度
         const userMessage = that.data.title;
         that.setData({
             title: '',
+            textareaHeight: 60, // 重置文本框高度为初始值
+            inputAreaHeight: 100 // 重置输入区域高度为初始值
         });
+        
+        // 更新底部空间和按钮位置
+        setTimeout(() => {
+            that.updateBottomSpace();
+        }, 50);
         
         that.autoScroll(); // 滚动到底部
         
@@ -351,25 +514,16 @@ Page({
             // 获取AI回复内容
             const aiResponse = that.getAIResponse(userMessage);
             
-            // 设置打字效果显示
+            // 设置流式输出状态，但不立即添加到chatList
             that.setData({
                 answerDesc: '',
                 typingContent: aiResponse,
+                aiResponseContent: aiResponse, // 暂存完整回复内容
+                answer_loading: true // 确保loading状态保持
             });
             
+            // 启动流式输出
             that.showTypingContent();
-            
-            // 添加AI回复到聊天记录
-            setTimeout(() => {
-                that.setData({
-                    chatList: [...that.data.chatList, {
-                        role: 'assistant',
-                        content: aiResponse,
-                        time: that.formatDate(new Date())
-                    }],
-                });
-                that.autoScroll();
-            }, aiResponse.length * 30 + 500); // 等待打字效果结束后添加到聊天记录
         }, 800); // 模拟思考时间
     },
 
@@ -399,6 +553,8 @@ Page({
         // 初始化自动滚动
         setTimeout(() => {
             this.autoScroll();
+            // 初始化所有UI元素位置
+            this.updateBottomSpace();
         }, 300);
     },
 

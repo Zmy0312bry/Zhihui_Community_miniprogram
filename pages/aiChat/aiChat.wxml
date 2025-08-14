@@ -16,7 +16,7 @@
                 <!-- 欢迎页面 -->
                 <view wx:if="{{chatList.length<=0}}" class="begin">
                     <view class="welcome-header">
-                        <image src="/static/icon/ai.png" class="welcome-avatar"/>
+                        <image src="/static/icon/icowwn.png" class="welcome-avatar" mode="aspectFit"/>
                     </view>
                     <view class="begin-title">{{beginTitle}}</view>
                     <view class="begin-tips">{{beginTips}}</view>
@@ -42,7 +42,7 @@
                             <view wx:if="{{item.role == 'assistant'}}" class="message-container ai-message">
                                 <view class="item-left">
                                     <view class="item-img">
-                                        <image src="/static/icon/ai.png" mode="aspectFill" class="item-photo ai-avatar"/>
+                                        <image src="/static/icon/icowwn.png" mode="aspectFit" class="item-photo ai-avatar"/>
                                     </view>
                                     <view class="item-content ai-content">
                                         <wemark md="{{item.content}}" highlight type="wemark"></wemark>
@@ -70,7 +70,7 @@
                     <view wx:if="{{answer_loading}}" class="message-container ai-message">
                         <view class="item-left">
                             <view class="item-img">
-                                <image src="/static/icon/ai.png" mode="aspectFill" class="item-photo ai-avatar"/>
+                                <image src="/static/icon/icowwn.png" mode="aspectFit" class="item-photo ai-avatar"/>
                             </view>
                             <view class="item-content ai-content">
                                 <view class="typing-indicator" wx:if="{{!answerDesc}}">
@@ -94,14 +94,21 @@
     </view>
     
     <!-- 输入区域 -->
-    <view class="title-view">
+    <view class="title-view" style="height: {{inputAreaHeight}}px;">
         <view class="input-container">
-            <input model:value="{{title}}" 
-                  type="text" 
+            <textarea model:value="{{title}}" 
+                  class="input-textarea"
+                  show-confirm-bar="{{false}}"
                   confirm-type="send" 
                   placeholder="请输入您想问的问题..." 
                   bindconfirm="sendChat"
-                  cursor-spacing="30"/>
+                  bindinput="adjustTextareaHeight"
+                  auto-height="{{true}}"
+                  maxlength="500"
+                  cursor-spacing="30"
+                  style="height: {{textareaHeight}}px; max-height: 90px; overflow-y: auto;"
+                  scroll-y="{{true}}"
+            />
             <text bindtap="sendChat" class="send-button">{{'发送'}}</text>
         </view>
     </view>
