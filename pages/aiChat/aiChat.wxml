@@ -117,6 +117,8 @@
 <view bindtap="openAddChat" class="add-chat-btn">
     <text>+</text>
 </view>
+
+
     <!-- 侧边栏 -->
 <view class="page">
     <view class="page-top {{open ? 'page-top-show' : ''}}">

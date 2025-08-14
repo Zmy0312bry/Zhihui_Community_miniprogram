@@ -2,6 +2,7 @@ let App = getApp();
 let baseUrl = App.globalData.config.baseUrl
 let wsUrl = App.globalData.config.wsUrl
 const {getRequestOpen,getRequest,uploadFile} = require('./request');
+const {callZhipuAI, callZhipuAINonStream, callZhipuAIStream} = require('./zhipuAI');
 //微信login
 const wxlogin_url = baseUrl + 'open/wx/ma/login'
 //微信退出登录
@@ -37,5 +38,9 @@ module.exports={
     userUpdate_url: userUpdate_url,
     wxlogout_url: wxlogout_url,
     upload_url: upload_url,
-    addChatNums_url: addChatNums_url
+    addChatNums_url: addChatNums_url,
+    // 智谱AI相关API
+    callZhipuAI: callZhipuAI,
+    callZhipuAINonStream: callZhipuAINonStream, 
+    callZhipuAIStream: callZhipuAIStream
 }

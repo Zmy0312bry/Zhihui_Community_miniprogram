@@ -1,5 +1,7 @@
 // pages/aiChat/aiChat.js
-const app = getApp()
+const app = getApp();
+const api = require('../../utils/api.js');
+
 Page({
 
     /**
@@ -34,7 +36,27 @@ Page({
             '如何使用智慧社区的便民服务？': '使用智慧社区的便民服务很简单：\n1. 在首页找到"便民服务"入口\n2. 选择您需要的服务类型（如水电缴费、快递代收、维修服务等）\n3. 按提示填写相关信息\n4. 提交请求后等待服务完成\n\n您也可以在"我的服务"中查看历史记录和进度。',
             '社区活动报名如何操作？': '社区活动报名步骤：\n1. 点击首页"社区活动"模块\n2. 浏览可参与的活动列表\n3. 点击感兴趣的活动查看详情\n4. 点击"立即报名"按钮\n5. 填写报名信息并提交\n\n报名成功后，您将收到确认通知，也可在"我的活动"中查看报名状态。',
             '智慧社区有哪些功能？': '智慧社区平台主要功能包括：\n- **社区公告**：重要通知及时获取\n- **物业服务**：报修、投诉、建议等\n- **便民服务**：水电缴费、家政服务预约\n- **邻里社交**：社区论坛、兴趣小组\n- **智能门禁**：手机一键开门\n- **访客管理**：预约访客、临时通行证\n- **社区活动**：线上报名、活动提醒\n- **健康服务**：社区医疗资源对接\n\n所有服务都可以在小程序中一站式完成，让社区生活更便捷。'
-        }
+        },
+        // 智谱AI相关数据
+        zhipuRequestId: null, // 智谱API请求ID
+        conversationHistory: [], // 对话历史，用于构建API请求
+        systemPrompt: `角色设定：小暖，上地社区数字助手，服务老年人，性格温暖耐心。
+
+社区信息：
+- 地址：海淀区上地街道东里社区服务中心
+- 热线：62988899（24小时）
+- 交通：上地南口站(447/521路)，地铁13号线上地站
+- 医疗：上地医院（周一三免挂号费），同仁堂上地店
+- 活动：老年大学书法班(周二)、智能手机课(周四)
+- 政策：65岁以上可申请公交补贴，需带身份证办理
+- 服务："爱在上地"养老助残平台，高龄老人可申请"一键呼"
+
+交流要求：
+- 使用简体中文，语气亲切
+- 回复带温暖表情(🌷☕🎵)，不超过3个
+- 操作步骤分点说明，每步不超过15字
+- 政策信息标注来源："根据海淀老龄办通知"
+- 发现消极情绪时引导至社区活动` // 系统提示词
     },
 
     /**
@@ -46,7 +68,8 @@ Page({
             newMessageQueue: [],
             aiResponseContent: '', // 初始化流式输出内容
             textareaHeight: 60, // 文本区域初始高度
-            inputAreaHeight: 100 // 输入区域初始高度
+            inputAreaHeight: 100, // 输入区域初始高度
+            conversationHistory: [] // 初始化对话历史
         });
         
         // 从缓存读取历史对话
@@ -54,10 +77,19 @@ Page({
         this.setData({
             dialogue_list: cachedHistory
         });
+        
+        // 从缓存读取当前对话的消息历史（如果有）
+        const cachedConversation = wx.getStorageSync('currentConversation');
+        if (cachedConversation && Array.isArray(cachedConversation)) {
+            this.setData({
+                conversationHistory: cachedConversation
+            });
+        }
     },
     
     /**
-     * 模拟打字效果显示内容
+     * 处理流式输出和打字效果显示内容
+     * 支持API流式输出和模拟打字效果两种模式
      */
     showTypingContent() {
         if (!this.data.typingContent || this.data.isTyping) {
@@ -123,44 +155,226 @@ Page({
                     this.showTypingContent(); // 递归调用自己，显示下一条消息
                 }
             }
-        }, 30); // 每80毫秒显示一个字符，调整为更慢的打字速度
+        }, 30); // 每30毫秒显示一个字符，调整为更慢的打字速度
+    },
+    
+    /**
+     * 处理API流式输出
+     * @param {string} chunk 当前文本块
+     * @param {string} fullContent 累积的完整内容
+     */
+    handleStreamingOutput(chunk, fullContent) {
+        // 更新显示内容
+        this.setData({
+            answerDesc: fullContent, // 只更新当前显示的内容
+        });
+        
+        // 自动滚动
+        this.autoScroll();
+    },
+    
+    /**
+     * 处理API流式输出完成
+     * @param {string} fullContent 完整内容
+     */
+    handleStreamingComplete(fullContent) {
+        if (!fullContent || fullContent.length === 0) {
+            fullContent = '很抱歉，我暂时无法回答您的问题，请稍后再试。🌷';
+        }
+        
+        // 添加AI回复到聊天列表并重置状态
+        this.setData({
+            answerDesc: '', // 清空临时显示
+            chatList: [...this.data.chatList, {
+                role: 'assistant',
+                content: fullContent,
+                time: this.formatDate(new Date())
+            }],
+            isTyping: false,
+            typingContent: '',
+            isThisChatOver: true,
+            answer_loading: false
+        }, () => {
+            this.autoScroll();
+        });
+        
+        // 清除定时器
+        if (this.typingInterval) {
+            clearInterval(this.typingInterval);
+            this.typingInterval = null;
+        }
     },
 
     /**
      * 获取AI回复内容
-     * 根据用户输入匹配预设回答或生成通用回复
+     * 根据用户输入匹配预设回答或调用智谱AI生成回答
+     * @param {string} userInput 用户输入
+     * @param {boolean} useAPI 是否使用API
+     * @param {Function} onData 流式输出回调函数
+     * @param {Function} onComplete 完成回调函数
+     * @param {Function} onError 错误回调函数
      */
-    getAIResponse(userInput) {
+    getAIResponse(userInput, useAPI = false, onData, onComplete, onError) {
         // 检查是否有匹配的预设回答
         if (this.data.mockResponses[userInput]) {
-            return this.data.mockResponses[userInput];
+            const response = this.data.mockResponses[userInput];
+            
+            // 如果设置了回调函数，以模拟流式输出的方式调用回调
+            if (onData && onComplete) {
+                let index = 0;
+                const chunkSize = 5; // 每次发送的字符数
+                const intervalId = setInterval(() => {
+                    if (index < response.length) {
+                        const end = Math.min(index + chunkSize, response.length);
+                        const chunk = response.substring(index, end);
+                        onData(chunk, response.substring(0, end));
+                        index = end;
+                    } else {
+                        clearInterval(intervalId);
+                        onComplete(response);
+                    }
+                }, 30);
+            }
+            
+            return response;
         }
         
-        // 如果没有匹配的预设回答，返回通用回复
+        // 如果需要使用API且不是预设回答
+        if (useAPI) {
+            // 构建消息历史，只包含系统提示和当前用户问题
+            const messages = [];
+            
+            // 添加系统提示
+            messages.push({
+                role: "system", 
+                content: this.buildSystemPrompt()
+            });
+            
+            // 添加当前用户问题
+            messages.push({
+                role: "user",
+                content: userInput
+            });
+            
+            // 调用智谱AI流式API
+            const requestTask = api.callZhipuAIStream(
+                messages,
+                (chunk, fullContent) => {
+                    // 流式输出回调
+                    if (onData) onData(chunk, fullContent);
+                },
+                (fullContent) => {
+                    // 完成回调
+                    if (onComplete) onComplete(fullContent);
+                    
+                    // 将本次对话添加到历史中
+                    this.updateConversationHistory(userInput, fullContent);
+                },
+                (error) => {
+                    // 错误回调
+                    console.error('智谱AI调用失败:', error);
+                    if (onError) onError(error);
+                    
+                    // 返回一个更具体的错误回复，提示用户可能的问题
+                    let errorResponse = '';
+                    
+                    if (error && error.errorCode === 'NO_CONTENT') {
+                        errorResponse = `很抱歉，AI助手暂时无法回答您的问题。可能是由于网络连接问题或服务繁忙，请稍后再试。🌷`;
+                    } else if (error && error.errorCode) {
+                        errorResponse = `很抱歉，AI助手遇到了问题(${error.errorCode})。请稍后再试或联系社区客服获取帮助。🌷`;
+                    } else {
+                        errorResponse = `很抱歉，AI助手暂时无法回答您的问题。请稍后再试或联系社区客服获取帮助。🌷`;
+                    }
+                    
+                    if (onData) onData(errorResponse, errorResponse);
+                    if (onComplete) onComplete(errorResponse);
+                },
+                {
+                    max_tokens: 500, // 限制回复长度不超过500字
+                    temperature: 0.7, // 控制创意度，较高的值会使输出更多样化
+                    top_p: 0.95 // 保持高概率词的输出质量
+                }
+            );
+            
+            // 保存请求任务ID
+            this.data.zhipuRequestId = requestTask;
+            
+            // 返回空字符串，实际内容将通过回调函数处理
+            return '';
+        }
+        
+        // 如果不使用API且没有预设回答，返回通用回复
         const genericResponses = [
-            `感谢您的问题"${userInput}"。作为智慧社区AI助手，我正在不断学习中。这个问题我需要进一步了解，您可以联系社区客服获取更准确的信息。`,
-            `您好，关于"${userInput}"，我建议您可以在智慧社区APP首页查看相关指南，或联系物业服务中心获取帮助。`,
-            `我理解您想了解关于"${userInput}"的信息。智慧社区平台正在不断完善相关功能，请您关注社区公告获取最新进展。`
+            `感谢您的问题"${userInput}"。作为智慧社区AI助手，我正在不断学习中。这个问题我需要进一步了解，您可以联系社区客服获取更准确的信息。🌷`,
+            `您好，关于"${userInput}"，我建议您可以在智慧社区APP首页查看相关指南，或联系物业服务中心获取帮助。☕`,
+            `我理解您想了解关于"${userInput}"的信息。智慧社区平台正在不断完善相关功能，请您关注社区公告获取最新进展。🎵`
         ];
         
         // 随机选择一个通用回复
         const randomIndex = Math.floor(Math.random() * genericResponses.length);
         return genericResponses[randomIndex];
     },
+    
+    /**
+     * 构建系统提示词，只需要基本提示，不包含对话历史
+     */
+    buildSystemPrompt() {
+        // 直接返回基础系统提示词
+        return this.data.systemPrompt;
+        
+        return systemPrompt;
+    },
+    
+    /**
+     * 更新对话历史
+     * @param {string} userMessage 用户消息
+     * @param {string} aiResponse AI回复
+     */
+    updateConversationHistory(userMessage, aiResponse) {
+        const updatedHistory = [...this.data.conversationHistory];
+        
+        // 添加用户消息
+        updatedHistory.push({
+            role: "user",  // 用户角色为user
+            content: userMessage
+        });
+        
+        // 添加AI回复
+        updatedHistory.push({
+            role: "assistant",  // AI角色为assistant
+            content: aiResponse
+        });
+        
+        // 最多保留10轮对话（20条消息）
+        const historyLimit = 20;
+        const trimmedHistory = updatedHistory.length > historyLimit ? 
+            updatedHistory.slice(updatedHistory.length - historyLimit) : updatedHistory;
+        
+        // 更新状态
+        this.setData({
+            conversationHistory: trimmedHistory
+        });
+        
+        // 保存到本地存储
+        wx.setStorageSync('currentConversation', trimmedHistory);
+    },
     /**
      * 打开历史对话
      */
     open_chat: function(opts){
         const that = this;
+        const userContent = opts.currentTarget.dataset.title || '新对话';
+        const aiResponse = that.getAIResponse(userContent);
+        
         that.setData({
             chatList: [
                 {
                     role: 'user',
-                    content: opts.currentTarget.dataset.title || '新对话'
+                    content: userContent
                 },
                 {
                     role: 'assistant',
-                    content: that.getAIResponse(opts.currentTarget.dataset.title)
+                    content: aiResponse
                 }
             ],
             loading: false,
@@ -169,7 +383,21 @@ Page({
             answerDesc: '',
             answer_loading: false,
             typePage: '智慧社区助手',
+            // 初始化对话历史
+            conversationHistory: [
+                {
+                    role: "user",
+                    content: userContent
+                },
+                {
+                    role: "assistant",
+                    content: aiResponse
+                }
+            ]
         });
+        
+        // 保存到本地存储
+        wx.setStorageSync('currentConversation', that.data.conversationHistory);
     },
     
     /**
@@ -213,8 +441,13 @@ Page({
             chatList: [],
             answerDesc: "",
             loading: false,
-            dialogueId: Date.now() // 使用时间戳作为新对话ID
+            dialogueId: Date.now(), // 使用时间戳作为新对话ID
+            conversationHistory: [] // 清空对话历史
         });
+        
+        // 清除本地存储中的对话历史
+        wx.removeStorageSync('currentConversation');
+        
         this.cancelChat();
     },
     
@@ -285,16 +518,19 @@ Page({
      */
     autoScroll() {
         let that = this;
-        let query = wx.createSelectorQuery();
-        // 通过class选择器定位到scorll-view
-        query.select('.scroll-text').boundingClientRect(res => {
-            if (res) {
-                that.setData({
-                    scrollTop: res.height * 100 // 滚动到底部
-                });
-            }
-        });
-        query.exec();
+        setTimeout(() => {
+            let query = wx.createSelectorQuery();
+            // 通过class选择器定位到scorll-view
+            query.select('.scroll-text').boundingClientRect(res => {
+                if (res) {
+                    console.log('滚动到:', res.height);
+                    that.setData({
+                        scrollTop: res.height * 100 // 使用足够大的值确保滚动到底部
+                    });
+                }
+            });
+            query.exec();
+        }, 100); // 延迟一下以确保内容渲染完成
     },
     
     /**
@@ -415,23 +651,6 @@ Page({
             }).exec();
         }
         
-        // 更新添加会话按钮位置
-        const addChatBtn = wx.createSelectorQuery().select('.add-chat-btn');
-        if (addChatBtn) {
-            addChatBtn.fields({
-                computedStyle: ['bottom'],
-            }, function(res) {
-                if (res) {
-                    wx.createSelectorQuery().select('.add-chat-btn').node(function(res) {
-                        if (res && res.node) {
-                            // 根据输入框高度调整按钮位置
-                            const newBottom = 330 + extraHeight; // 更新为新的基础位置
-                            res.node.style.bottom = newBottom + 'rpx';
-                        }
-                    }).exec();
-                }
-            }).exec();
-        }
         
         // 同样更新样式修复SCSS的语法错误
         wx.createSelectorQuery().selectAll('.input-textarea').fields({
@@ -509,21 +728,58 @@ Page({
         
         that.autoScroll(); // 滚动到底部
         
+        // 检查是否是预设问题，使用不同的处理方式
+        const isPresetQuestion = Object.keys(that.data.mockResponses).includes(userMessage);
+        
         // 设置延迟模拟AI思考时间
         setTimeout(() => {
-            // 获取AI回复内容
-            const aiResponse = that.getAIResponse(userMessage);
-            
-            // 设置流式输出状态，但不立即添加到chatList
-            that.setData({
-                answerDesc: '',
-                typingContent: aiResponse,
-                aiResponseContent: aiResponse, // 暂存完整回复内容
-                answer_loading: true // 确保loading状态保持
-            });
-            
-            // 启动流式输出
-            that.showTypingContent();
+            // 对于预设问题，使用本地回答，对于其他问题，调用API
+            if (isPresetQuestion) {
+                // 获取预设AI回复内容
+                const aiResponse = that.getAIResponse(userMessage, false);
+                
+                // 设置流式输出状态，但不立即添加到chatList
+                that.setData({
+                    answerDesc: '',
+                    typingContent: aiResponse,
+                    aiResponseContent: aiResponse, // 暂存完整回复内容
+                    answer_loading: true // 确保loading状态保持
+                });
+                
+                // 启动流式输出
+                that.showTypingContent();
+                
+                // 更新对话历史（即使是预设回答）
+                that.updateConversationHistory(userMessage, aiResponse);
+            } else {
+                // 对于非预设问题，调用API生成回答
+                that.getAIResponse(
+                    userMessage, 
+                    true, // 使用API
+                    (chunk, fullContent) => {
+                        // 流式输出回调
+                        that.handleStreamingOutput(chunk, fullContent);
+                    },
+                    (fullContent) => {
+                        // 完成回调
+                        that.handleStreamingComplete(fullContent);
+                    },
+                    (error) => {
+                        // 错误回调
+                        console.error('智谱AI调用失败:', error);
+                        wx.showToast({
+                            title: '获取回答失败，请重试',
+                            icon: 'none'
+                        });
+                        
+                        // 恢复UI状态
+                        that.setData({
+                            isThisChatOver: true,
+                            answer_loading: false
+                        });
+                    }
+                );
+            }
         }, 800); // 模拟思考时间
     },
 
@@ -584,6 +840,8 @@ Page({
         }
     },
 
+
+    
     /**
      * 生命周期函数--监听页面隐藏
      */
@@ -591,6 +849,11 @@ Page({
         // 清理打字效果定时器
         if (this.typingInterval) {
             clearInterval(this.typingInterval);
+        }
+        
+        // 取消可能正在进行的API请求
+        if (this.data.zhipuRequestId) {
+            wx.request.abort(this.data.zhipuRequestId);
         }
     },
 
@@ -608,6 +871,16 @@ Page({
         // 清理定时器
         if (this.typingInterval) {
             clearInterval(this.typingInterval);
+        }
+        
+        // 取消可能正在进行的API请求
+        if (this.data.zhipuRequestId) {
+            wx.request.abort(this.data.zhipuRequestId);
+        }
+        
+        // 保存当前对话历史到缓存
+        if (this.data.conversationHistory && this.data.conversationHistory.length > 0) {
+            wx.setStorageSync('currentConversation', this.data.conversationHistory);
         }
     },
 
