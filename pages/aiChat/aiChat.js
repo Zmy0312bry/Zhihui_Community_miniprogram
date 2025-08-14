@@ -167,12 +167,14 @@ Page({
                 
                 // 如果有完整回复内容，则添加到聊天列表
                 if (this.data.aiResponseContent) {
+                    const newChatItem = {
+                        role: 'assistant',
+                        content: this.data.aiResponseContent,
+                        time: this.formatDate(new Date())
+                    };
+                    const updatedChatList = this.data.chatList.concat([newChatItem]);
                     this.setData({
-                        chatList: [...this.data.chatList, {
-                            role: 'assistant',
-                            content: this.data.aiResponseContent,
-                            time: this.formatDate(new Date())
-                        }],
+                        chatList: updatedChatList,
                         isTyping: false,
                         typingContent: '', // 清空当前内容，准备下一条消息
                         aiResponseContent: '', // 清空暂存的回复内容
@@ -226,13 +228,15 @@ Page({
         }
         
         // 添加AI回复到聊天列表并重置状态
+        const aiReplyItem = {
+            role: 'assistant',
+            content: fullContent,
+            time: this.formatDate(new Date())
+        };
+        const updatedChatList = this.data.chatList.concat([aiReplyItem]);
         this.setData({
             answerDesc: '', // 清空临时显示
-            chatList: [...this.data.chatList, {
-                role: 'assistant',
-                content: fullContent,
-                time: this.formatDate(new Date())
-            }],
+            chatList: updatedChatList,
             isTyping: false,
             typingContent: '',
             isThisChatOver: true,
@@ -374,7 +378,7 @@ Page({
      * @param {string} aiResponse AI回复
      */
     updateConversationHistory(userMessage, aiResponse) {
-        const updatedHistory = [...this.data.conversationHistory];
+        const updatedHistory = this.data.conversationHistory.slice(); // 创建副本
         
         // 添加用户消息
         updatedHistory.push({
@@ -742,13 +746,15 @@ Page({
         }
         
         // 添加用户消息到聊天列表
+        const userMessage = {
+            role: 'user',
+            content: that.data.title,
+            time: that.formatDate(new Date())
+        };
+        const updatedChatList = that.data.chatList.concat([userMessage]);
         that.setData({
             isThisChatOver: false, // 标记对话正在进行
-            chatList: [...that.data.chatList, {
-                role: 'user',
-                content: that.data.title,
-                time: that.formatDate(new Date())
-            }],
+            chatList: updatedChatList,
             answer_loading: true, // 显示AI正在回复状态
             answerDesc: '' // 清空之前的回答
         });
@@ -757,7 +763,7 @@ Page({
         that.saveToHistory(that.data.title);
         
         // 清空输入框并重置高度
-        const userMessage = that.data.title;
+        const currentUserMessage = that.data.title;
         that.setData({
             title: '',
             textareaHeight: 60, // 重置文本框高度为初始值
@@ -830,8 +836,8 @@ Page({
      * 复制聊天内容
      */
     copyChatContent(e) {
-        const { dataset } = e.currentTarget;
-        const { content } = dataset;
+        const dataset = e.currentTarget.dataset;
+        const content = dataset.content;
 
         wx.setClipboardData({
             data: content,

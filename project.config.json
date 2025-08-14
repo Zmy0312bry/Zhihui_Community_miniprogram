@@ -2,7 +2,7 @@
   "compileType": "miniprogram",
   "setting": {
     "coverView": true,
-    "es6": false,
+    "es6": true,
     "postcss": true,
     "minified": true,
     "enhance": true,

@@ -241,7 +241,8 @@ Page({
         })
     },
     cancelLogin() {
-        const {loginToken} = wx.getStorageSync('userLogin');
+        const userLogin = wx.getStorageSync('userLogin');
+        const loginToken = userLogin.loginToken;
         if(loginToken==null){
             that.setData({
                 isLogin: false
@@ -335,7 +336,7 @@ Page({
     },
     onChooseAvatar(e) {
         const that = this
-        const {avatarUrl} = e.detail
+        const avatarUrl = e.detail.avatarUrl
         console.log(avatarUrl)
         const config = {
             url: api.upload_url,

@@ -3,9 +3,9 @@
   "version": "1.0.0",
   "main": ".eslintrc.js",
   "dependencies": {
+    "@babel/runtime": "^7.28.3",
     "@vant/weapp": "^1.11.5"
   },
-  "devDependencies": {},
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
