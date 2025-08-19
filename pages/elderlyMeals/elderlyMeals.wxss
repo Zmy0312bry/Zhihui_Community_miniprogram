@@ -1,0 +1,86 @@
+.container {
+    min-height: 100vh;
+    background-color: #f8f8f8;
+}
+
+.header {
+    background-color: white;
+    box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.1);
+}
+
+.community-selector {
+    background-color: white;
+    margin-bottom: 20rpx;
+}
+
+.menu-list {
+    padding: 30rpx;
+}
+
+.menu-date {
+    font-size: 32rpx;
+    color: #333;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 30rpx;
+    padding: 20rpx;
+    background-color: white;
+    border-radius: 20rpx;
+    box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.1);
+}
+
+.meal-section {
+    margin-bottom: 40rpx;
+}
+
+.meal-title {
+    font-size: 30rpx;
+    color: #2979ff;
+    font-weight: bold;
+    margin-bottom: 20rpx;
+    padding-left: 20rpx;
+    border-left: 6rpx solid #2979ff;
+}
+
+.dish-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20rpx;
+}
+
+.dish-item {
+    background-color: white;
+    border-radius: 20rpx;
+    overflow: hidden;
+    box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+}
+
+.dish-item:active {
+    transform: scale(0.98);
+}
+
+.dish-image {
+    width: 100%;
+    height: 200rpx;
+    object-fit: cover;
+}
+
+.dish-info {
+    padding: 20rpx;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.dish-name {
+    font-size: 28rpx;
+    color: #333;
+    font-weight: 500;
+}
+
+.dish-price {
+    font-size: 26rpx;
+    color: #ff6b35;
+    font-weight: bold;
+}

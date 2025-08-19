@@ -1,122 +1,101 @@
 // app.js
+const { colorUI } = require('./config/ColorUI')
 const {
     config
 } = require('./utils/config');
+
 App({
     onLaunch() {
         // 展示本地存储能力
         const logs = wx.getStorageSync('logs') || []
         logs.unshift(Date.now())
         wx.setStorageSync('logs', logs)
+        
         //根据运行环境设置全局常量
         this['globalData']['config'] = config;
-        //初始化主题
-        this.loadThemeFromCache();
+        
+        //初始化主题为黄色
+        this.initTheme();
+        
+        // 初始化 ColorUI 框架
+        this.initColorUI()
     },
+    
     globalData: {
         userInfo: null,
         config: {},
         theme: 'yellow',
         backgroundColor: '#FFD000',
-        themeList: [
-            {
-                name: 'yellow',
-                text: '黄色',
-                textColor: '#8c6031',
-                backgroundColor: '#FFD000'
-            },
-            {
-                name: 'cyan',
-                text: '青色',
-                textColor: '#ffffff',
-                backgroundColor: '#14B0BB'
-            },
-            {
-                name: 'pink',
-                text: '粉色',
-                textColor: '#f3b9b2',
-                backgroundColor: '#F05B7A'
-            },
-            {
-                name: 'purple',
-                text: '紫色',
-                textColor: '#ffffff',
-                backgroundColor: '#cb7ddf'
-            },
-            {
-                name: 'green-grass',
-                text: '草绿',
-                textColor: '#5d6021',
-                backgroundColor: '#e3eabb'
-            },
-            {
-                name: 'cyan-verdant',
-                text: '青葱',
-                textColor: '#417036',
-                backgroundColor: '#d1e9cd'
-            },
-            {
-                name: 'blue-aqua',
-                text: '水蓝',
-                textColor: '#2e6167',
-                backgroundColor: '#bbe4e3'
-            },
-        ]
+        systemInfo: null,
+        statusBarHeight: 0,
+        navBarHeight: 0,
+        isIphoneX: false
     },
-    loadThemeFromCache: function () {
-        // 尝试从本地存储加载主题
-        const cachedTheme = wx.getStorageSync('currentTheme');
-        if (cachedTheme) {
-            this.updateTheme(cachedTheme);
-        } else {
-            // 如果没有缓存则使用默认主题
-            this.updateTheme();
+    
+    /**
+     * 初始化 ColorUI 框架
+     */
+    initColorUI() {
+        try {
+            // 挂载 ColorUI 到全局
+            this.colorUI = colorUI
+            
+            // 获取系统信息
+            this.getSystemInfo()
+            
+            colorUI.cuLog('ColorUI 框架初始化成功')
+        } catch (error) {
+            console.error('ColorUI 初始化失败:', error)
         }
     },
-    updateTheme: function (theme) {
-        theme = theme || this.globalData.theme;
 
-        // 从themeList中查找对应主题的backgroundColor
-        const selectedTheme = this.globalData.themeList.find(item => item.name === theme);
-
-        if (!selectedTheme) {
-            console.error('找不到对应的主题:', theme);
-            return;
-        }
-        this.globalData.theme = theme;
-
-        this.globalData.backgroundColor = selectedTheme.backgroundColor;
-        // // 更新全局样式
-        // wx.setNavigationBarColor({
-        //     frontColor: '#000000',
-        //     backgroundColor: this.globalData.backgroundColor,
-        //     animation: {
-        //         duration: 400,
-        //         timingFunc: 'easeIn'
-        //     }
-        // });
-        //
-        // wx.setTabBarStyle({
-        //     color: '#7A7E83',
-        //     backgroundColor: this.globalData.backgroundColor
-        // });
-
-        // 更新所有页面的样式
-        const pages = getCurrentPages();
-        pages.forEach(page => {
-            page.setData({
-                backgroundColor: this.globalData.backgroundColor
-            });
-        });
-        this.onThemeChange(selectedTheme);
-
-        // 缓存主题
-        wx.setStorageSync('currentTheme', selectedTheme);
+    /**
+     * 获取系统信息
+     */
+    getSystemInfo() {
+        wx.getSystemInfo({
+            success: (res) => {
+                this.globalData.systemInfo = res
+                this.globalData.statusBarHeight = res.statusBarHeight
+                this.globalData.navBarHeight = res.statusBarHeight + 44
+                
+                // 判断是否为 iPhone X 系列
+                const model = res.model
+                if (model.includes('iPhone X') || model.includes('iPhone 11') || 
+                    model.includes('iPhone 12') || model.includes('iPhone 13') || 
+                    model.includes('iPhone 14') || model.includes('iPhone 15')) {
+                    this.globalData.isIphoneX = true
+                }
+                
+                colorUI.cuLog('系统信息获取成功:', res)
+            },
+            fail: (error) => {
+                console.error('获取系统信息失败:', error)
+            }
+        })
     },
-    onThemeChange: function (selectedTheme) {
+    
+    initTheme: function () {
+        // 固定使用黄色主题
+        this.globalData.theme = 'yellow';
+        this.globalData.backgroundColor = '#FFD000';
+        
+        // 设置导航栏颜色
         wx.setNavigationBarColor({
             frontColor: '#000000',
-            backgroundColor: selectedTheme.backgroundColor,
+            backgroundColor: this.globalData.backgroundColor,
+            animation: {
+                duration: 400,
+                timingFunc: 'easeIn'
+            }
+        });
+    },
+    
+    onThemeChange: function (selectedTheme) {
+        // 保持兼容性，但固定为黄色主题
+        wx.setNavigationBarColor({
+            frontColor: '#000000',
+            backgroundColor: '#FFD000',
             animation: {
                 duration: 400,
                 timingFunc: 'easeIn'

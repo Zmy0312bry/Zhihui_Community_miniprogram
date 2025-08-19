@@ -1,0 +1,18 @@
+<view class="container">
+    <!-- 页面头部 -->
+    <view class="header">
+        <van-nav-bar title="联系社区" left-text="返回" left-arrow bind:click-left="goBack" />
+    </view>
+
+    <!-- 社区列表 -->
+    <view class="community-list">
+        <view class="community-item" wx:for="{{communityList}}" wx:key="id" bindtap="callCommunity" data-phone="{{item.phone}}">
+            <view class="community-info">
+                <text class="community-name">{{item.name}}</text>
+                <text class="community-address">{{item.address}}</text>
+                <text class="community-phone">联系电话：{{item.phone}}</text>
+            </view>
+            <van-icon name="phone-o" class="phone-icon" />
+        </view>
+    </view>
+</view>

@@ -1,0 +1,30 @@
+<view class="container">
+    <!-- 页面头部 -->
+    <view class="header">
+        <van-nav-bar title="养老用餐" left-text="返回" left-arrow bind:click-left="goBack" />
+    </view>
+
+    <!-- 社区选择器 -->
+    <view class="community-selector">
+        <van-dropdown-menu>
+            <van-dropdown-item value="{{selectedCommunity}}" options="{{communityOptions}}" bind:change="onCommunityChange" />
+        </van-dropdown-menu>
+    </view>
+
+    <!-- 菜谱列表 -->
+    <view class="menu-list">
+        <view class="menu-date">{{currentDate}} 菜谱</view>
+        <view class="meal-section" wx:for="{{mealTypes}}" wx:key="type">
+            <view class="meal-title">{{item.name}}</view>
+            <view class="dish-grid">
+                <view class="dish-item" wx:for="{{currentMenus[item.type]}}" wx:key="id" wx:for-item="dish">
+                    <image src="{{dish.image}}" class="dish-image" mode="aspectFill"></image>
+                    <view class="dish-info">
+                        <text class="dish-name">{{dish.name}}</text>
+                        <text class="dish-price">￥{{dish.price}}</text>
+                    </view>
+                </view>
+            </view>
+        </view>
+    </view>
+</view>

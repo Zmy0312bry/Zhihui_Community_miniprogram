@@ -1,1 +1,102 @@
+/**
+ * 智汇社区小程序全局样式
+ * 基于 ColorUI 3.x 框架
+ */
+
+// 引入 ColorUI 基础样式
 @import './mp-cu/colorUI/scss/ui';
+
+
+// ==================== 全局自定义样式 ====================
+
+/* 智汇社区专用黄色主题增强 */
+.cu-avatar[class*="bg-yellow"] {
+    background-color: #FFD000 !important;
+    color: #000 !important;
+}
+
+.cu-btn.bg-yellow {
+    background-color: #FFD000 !important;
+    color: #000 !important;
+}
+
+.cu-tag.bg-yellow {
+    background-color: #FFD000 !important;
+    color: #000 !important;
+}
+
+/* 渐变背景增强 */
+.cu-btn.bg-gradual-yellow {
+    background-image: linear-gradient(135deg, #FFD000 0%, #FFC107 100%) !important;
+}
+
+.cu-card .bg-gradual-yellow {
+    background-image: linear-gradient(135deg, #FFD000 0%, #FFC107 100%) !important;
+}
+
+/* 社区特色样式 */
+.community-card {
+    border-radius: 15rpx;
+    box-shadow: 0 4rpx 8rpx rgba(255, 208, 0, 0.15);
+    transition: all 0.3s ease;
+}
+
+.community-card:active {
+    transform: scale(0.98);
+    box-shadow: 0 2rpx 4rpx rgba(255, 208, 0, 0.25);
+}
+
+/* 智能助手专用样式 */
+.ai-assistant {
+    border: 2rpx solid #FFD000;
+    border-radius: 20rpx;
+    background: linear-gradient(135deg, #FFF9E6 0%, #FFFAEB 100%);
+}
+
+.health-popup {
+    border-radius: 20rpx;
+    box-shadow: 0 8rpx 16rpx rgba(0, 0, 0, 0.1);
+}
+
+/* 底部Logo样式 */
+.bottom-logo {
+    opacity: 0.8;
+    filter: grayscale(0.2);
+    transition: all 0.3s ease;
+}
+
+/* 滚动公告样式 */
+.scroll-notice {
+    background: linear-gradient(135deg, #FFF9E6 0%, #FFFAEB 100%);
+    border-left: 4rpx solid #FFD000;
+}
+
+/* 功能块网格样式 */
+.function-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20rpx;
+    padding: 20rpx;
+}
+
+.function-item {
+    border-radius: 15rpx;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    box-shadow: 0 4rpx 8rpx rgba(0, 0, 0, 0.1);
+}
+
+.function-item:active {
+    transform: scale(0.95);
+}
+
+/* 卡片轮播样式 */
+.swiper-container {
+    border-radius: 20rpx;
+    overflow: hidden;
+    box-shadow: 0 8rpx 16rpx rgba(0, 0, 0, 0.1);
+}
+
+.swiper-item image {
+    border-radius: 20rpx;
+}

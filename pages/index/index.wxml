@@ -1,14 +1,60 @@
 <view class="container">
-    <van-notice-bar scrollable style="width:100%"
-        left-icon="volume-o"
-        text="{{scrollText}}"
-    />
-    <image src="{{avatarUrl}}" class="avatar" mode="aspectFit"></image>
-    <text class="greeting">{{greeting}}</text>
-
-    <view class="button-container">
-        <van-button round type="primary" icon="chat-o" bindtap="goChat" custom-class="bold-button-text">文字聊天</van-button>
-<!--        <van-button round type="info" icon="share-o" open-type="share">分享好友</van-button>-->
-        <van-button round type="info" icon="service-o" open-type="contact" custom-class="bold-button-text">联系社区</van-button>
+    <!-- 轮播图 -->
+    <view class="swiper-container">
+        <swiper class="swiper" autoplay="{{true}}" interval="{{3000}}" duration="{{500}}" circular="{{true}}" indicator-dots="{{true}}" indicator-color="rgba(255,255,255,0.5)" indicator-active-color="#ffffff">
+            <swiper-item wx:for="{{bannerList}}" wx:key="index">
+                <image src="{{item}}" class="banner-image" mode="aspectFill"></image>
+            </swiper-item>
+        </swiper>
     </view>
+
+    <!-- 滚动提示 -->
+    <view class="scroll-notice">
+        <text class="scroll-text">欢迎使用智汇街道智能小助手</text>
+    </view>
+
+    <!-- 四个功能入口 -->
+    <view class="function-grid">
+        <view class="function-item bg-blue-gradient" bindtap="goAiChat">
+            <text class=_icon-home function-icon"></text>
+            <text class="function-text">AI聊天</text>
+        </view>
+        <view class="function-item bg-green-gradient" bindtap="goContactCommunity">
+            <text class="_icon-info function-icon"></text>
+            <text class="function-text">联系社区</text>
+        </view>
+        <view class="function-item bg-orange-gradient" bindtap="goElderlyMeals">
+            <text class="_icon-waiting function-icon"></text>
+            <text class="function-text">养老用餐</text>
+        </view>
+        <view class="function-item bg-purple-gradient" bindtap="showHealthTips">
+            <text class="_icon-warn function-icon"></text>
+            <text class="function-text">健康指导</text>
+        </view>
+    </view>
+
+    <!-- 底部logo -->
+    <view class="bottom-logo">
+        <image src="/static/img/logo_bottom.png" class="logo-image" mode="aspectFit"></image>
+    </view>
+
+    <!-- 健康指导弹窗 -->
+    <van-popup show="{{showHealthPopup}}" bind:close="hideHealthTips" position="center" round custom-style="width: 80%; max-height: 70%;">
+        <view class="health-popup">
+            <view class="popup-header">
+                <text class="popup-title">今日健康指导</text>
+                <van-icon name="cross" bindtap="hideHealthTips" class="close-icon"></van-icon>
+            </view>
+            <view class="popup-content">
+                <view class="health-section">
+                    <text class="section-title">温馨提示</text>
+                    <text class="section-content">{{healthTips.warmTips}}</text>
+                </view>
+                <view class="health-section">
+                    <text class="section-title">健康建议</text>
+                    <text class="section-content">{{healthTips.healthAdvice}}</text>
+                </view>
+            </view>
+        </view>
+    </van-popup>
 </view>
