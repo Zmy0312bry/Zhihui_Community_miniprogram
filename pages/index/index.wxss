@@ -125,9 +125,16 @@
 }
 
 .function-icon {
-    font-size: 80rpx !important;
-    color: white;
     margin-bottom: 25rpx;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* 确保van-icon在function-icon内正确显示 */
+.function-icon .van-icon {
+    font-size: 80rpx !important;
+    color: white !important;
 }
 
 .function-text {
@@ -135,22 +142,6 @@
     color: white;
     font-weight: bold;
     text-shadow: 0 2rpx 4rpx rgba(0, 0, 0, 0.3);
-}
-
-/* 底部logo样式 */
-.bottom-logo {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 0rpx 0 0rpx 0;
-    margin-top: 0rpx;
-}
-
-.logo-image {
-    max-width: 400rpx;
-    max-height: 200rpx;
-    opacity: 0.8;
-    transition: opacity 0.3s ease;
 }
 
 /* 健康指导弹窗样式 */
@@ -203,4 +194,20 @@
     color: #666;
     line-height: 1.6;
     white-space: pre-line;
+}
+
+/* 底部logo样式 */
+.bottom-logo {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 0rpx 0 0rpx 0;
+    margin-top: 0rpx;
+}
+
+.logo-image {
+    max-width: 400rpx;
+    max-height: 200rpx;
+    opacity: 0.8;
+    transition: opacity 0.3s ease;
 }

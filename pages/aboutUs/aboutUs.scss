@@ -1,0 +1,137 @@
+.about-us-container {
+    min-height: 100vh;
+    background: linear-gradient(180deg, #f8f9fa 0%, #e9ecef 100%);
+    padding-bottom: 40rpx;
+}
+
+/* 应用信息区域 */
+.app-info-section {
+    background: linear-gradient(135deg, #4ECDC4 0%, #45B7D1 50%, #96CEB4 100%);
+    padding: 80rpx 40rpx 80rpx;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    box-shadow: 0 8rpx 30rpx rgba(0, 0, 0, 0.15);
+}
+
+.app-logo {
+    width: 150rpx;
+    height: 150rpx;
+    margin-bottom: 30rpx;
+    border-radius: 30rpx;
+    overflow: hidden;
+    background-color: #ffffff;
+    box-shadow: 0 8rpx 20rpx rgba(0, 0, 0, 0.2);
+}
+
+.logo-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.app-name {
+    color: #ffffff;
+    font-size: 48rpx;
+    font-weight: 700;
+    text-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.3);
+    margin-bottom: 20rpx;
+}
+
+.app-version {
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 28rpx;
+    font-weight: 500;
+    margin-bottom: 40rpx;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 10rpx 30rpx;
+    border-radius: 30rpx;
+}
+
+.app-description {
+    color: rgba(255, 255, 255, 0.95);
+    font-size: 32rpx;
+    text-align: center;
+    line-height: 1.6;
+    max-width: 600rpx;
+}
+
+/* 信息详情区域 */
+.info-details {
+    margin: 40rpx 30rpx;
+    background-color: #ffffff;
+    border-radius: 25rpx;
+    box-shadow: 0 8rpx 30rpx rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+}
+
+/* 功能特色区域 */
+.features-section {
+    margin: 40rpx 30rpx;
+    background-color: #ffffff;
+    border-radius: 25rpx;
+    box-shadow: 0 8rpx 30rpx rgba(0, 0, 0, 0.08);
+    padding: 40rpx;
+}
+
+.section-title {
+    font-size: 36rpx;
+    font-weight: 700;
+    color: #333;
+    margin-bottom: 30rpx;
+    text-align: center;
+}
+
+.features-list {
+    display: flex;
+    flex-direction: column;
+    gap: 30rpx;
+}
+
+.feature-item {
+    display: flex;
+    align-items: center;
+    gap: 20rpx;
+    padding: 20rpx;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-radius: 15rpx;
+    border: 2rpx solid rgba(78, 205, 196, 0.1);
+}
+
+.feature-item text {
+    font-size: 32rpx;
+    color: #333;
+    font-weight: 500;
+}
+
+/* 版权信息 */
+.copyright-section {
+    text-align: center;
+    padding: 40rpx;
+    margin: 40rpx 30rpx;
+    background-color: #ffffff;
+    border-radius: 25rpx;
+    box-shadow: 0 8rpx 30rpx rgba(0, 0, 0, 0.08);
+}
+
+.copyright-text {
+    display: block;
+    color: #666;
+    font-size: 24rpx;
+    line-height: 1.8;
+}
+
+/* 功能按钮 */
+.action-buttons {
+    padding: 40rpx 30rpx;
+}
+
+.action-buttons .van-button {
+    height: 100rpx !important;
+    font-size: 36rpx !important;
+    font-weight: 700 !important;
+    background: linear-gradient(135deg, #4ECDC4 0%, #45B7D1 100%) !important;
+    border: none !important;
+    box-shadow: 0 6rpx 20rpx rgba(78, 205, 196, 0.4) !important;
+}

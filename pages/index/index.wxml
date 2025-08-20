@@ -16,19 +16,19 @@
     <!-- 四个功能入口 -->
     <view class="function-grid">
         <view class="function-item bg-blue-gradient" bindtap="goAiChat">
-            <text class=_icon-home function-icon"></text>
+            <van-icon name="comment" size="80rpx" color="white" class="function-icon"></van-icon>
             <text class="function-text">AI聊天</text>
         </view>
         <view class="function-item bg-green-gradient" bindtap="goContactCommunity">
-            <text class="_icon-info function-icon"></text>
+            <van-icon name="phone" size="80rpx" color="white" class="function-icon"></van-icon>
             <text class="function-text">联系社区</text>
         </view>
         <view class="function-item bg-orange-gradient" bindtap="goElderlyMeals">
-            <text class="_icon-waiting function-icon"></text>
+            <van-icon name="shop-collect" size="80rpx" color="white" class="function-icon"></van-icon>
             <text class="function-text">养老用餐</text>
         </view>
         <view class="function-item bg-purple-gradient" bindtap="showHealthTips">
-            <text class="_icon-warn function-icon"></text>
+            <van-icon name="medal" size="80rpx" color="white" class="function-icon"></van-icon>
             <text class="function-text">健康指导</text>
         </view>
     </view>

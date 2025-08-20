@@ -1,0 +1,41 @@
+<view class="personal-info-container">
+    <!-- 用户信息区域 -->
+    <view class="user-info-section">
+        <view class="avatar-section">
+            <button class="avatar-wrapper" open-type="chooseAvatar" bind:chooseavatar="onChooseAvatar">
+                <image class="avatar" src="{{avatarUrl}}"></image>
+                <view class="avatar-edit-icon">
+                    <van-icon name="edit" size="24rpx" color="#fff"/>
+                </view>
+            </button>
+        </view>
+        
+        <view class="nickname-section">
+            <view class="nickname-input-container">
+                <input type="nickname" 
+                       class="nickname-input" 
+                       placeholder="请输入昵称" 
+                       placeholder-class="nickname-placeholder"
+                       bind:change="onChooseNickname"
+                       value="{{nickname}}"/>
+            </view>
+        </view>
+    </view>
+
+    <!-- 个人信息详情 -->
+    <view class="info-details">
+        <van-cell-group>
+            <van-cell title="昵称" value="{{nickname || '未设置'}}" />
+            <van-cell title="手机号" value="{{phone || '未绑定'}}" />
+            <van-cell title="用户ID" value="{{userInfo.id || '未知'}}" />
+            <van-cell title="注册时间" value="{{userInfo.createTime || '未知'}}" />
+        </van-cell-group>
+    </view>
+
+    <!-- 功能按钮 -->
+    <view class="action-buttons">
+        <van-button round type="primary" block bind:click="goBack">
+            返回
+        </van-button>
+    </view>
+</view>

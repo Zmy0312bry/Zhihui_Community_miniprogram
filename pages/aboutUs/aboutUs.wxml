@@ -1,0 +1,66 @@
+<view class="about-us-container">
+    <!-- 应用信息区域 -->
+    <view class="app-info-section">
+        <view class="app-logo">
+            <image class="logo-image" src="/static/icon/bupt.png" mode="aspectFit"/>
+        </view>
+        
+        <view class="app-name">{{appInfo.name}}</view>
+        <view class="app-version">版本 {{appInfo.version}}</view>
+        
+        <view class="app-description">
+            {{appInfo.description}}
+        </view>
+    </view>
+
+    <!-- 详细信息 -->
+    <view class="info-details">
+        <van-cell-group>
+            <van-cell title="应用名称" value="{{appInfo.name}}" />
+            <van-cell title="当前版本" value="{{appInfo.version}}" />
+            <van-cell title="开发团队" value="{{appInfo.developer}}" />
+            <van-cell 
+                title="联系我们" 
+                value="{{appInfo.contact}}" 
+                is-link
+                bind:click="copyContact"
+            />
+        </van-cell-group>
+    </view>
+
+    <!-- 功能特色 -->
+    <view class="features-section">
+        <view class="section-title">功能特色</view>
+        <view class="features-list">
+            <view class="feature-item">
+                <van-icon name="chat-o" size="40rpx" color="#4ECDC4"/>
+                <text>AI智能聊天助手</text>
+            </view>
+            <view class="feature-item">
+                <van-icon name="friends-o" size="40rpx" color="#FF6B6B"/>
+                <text>社区服务便民</text>
+            </view>
+            <view class="feature-item">
+                <van-icon name="setting-o" size="40rpx" color="#45B7D1"/>
+                <text>个性化设置</text>
+            </view>
+            <view class="feature-item">
+                <van-icon name="shield-o" size="40rpx" color="#96CEB4"/>
+                <text>用户隐私保护</text>
+            </view>
+        </view>
+    </view>
+
+    <!-- 版权信息 -->
+    <view class="copyright-section">
+        <text class="copyright-text">© 2025 智慧社区开发团队</text>
+        <text class="copyright-text">All rights reserved</text>
+    </view>
+
+    <!-- 返回按钮 -->
+    <view class="action-buttons">
+        <van-button round type="primary" block bind:click="goBack">
+            返回
+        </van-button>
+    </view>
+</view>

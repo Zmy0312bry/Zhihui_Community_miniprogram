@@ -1,1 +1,62 @@
 /* custom-tab-bar/index.wxss */
+
+/* 主要tabbar容器样式 */
+.van-tabbar {
+    height: 140rpx !important;
+    background-color: #ffffff !important;
+    border-top: 8rpx solid #f0f0f0 !important;
+    padding-bottom: calc(env(safe-area-inset-bottom) + 18rpx) !important;
+}
+
+/* tabbar单项样式 */
+.van-tabbar-item {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 18rpx 0 !important;
+    min-height: 110rpx !important;
+}
+
+/* 图标容器和大小 */
+.van-tabbar-item__icon {
+    width: 90rpx !important;
+    height: 90rpx !important;
+    margin-bottom: 12rpx !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+/* Vant图标字体大小 */
+.van-tabbar-item__icon .van-icon {
+    font-size: 90rpx !important;
+    font-weight: 700 !important;
+}
+
+/* 文字样式 */
+.van-tabbar-item__text {
+    font-size: 32rpx !important;
+    font-weight: 800 !important;
+    line-height: 1.2 !important;
+    color: #666666 !important;
+}
+
+/* 选中状态样式 */
+.van-tabbar-item--active .van-tabbar-item__text {
+    color: #FFD000 !important;
+    font-weight: 900 !important;
+    font-size: 38rpx !important;
+}
+
+.van-tabbar-item--active .van-tabbar-item__icon .van-icon {
+    color: #FFD000 !important;
+    font-size: 96rpx !important;
+    font-weight: 800 !important;
+}
+
+/* 点击反馈效果 */
+.van-tabbar-item:active {
+    background-color: rgba(255, 208, 0, 0.05) !important;
+    transition: background-color 0.1s ease !important;
+}

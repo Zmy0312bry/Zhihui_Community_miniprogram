@@ -1,0 +1,109 @@
+.personal-info-container {
+    min-height: 100vh;
+    background: linear-gradient(180deg, #f8f9fa 0%, #e9ecef 100%);
+    padding-bottom: 40rpx;
+}
+
+/* 用户信息区域 */
+.user-info-section {
+    background: linear-gradient(135deg, #FF6B6B 0%, #4ECDC4 50%, #45B7D1 100%);
+    padding: 80rpx 40rpx 80rpx;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    box-shadow: 0 8rpx 30rpx rgba(0, 0, 0, 0.15);
+}
+
+.avatar-section {
+    position: relative;
+    margin-bottom: 40rpx;
+}
+
+.avatar-wrapper {
+    position: relative;
+    width: 200rpx;
+    height: 200rpx;
+    padding: 0;
+    border-radius: 50%;
+    border: 6rpx solid rgba(255, 255, 255, 0.4);
+    background: transparent;
+    overflow: hidden;
+    box-shadow: 0 8rpx 20rpx rgba(0, 0, 0, 0.2);
+    
+    &::after {
+        border: none;
+    }
+}
+
+.avatar {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.avatar-edit-icon {
+    position: absolute;
+    right: 10rpx;
+    bottom: 10rpx;
+    width: 60rpx;
+    height: 60rpx;
+    background: linear-gradient(135deg, #FF6B6B 0%, #4ECDC4 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 4rpx solid #fff;
+    box-shadow: 0 4rpx 10rpx rgba(0, 0, 0, 0.2);
+}
+
+.nickname-section {
+    text-align: center;
+    width: 100%;
+}
+
+.nickname-input-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+.nickname-input {
+    color: #ffffff;
+    font-size: 32rpx;
+    text-align: center;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 40rpx;
+    padding: 20rpx 40rpx;
+    border: 2rpx solid rgba(255, 255, 255, 0.2);
+    min-width: 300rpx;
+}
+
+.nickname-placeholder {
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 28rpx;
+}
+
+/* 信息详情区域 */
+.info-details {
+    margin: 40rpx 30rpx;
+    background-color: #ffffff;
+    border-radius: 25rpx;
+    box-shadow: 0 8rpx 30rpx rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+}
+
+/* 功能按钮 */
+.action-buttons {
+    padding: 40rpx 30rpx;
+}
+
+.action-buttons .van-button {
+    height: 100rpx !important;
+    font-size: 36rpx !important;
+    font-weight: 700 !important;
+    background: linear-gradient(135deg, #FF6B6B 0%, #4ECDC4 100%) !important;
+    border: none !important;
+    box-shadow: 0 6rpx 20rpx rgba(255, 107, 107, 0.4) !important;
+}

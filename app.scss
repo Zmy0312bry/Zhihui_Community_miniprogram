@@ -6,7 +6,6 @@
 // 引入 ColorUI 基础样式
 @import './mp-cu/colorUI/scss/ui';
 
-
 // ==================== 全局自定义样式 ====================
 
 /* 智汇社区专用黄色主题增强 */
@@ -56,13 +55,6 @@
 .health-popup {
     border-radius: 20rpx;
     box-shadow: 0 8rpx 16rpx rgba(0, 0, 0, 0.1);
-}
-
-/* 底部Logo样式 */
-.bottom-logo {
-    opacity: 0.8;
-    filter: grayscale(0.2);
-    transition: all 0.3s ease;
 }
 
 /* 滚动公告样式 */

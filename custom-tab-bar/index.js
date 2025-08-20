@@ -6,18 +6,17 @@ Component({
             {
                 pagePath: "/pages/index/index",
                 text: "首页",
-                icon: "home-o",
+                icon: "wap-home-o"
             },
             {
-                pagePath: "/pages/aiChat/aiChat",
-                text: "聊天",
-                icon: "chat-o",
+                pagePath: "/pages/aiChat/aiChat", 
+                text: "AI聊天",
+                icon: "chat-o"
             },
             {
                 pagePath: "/pages/mine/mine",
                 text: "我的",
-                icon:"user-o",
-
+                icon: "user-o"
             },
         ]
     },

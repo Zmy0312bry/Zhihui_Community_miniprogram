@@ -6,8 +6,6 @@ var api = require('./../../utils/api')
 var app = getApp()
 Page({
     data: {
-        backgroundColor: '',
-        currentTheme: '',
         scrollTop: 0,
         avatarUrl: '/static/icon/default.png',
         nickname: '',
@@ -16,129 +14,7 @@ Page({
         userInfo: {},
         isAuth: true,
         isIphone: false,
-        show: false,
-        giteeUrl:'https://gitee.com/yuanhan93/ai-chat-open',
-        showThemeList: false,
-        themeList:[],
-        rewardedVideoAd: null
-    },
-
-    // 初始化激励广告
-    initRewardedVideoAd() {
-        if (wx.createRewardedVideoAd) {
-            this.data.rewardedVideoAd = wx.createRewardedVideoAd({
-                adUnitId: 'adunit-0a691ba51eff0c7d' // 这里替换为实际的广告位ID
-            });
-
-            // 监听广告关闭事件
-            this.data.rewardedVideoAd.onClose(res => {
-                // 用户点击了【关闭广告】按钮
-                if (res && res.isEnded) {
-                    // 正常播放结束，可以下发奖励
-                    this.addChatTimes();
-                } else {
-                    // 播放中途退出，不下发奖励
-                    wx.showToast({
-                        title: '观看完整视频才能获得奖励哦',
-                        icon: 'none'
-                    });
-                }
-            });
-
-            // 监听广告加载事件
-            this.data.rewardedVideoAd.onLoad(() => {
-                console.log('激励视频广告加载成功');
-            });
-
-            // 监听广告错误事件
-            this.data.rewardedVideoAd.onError(err => {
-                console.log('激励视频广告出错：', err);
-                wx.showToast({
-                    title: '广告加载失败，请稍后再试',
-                    icon: 'none'
-                });
-            });
-        }
-    },
-
-    // 观看广告按钮点击事件
-    watchVideoAd() {
-        const that = this;
-
-        if (!that.data.isLogin) {
-            wx.showToast({
-                title: '请先登录',
-                icon: 'none'
-            });
-            return;
-        }
-
-        if (that.data.rewardedVideoAd) {
-            that.data.rewardedVideoAd.show().catch(() => {
-                // 失败重试
-                that.data.rewardedVideoAd.load()
-                    .then(() => that.data.rewardedVideoAd.show())
-                    .catch(err => {
-                        console.log('激励视频广告显示失败：', err);
-                        wx.showToast({
-                            title: '广告加载失败，请稍后再试',
-                            icon: 'none'
-                        });
-                    });
-            });
-        } else {
-            wx.showToast({
-                title: '广告组件未初始化',
-                icon: 'none'
-            });
-        }
-    },
-
-    // 增加聊天次数
-    addChatTimes() {
-        const that = this;
-        const config = {
-            url: api.addChatNums_url,
-            method: 'POST',
-            data: {
-                changeType: 5 //变更类型
-            }
-        };
-
-        api.getRequest(config).then(res => {
-            if (res.code === 200) {
-                wx.showToast({
-                    title: '恭喜获得15次聊天机会！',
-                    icon: 'success'
-                });
-                // 更新用户信息
-                that.getuserInfo();
-            } else {
-                wx.showToast({
-                    title: res.msg || '奖励发放失败，请稍后再试',
-                    icon: 'none'
-                });
-            }
-        }).catch(err => {
-            console.log('奖励发放失败', err);
-            wx.showToast({
-                title: '奖励发放失败，请稍后再试',
-                icon: 'none'
-            });
-        });
-    },
-
-    copyGiteeContent(){
-        wx.setClipboardData({
-            data: this.data.giteeUrl,
-            success() {
-                wx.showToast({ title: '复制成功', icon: 'success' });
-            },
-            fail(err) {
-                console.error('Failed to copy:', err);
-                wx.showToast({ title: '复制失败', icon: 'none' });
-            },
-        });
+        show: false
     },
 
     onClickShow() {
@@ -147,6 +23,20 @@ Page({
 
     onClickHide() {
         this.setData({ show: false });
+    },
+
+    // 跳转到个人信息页面
+    goToPersonalInfo() {
+        wx.navigateTo({
+            url: '/pages/personalInfo/personalInfo'
+        });
+    },
+
+    // 跳转到关于我们页面
+    goToAboutUs() {
+        wx.navigateTo({
+            url: '/pages/aboutUs/aboutUs'
+        });
     },
 
     login(e) {
@@ -375,34 +265,8 @@ Page({
 
     },
 
-    changeTheme: function (e) {
-        const theme = e.currentTarget.dataset.theme;
-        this.setData({
-            currentTheme: theme
-        });
-        app.updateTheme(theme);
-    },
-
-    openThemeList: function (){
-        const that = this;
-        that.setData({
-            showThemeList: true
-        })
-    },
-
     onLoad() {
-        this.setData({
-            backgroundColor: app.globalData.backgroundColor,
-            themeList: app.globalData.themeList,
-            currentTheme: app.globalData.theme
-        });
-        const cachedTheme = wx.getStorageSync('currentTheme');
-        if (cachedTheme) {
-            app.onThemeChange(cachedTheme);
-        }
-
-        // 初始化激励广告
-        this.initRewardedVideoAd();
+        // 页面加载时的初始化操作
     },
     onShow() {
         this.getTabBar().init();

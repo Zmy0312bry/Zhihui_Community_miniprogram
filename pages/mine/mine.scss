@@ -1,147 +1,58 @@
 .ui-container {
-  // display: flex;
+    padding-bottom: 200rpx;
+    background: linear-gradient(180deg, #f8f9fa 0%, #e9ecef 100%);
+    min-height: 100vh;
 }
-.theme-button-content {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: flex-start;
-    margin-top: 10px;
-    margin-left: 10px;
 
-    .van-button {
-        height: 60px;
-        width: 60px;
-        margin-right: 10px;
-        margin-bottom: 10px;
-        border-radius: 50%;
-    }
-}
-.theme-button-selected {
-    border:1px solid  #00afff;
-}
 .mem-top-img {
-  //width: 6vh;
-  //height: auto;
     height: 50px;
 }
-.avatar-box{
-  // flex: 1;
-  width: 140rpx;
-  height: 140rpx;
-  position: relative;
-  margin: 0 auto;
-  .avatar-wrapper {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    padding: 0;
-    border-radius: 50%;
-    border: none;
-  }
-  .avatar {
-      border: none;
-      width: 140rpx;
-      height: 140rpx;
-      overflow: hidden;
-      border-radius: 50%;
-  }
-}
 
-.avatar-nick{
-  // flex: 1;
-  padding: 40rpx 40rpx;
-  text-align: center;
-}
-.flex-bar {
-  margin: 3vh 5vh 3vh 4vh;
-
-}
-.money-list {
-  margin: 2vh 2vh 4vh;
-  .money-title {
-    display: inline-block;
-    padding: 2rpx 10rpx;
-    border-bottom: rgba(92, 133, 247, 0.541) solid 4rpx;
-    // color: #818181;
-  }
-  .money-content {
-    padding: 4rpx 18rpx;
-    color: #818181;
-    // width: 100%;
-    .money-con-li {
-      position: relative;
-      // width: 100%;
-      border-bottom: #cacaca8a solid 1rpx;
-      margin-top: 20rpx;
-      padding-bottom: 16rpx;
-      display: flex;
-
+.avatar-box {
+    width: 140rpx;
+    height: 140rpx;
+    position: relative;
+    margin: 0 auto;
+    
+    .avatar-wrapper {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        padding: 0;
+        border-radius: 50%;
+        border: none;
+        
+        &::after {
+            border: none;
+        }
     }
-    .money-con-num {
-      display: inline-block;
-      color: rgb(44, 44, 44);
-      // text-align: left;
-      // width: 60%;
-      flex: 1;
-      // float: left;
-
+    
+    .avatar {
+        border: none;
+        width: 140rpx;
+        height: 140rpx;
+        overflow: hidden;
+        border-radius: 50%;
+        object-fit: cover;
     }
-    .money-con-icon {
-      flex: 1;
-      display: inline-block;
-      text-align: right;
-      padding: 2rpx 16rpx;
-      // background-color: blue;
-      color: #bbbbbb;
-      // float: right;
+}
+
+.avatar-nick {
+    padding: 40rpx 40rpx;
+    text-align: center;
+    
+    .weui-input {
+        color: #333;
+        font-size: 32rpx;
+        text-align: center;
+        background: transparent;
+        border: none;
+        outline: none;
     }
-
-
-  }
-}
-.text-xl {
-  margin-top: 20rpx;
-  text-align: center;
-}
-
-.level {
-    display: flex;
-    align-items: center;
-}
-.share-box {
-    justify-content: space-between;
-    margin-top: 2%;
-    background-color: rgb(65, 64, 64);
-    border-top-left-radius: 20rpx;
-    border-top-right-radius: 20rpx;
-    padding: 20rpx;
-}
-
-.money {
-    font-size: 30rpx;
-    color: rgb(248, 201, 70);
-}
-
-.money-text {
-    padding-left: 20rpx;
-}
-.share-text {
-    padding-top: 10rpx;
-    font-size: 24rpx;
-    color: rgba(248, 212, 112, 0.479);
-}
-
-.share-btn {
-    background-color: rgb(248, 201, 70);
-    color: rgb(54, 54, 54);
-    border-radius: 50rpx;
-    font-size: 26rpx;
-    padding: 5rpx 15rpx 8rpx 15rpx;
 }
 
 .white-box {
     background-color: white;
-    //margin: 20rpx;
     margin-top: 20rpx;
     border-radius: 20rpx;
     padding: 0 20rpx;
@@ -181,16 +92,42 @@
     color: rgb(148, 147, 147);
 }
 
+.flex-bar {
+    margin: 3vh 5vh 3vh 4vh;
+}
+
 .fixed-bottom {
     position: fixed;
     bottom: 80px;
     left: 0;
     right: 0;
-    z-index: 99; /* 可选，确保按钮层叠在其他元素之上 */
+    z-index: 99;
 }
+
+.text-xl {
+    margin-top: 20rpx;
+    text-align: center;
+}
+
 .wrapper {
     display: flex;
     align-items: center;
     justify-content: center;
     height: 100%;
+}
+
+/* 二维码弹窗样式 */
+.qrcode-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20rpx;
+    width: 100%;
+}
+
+.qrcode-image {
+    max-width: 100%;
+    max-height: 80vh;
+    width: auto;
+    height: auto;
 }

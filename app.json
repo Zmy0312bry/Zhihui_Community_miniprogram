@@ -4,6 +4,8 @@
     "pages/aiChat/aiChat",
     "pages/logs/logs",
     "pages/mine/mine",
+    "pages/personalInfo/personalInfo",
+    "pages/aboutUs/aboutUs",
     "pages/contactCommunity/contactCommunity",
     "pages/elderlyMeals/elderlyMeals",
     "custom-tab-bar/index"

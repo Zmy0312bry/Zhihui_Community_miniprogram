@@ -1,5 +1,4 @@
 // app.js
-const { colorUI } = require('./config/ColorUI')
 const {
     config
 } = require('./utils/config');
@@ -17,8 +16,8 @@ App({
         //初始化主题为黄色
         this.initTheme();
         
-        // 初始化 ColorUI 框架
-        this.initColorUI()
+        // 获取系统信息
+        this.getSystemInfo();
     },
     
     globalData: {
@@ -32,23 +31,6 @@ App({
         isIphoneX: false
     },
     
-    /**
-     * 初始化 ColorUI 框架
-     */
-    initColorUI() {
-        try {
-            // 挂载 ColorUI 到全局
-            this.colorUI = colorUI
-            
-            // 获取系统信息
-            this.getSystemInfo()
-            
-            colorUI.cuLog('ColorUI 框架初始化成功')
-        } catch (error) {
-            console.error('ColorUI 初始化失败:', error)
-        }
-    },
-
     /**
      * 获取系统信息
      */
@@ -67,7 +49,7 @@ App({
                     this.globalData.isIphoneX = true
                 }
                 
-                colorUI.cuLog('系统信息获取成功:', res)
+                console.log('系统信息获取成功:', res)
             },
             fail: (error) => {
                 console.error('获取系统信息失败:', error)
