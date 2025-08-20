@@ -1,6 +1,22 @@
 // pages/aiChat/aiChat.js
 const app = getApp();
 const api = require('../../utils/api.js');
+const { 
+  initRecorderManager, 
+  startRecording, 
+  stopRecording, 
+  recognizeVoice, 
+  getInputAreaHeight 
+} = require('../../utils/voiceUtils.js');
+const { 
+  formatChatTime, 
+  createUserMessage, 
+  createAIMessage, 
+  adjustTextareaHeight, 
+  copyToClipboard, 
+  scrollToBottom, 
+  validateMessage 
+} = require('../../utils/chatUtils.js');
 
 Page({
 
@@ -30,7 +46,13 @@ Page({
         typingContent: '', // 当前正在显示的消息内容
         isThisChatOver: true, // 本轮对话是否结束
         textareaHeight: 60, // 文本区域高度，默认高度
-        inputAreaHeight: 100, // 整个输入区域的高度
+        inputAreaHeight: 190, // 整个输入区域的高度，固定为190px
+        isInputExpanded: false, // 输入框是否展开（用于控制点击外部收起）
+        // 语音输入相关
+        inputMode: 'voice', // 默认语音输入模式：'voice' | 'text'
+        isRecording: false, // 是否正在录音
+        voiceText: '', // 语音识别的文字
+        recorderManager: null, // 录音管理器
         mockResponses: { // 模拟AI回复内容
             '请介绍一下智慧社区的概念': '智慧社区是运用物联网、云计算、人工智能等技术，为社区居民提供便捷、高效、智能的生活服务平台。它包含社区管理、便民服务、安防监控、环境监测等功能，旨在提高居民生活质量和社区管理效率。',
             '如何使用智慧社区的便民服务？': '使用智慧社区的便民服务很简单：\n1. 在首页找到"便民服务"入口\n2. 选择您需要的服务类型（如水电缴费、快递代收、维修服务等）\n3. 按提示填写相关信息\n4. 提交请求后等待服务完成\n\n您也可以在"我的服务"中查看历史记录和进度。',
@@ -111,9 +133,13 @@ Page({
             newMessageQueue: [],
             aiResponseContent: '', // 初始化流式输出内容
             textareaHeight: 60, // 文本区域初始高度
-            inputAreaHeight: 100, // 输入区域初始高度
+            inputAreaHeight: 120, // 收起状态的高度，展开时为190px
+            isInputExpanded: false, // 初始状态为收起
             conversationHistory: [] // 初始化对话历史
         });
+        
+        // 初始化语音功能
+        this.initVoiceFeatures();
         
         // 从缓存读取历史对话
         const cachedHistory = wx.getStorageSync('aiChatHistory') || [];
@@ -128,6 +154,166 @@ Page({
                 conversationHistory: cachedConversation
             });
         }
+    },
+
+    // 初始化语音功能
+    initVoiceFeatures() {
+        const recorderManager = initRecorderManager({
+            onStart: () => {
+                console.log('录音开始');
+                this.setData({
+                    isRecording: true
+                });
+            },
+            onStop: (res) => {
+                console.log('录音结束', res);
+                this.setData({
+                    isRecording: false
+                });
+                
+                // 调用语音识别
+                this.handleVoiceRecognition(res.tempFilePath);
+            },
+            onError: (res) => {
+                console.error('录音错误', res);
+                this.setData({
+                    isRecording: false
+                });
+                wx.showToast({
+                    title: '录音失败，请重试',
+                    icon: 'none'
+                });
+            }
+        });
+
+        this.setData({
+            recorderManager: recorderManager
+        });
+    },
+
+    // 切换到语音输入
+    switchToVoice() {
+        this.setData({
+            inputMode: 'voice',
+            inputAreaHeight: 190, // 保持固定高度
+            isInputExpanded: true // 切换时展开输入框
+        });
+        this.updateAddButtonPosition(190);
+    },
+
+    // 切换到文字输入
+    switchToText() {
+        this.setData({
+            inputMode: 'text',
+            inputAreaHeight: 190, // 保持固定高度
+            isInputExpanded: true // 切换时展开输入框
+        });
+        this.updateAddButtonPosition(190);
+    },
+
+    // 更新新增按钮位置
+    updateAddButtonPosition(inputAreaHeight) {
+        // 这里可以通过setData更新按钮位置，但由于WXML中已经绑定了动态计算
+        // 按钮位置会自动跟随inputAreaHeight变化
+        console.log('输入区域高度更新为:', inputAreaHeight);
+    },
+
+    // 展开输入框
+    expandInput() {
+        this.setData({
+            isInputExpanded: true,
+            inputAreaHeight: 190 // 展开时的高度
+        });
+    },
+
+    // 收起输入框
+    collapseInput() {
+        this.setData({
+            isInputExpanded: false,
+            inputAreaHeight: 120, // 收起时的高度
+            voiceText: '', // 清空语音文字
+            title: '' // 清空文字输入
+        });
+    },
+
+    // 点击输入区域外部收起输入框
+    onClickOutside() {
+        if (this.data.isInputExpanded) {
+            this.collapseInput();
+        }
+    },
+
+    // 点击输入区域内部，使用catchtap阻止事件冒泡
+    onClickInside(e) {
+        if (!this.data.isInputExpanded) {
+            this.expandInput();
+        }
+    },
+
+    // 开始/停止录音
+    toggleRecording() {
+        if (this.data.isRecording) {
+            stopRecording(this.data.recorderManager);
+        } else {
+            startRecording(this.data.recorderManager);
+        }
+    },
+
+    // 处理语音识别
+    async handleVoiceRecognition(filePath) {
+        try {
+            const result = await recognizeVoice(filePath);
+            this.setData({
+                voiceText: result,
+                inputAreaHeight: 190 // 保持固定高度
+            });
+            this.updateAddButtonPosition(190);
+        } catch (error) {
+            console.error('语音识别处理失败:', error);
+        }
+    },
+
+    // 清除语音文字，重新录音
+    clearVoiceText() {
+        this.setData({
+            voiceText: '',
+            inputAreaHeight: 190 // 保持固定高度
+        });
+        this.updateAddButtonPosition(190);
+    },
+
+    // 语音文字变化
+    onVoiceTextChange(e) {
+        this.setData({
+            voiceText: e.detail.value
+        });
+    },
+
+    // 发送语音识别的文字
+    sendVoiceText() {
+        const validation = validateMessage(this.data.voiceText);
+        if (!validation.valid) {
+            wx.showToast({
+                title: validation.message,
+                icon: 'none'
+            });
+            return;
+        }
+        
+        // 将语音文字设置为title并发送
+        this.setData({
+            title: this.data.voiceText
+        });
+        
+        this.sendChat();
+        
+        // 清空语音文字并收起界面
+        this.setData({
+            voiceText: '',
+            inputAreaHeight: 120, // 发送后收起
+            isInputExpanded: false // 收起输入框
+        });
+        this.updateAddButtonPosition(120);
     },
     
     /**
@@ -646,31 +832,8 @@ Page({
      * 根据输入内容调整文本框高度
      */
     adjustTextareaHeight(e) {
-        const text = e.detail.value || '';
-        const lineHeight = 28; // 大约单行文本高度(rpx)
-        const minHeight = 60; // 最小高度(约两行)
-        const maxHeight = 90; // 最大高度(约三行)
-        
-        // 计算文本行数 (粗略估计，每行约20个字符)
-        // 计算换行符数量
-        const newlines = (text.match(/\n/g) || []).length;
-        // 估算文本行数(考虑自然换行和手动换行)
-        const textLines = Math.ceil(text.length / 20);
-        const lines = Math.max(1, Math.min(3, Math.max(newlines + 1, textLines)));
-        
-        // 计算所需高度
-        let height = Math.max(minHeight, Math.min(maxHeight, lines * lineHeight));
-        
-        // 计算整个输入区域高度 (包括padding等)
-        const inputAreaHeight = height + 40; // 增加padding高度
-        
-        this.setData({
-            textareaHeight: height,
-            inputAreaHeight: inputAreaHeight
-        });
-        
+        adjustTextareaHeight(e, this.setData.bind(this));
         // 更新底部空间区域，确保聊天内容不被输入框遮挡
-        // 同时更新所有相关按钮位置
         this.updateBottomSpace();
     },
     
@@ -762,12 +925,14 @@ Page({
         // 保存到历史对话
         that.saveToHistory(that.data.title);
         
-        // 清空输入框并重置高度
+        // 清空输入框并重置高度，收起输入框
         const currentUserMessage = that.data.title;
         that.setData({
             title: '',
             textareaHeight: 60, // 重置文本框高度为初始值
-            inputAreaHeight: 100 // 重置输入区域高度为初始值
+            inputAreaHeight: 120, // 发送后收起输入框
+            isInputExpanded: false, // 收起输入框
+            voiceText: '' // 清空语音文字
         });
         
         // 更新底部空间和按钮位置
@@ -838,17 +1003,7 @@ Page({
     copyChatContent(e) {
         const dataset = e.currentTarget.dataset;
         const content = dataset.content;
-
-        wx.setClipboardData({
-            data: content,
-            success() {
-                wx.showToast({ title: '复制成功', icon: 'success' });
-            },
-            fail(err) {
-                console.error('Failed to copy:', err);
-                wx.showToast({ title: '复制失败', icon: 'none' });
-            },
-        });
+        copyToClipboard(content);
     },
 
     /**
@@ -915,7 +1070,13 @@ Page({
             isTyping: false,
             typingContent: '',
             newMessageQueue: [],
+            isRecording: false
         });
+        
+        // 停止录音
+        if (this.data.recorderManager && this.data.isRecording) {
+            stopRecording(this.data.recorderManager);
+        }
         
         // 清理定时器
         if (this.typingInterval) {

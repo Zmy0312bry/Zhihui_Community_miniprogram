@@ -14,14 +14,23 @@ Page({
         userInfo: {},
         isAuth: true,
         isIphone: false,
-        show: false
+        show: false,
+        timestamp: Date.now()
     },
 
     onClickShow() {
-        this.setData({ show: true });
+        // 重新设置时间戳确保图片刷新
+        this.setData({ 
+            show: true,
+            timestamp: Date.now()
+        });
     },
 
     onClickHide() {
+        this.setData({ show: false });
+    },
+
+    onClose() {
         this.setData({ show: false });
     },
 
@@ -36,6 +45,28 @@ Page({
     goToAboutUs() {
         wx.navigateTo({
             url: '/pages/aboutUs/aboutUs'
+        });
+    },
+
+    // 图片加载成功
+    onImageLoad(e) {
+        console.log('二维码图片加载成功:', e);
+        console.log('图片尺寸:', e.detail);
+    },
+
+    // 图片加载失败
+    onImageError(e) {
+        console.error('二维码图片加载失败:', e);
+        console.error('错误详情:', e.detail);
+        
+        // 尝试重新加载图片
+        this.setData({
+            timestamp: Date.now()
+        });
+        
+        wx.showToast({
+            title: '图片加载失败，正在重试...',
+            icon: 'none'
         });
     },
 

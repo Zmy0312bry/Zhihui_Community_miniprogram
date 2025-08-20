@@ -1,6 +1,7 @@
 {
   "usingComponents": {
-    "wemark": "../../components/wemark/wemark"
+    "wemark": "../../components/wemark/wemark",
+    "van-icon": "@vant/weapp/icon/index"
   },
   "navigationBarTitleText": "AI聊天"
 }

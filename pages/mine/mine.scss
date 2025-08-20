@@ -55,18 +55,18 @@
     background-color: white;
     margin-top: 20rpx;
     border-radius: 20rpx;
-    padding: 0 20rpx;
+    padding: 0 40rpx;
 }
 
 .row {
     display: flex;
     align-items: center;
-    padding: 36rpx 10rpx;
+    padding: 36rpx 20rpx;
     font-size: 30rpx;
     font-weight: inherit;
     background-color: rgba(0, 0, 0, 0);
     border-bottom: 1rpx solid #f1f1f1;
-    height: 40rpx;
+    height: 100rpx;
 }
 
 .row::after {
@@ -74,8 +74,9 @@
 }
 
 .text {
-    margin-left: 15rpx;
+    margin-left: 55rpx;
     color: #636262;
+    font-weight: bold;
 }
 
 .left {
@@ -116,18 +117,32 @@
     height: 100%;
 }
 
+/* van-dialog 样式覆盖 */
+#van-dialog {
+    z-index: 999 !important;
+}
+
 /* 二维码弹窗样式 */
 .qrcode-container {
     display: flex;
     justify-content: center;
     align-items: center;
-    padding: 20rpx;
+    padding: 40rpx 20rpx;
     width: 100%;
+    min-height: 400rpx;
+    background-color: #fff;
+    position: relative;
+    z-index: 1000;
 }
 
 .qrcode-image {
-    max-width: 100%;
-    max-height: 80vh;
-    width: auto;
-    height: auto;
+    width: 250px;
+    height: 250px;
+    border-radius: 10rpx;
+    box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.1);
+    background-color: #fff;
+    position: relative;
+    z-index: 1001;
+    display: block;
+    border: 2px solid #e0e0e0;
 }

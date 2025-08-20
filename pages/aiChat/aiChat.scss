@@ -4,6 +4,26 @@ page {
   background-color: #f5f7fa;
 }
 
+/* 输入遮罩层 */
+.input-mask {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 99;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
 /* 滚动视图样式 */
 scroll-view {
   max-height: 80vh;
@@ -13,39 +33,232 @@ scroll-view {
 .content-view {
   padding: 16rpx;
   color: #333;
-  padding-bottom: 290rpx; /* 增加底部内边距，适应新的输入框位置 */
+  padding-bottom: 340rpx; /* 增加底部内边距，适应新的语音输入框位置 */
 }
 
 /* 底部留白 */
 .bottom-space {
-  height: 230rpx; /* 增加底部留白高度，适应新的输入框位置 */
+  height: 280rpx; /* 增加底部留白高度，适应新的语音输入框位置 */
 }
 
 /* 输入框区域样式 */
 .title-view {
   position: fixed;
   display: flex;
-  bottom: 110rpx; /* 向上移动，避免被导航栏遮挡，并增加10px的距离 */
+  flex-direction: column;
+  bottom: 110rpx;
   left: 0;
   right: 0;
-  padding: 20rpx 0rpx; /* 增加上下内边距 */
+  padding: 24rpx 20rpx;
   padding-bottom: calc(20rpx + env(safe-area-inset-bottom));
-  background-color: #fff;
-  border-top: 1px solid #eaeaea;
-  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+  background: linear-gradient(135deg, #E8F5E8 0%, #C8E6C9 50%, #A5D6A7 100%);
+  border-top: 1px solid rgba(76, 175, 80, 0.2);
+  box-shadow: 0 -4px 20px rgba(76, 175, 80, 0.15);
   z-index: 100;
-  transition: height 0.2s ease; /* 添加高度变化过渡效果 */
-  min-height: 60px; /* 最小高度 */
+  transition: height 0.3s ease;
+  min-height: 80px;
+  border-radius: 25rpx 25rpx 0 0;
+}
+
+/* 输入方式切换 */
+.input-mode-switch {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20rpx;
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 50rpx;
+  padding: 8rpx;
+  backdrop-filter: blur(10rpx);
+  box-shadow: 0 4rpx 12rpx rgba(76, 175, 80, 0.1);
+}
+
+.mode-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  padding: 16rpx 24rpx;
+  border-radius: 40rpx;
+  transition: all 0.3s ease;
+  position: relative;
+  
+  text {
+    margin-left: 8rpx;
+    font-size: 26rpx;
+    color: #4CAF50;
+    font-weight: 500;
+    transition: color 0.3s ease;
+  }
+  
+  &.active {
+    background: linear-gradient(135deg, #4CAF50, #66BB6A);
+    box-shadow: 0 4rpx 12rpx rgba(76, 175, 80, 0.3);
+    transform: translateY(-2rpx);
+    
+    text {
+      color: #ffffff;
+      font-weight: 600;
+    }
+  }
+  
+  &:active {
+    transform: translateY(1rpx);
+  }
+}
+
+/* 语音输入区域 */
+.voice-input-area {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.voice-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 20rpx;
+}
+
+.voice-button {
+  width: 120rpx;
+  height: 120rpx;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #4CAF50, #388E3C);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8rpx 24rpx rgba(76, 175, 80, 0.4);
+  transition: all 0.3s ease;
+  position: relative;
+  
+  &.recording {
+    animation: pulse 1.5s infinite;
+    background: linear-gradient(135deg, #FF5722, #D32F2F);
+    box-shadow: 0 8rpx 24rpx rgba(255, 87, 34, 0.4);
+    
+    &::before {
+      content: '';
+      position: absolute;
+      width: 140rpx;
+      height: 140rpx;
+      border-radius: 50%;
+      background: rgba(255, 87, 34, 0.3);
+      animation: ripple 1.5s infinite;
+    }
+  }
+  
+  &:active {
+    transform: scale(0.95);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
+}
+
+@keyframes ripple {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1.3);
+    opacity: 0;
+  }
+}
+
+.voice-status {
+  margin-top: 16rpx;
+  
+  text {
+    font-size: 26rpx;
+    color: #4CAF50;
+    text-align: center;
+    font-weight: 500;
+  }
+}
+
+/* 语音文字编辑区域 */
+.voice-text-edit {
+  width: 100%;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 20rpx;
+  padding: 20rpx;
+  margin-top: 20rpx;
+  backdrop-filter: blur(10rpx);
+  box-shadow: 0 4rpx 12rpx rgba(76, 175, 80, 0.1);
+}
+
+.voice-textarea {
+  width: 100%;
+  min-height: 80rpx;
+  font-size: 28rpx;
+  color: #333;
+  border: 2rpx solid #E8F5E8;
+  border-radius: 12rpx;
+  padding: 16rpx;
+  background: #fff;
+  margin-bottom: 20rpx;
+  transition: border-color 0.3s ease;
+  
+  &:focus {
+    border-color: #4CAF50;
+  }
+}
+
+.voice-actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 20rpx;
+}
+
+.action-button {
+  flex: 1;
+  padding: 20rpx;
+  text-align: center;
+  border-radius: 12rpx;
+  font-size: 28rpx;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  
+  &.primary {
+    background: linear-gradient(135deg, #4CAF50, #66BB6A);
+    color: #fff;
+    box-shadow: 0 4rpx 12rpx rgba(76, 175, 80, 0.3);
+    
+    &:active {
+      background: linear-gradient(135deg, #388E3C, #4CAF50);
+      transform: translateY(1rpx);
+    }
+  }
+  
+  &.secondary {
+    background: rgba(255, 255, 255, 0.9);
+    color: #4CAF50;
+    border: 2rpx solid #E8F5E8;
+    
+    &:active {
+      background: #F1F8E9;
+      transform: translateY(1rpx);
+    }
+  }
 }
 
 /* 输入框容器 */
 .input-container {
   display: flex;
   width: 100%;
-  align-items: flex-start; /* 改为顶部对齐，以适应多行文本 */
-  padding: 0 20rpx; /* 增加左右内边距 */
-  min-height: 60rpx; /* 最小高度 */
-  max-height: 180rpx; /* 最大高度(约三行) */
+  align-items: flex-start;
+  padding: 10rpx 0;
+  min-height: 60rpx;
+  max-height: 180rpx;
+  justify-content: center;
 }
 
 /* 输入框样式 */
@@ -53,37 +266,50 @@ scroll-view {
   flex: 1;
   font-size: 28rpx;
   color: #333;
-  background-color: #f5f7fa;
+  background-color: rgba(255, 255, 255, 0.95);
   padding: 20rpx 30rpx;
   border-radius: 36rpx;
   margin-right: 20rpx;
-  border: 1px solid #eaeaea;
+  border: 2rpx solid rgba(76, 175, 80, 0.2);
   min-height: 2.4em;
-  max-height: 90px; /* 限制为最多三行，超过三行变为滑动 */
-  width: calc(100% - 140rpx); /* 保留发送按钮空间 */
+  max-height: 90px;
+  width: calc(100% - 140rpx);
   line-height: 1.4;
-  overflow-y: auto; /* 超过三行时可滚动 */
-  overflow-x: hidden; /* 隐藏水平滚动条 */
-  word-break: break-all; /* 确保长单词也会换行 */
-  white-space: pre-wrap; /* 保留换行和空格 */
+  overflow-y: auto;
+  overflow-x: hidden;
+  word-break: break-all;
+  white-space: pre-wrap;
+  box-shadow: 0 2rpx 8rpx rgba(76, 175, 80, 0.1);
+  backdrop-filter: blur(10rpx);
+  transition: border-color 0.3s ease;
+  
+  &:focus {
+    border-color: #4CAF50;
+  }
 }
 
 /* 发送按钮 */
 .send-button {
   display: flex;
-  align-items: center; /* 垂直居中对齐文本 */
-  justify-content: center; /* 水平居中对齐文本 */
+  align-items: center;
+  justify-content: center;
   padding: 16rpx 32rpx;
   border-radius: 36rpx;
-  background: linear-gradient(135deg, #4CAF50, #2E7D32);
+  background: linear-gradient(135deg, #4CAF50, #66BB6A);
   color: #fff;
   font-size: 28rpx;
   box-shadow: 0 4rpx 12rpx rgba(76, 175, 80, 0.3);
-  transition: all 0.3s;
-  align-self: center; /* 确保按钮垂直居中 */
-  flex-shrink: 0; /* 防止按钮被压缩 */
-  height: 36rpx; /* 调整固定高度以便于容纳文字 */
-  line-height: 36rpx; /* 确保文字垂直居中 */
+  transition: all 0.3s ease;
+  align-self: center;
+  flex-shrink: 0;
+  height: 36rpx;
+  line-height: 36rpx;
+  font-weight: 600;
+  
+  &:active {
+    background: linear-gradient(135deg, #388E3C, #4CAF50);
+    transform: translateY(1rpx);
+  }
 }
 /* 欢迎页面样式 */
 .begin {
@@ -320,19 +546,31 @@ scroll-view {
 .add-chat-btn {
   position: fixed;
   right: 30rpx;
-  bottom: 380rpx; /* 向上移动，与输入框保持一致，适应新的输入框位置 */
+  bottom: 100rpx; /* 向上移动，与输入框保持一致，适应新的输入框位置 */
   width: 100rpx;
   height: 100rpx;
-  background: linear-gradient(135deg, #4CAF50, #2E7D32);
+  background: linear-gradient(135deg, #4CAF50, #66BB6A);
   color: white;
   font-size: 48rpx;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 6rpx 16rpx rgba(0, 0, 0, 0.2);
+  box-shadow: 0 8rpx 24rpx rgba(76, 175, 80, 0.4);
   z-index: 99;
-  transition: bottom 0.2s ease; /* 添加位置过渡效果 */
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10rpx);
+  
+  &:active {
+    background: linear-gradient(135deg, #388E3C, #4CAF50);
+    transform: scale(0.95);
+    box-shadow: 0 6rpx 20rpx rgba(76, 175, 80, 0.3);
+  }
+  
+  text {
+    font-weight: 600;
+    text-shadow: 0 2rpx 4rpx rgba(0, 0, 0, 0.2);
+  }
 }
 
 /* 对话历史侧边栏 */

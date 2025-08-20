@@ -1,4 +1,7 @@
 <view doc navBg="bg-gradient-green" title="{{typePage}}" ui="text-white">
+    <!-- 点击外部区域的遮罩层 -->
+    <view wx:if="{{isInputExpanded}}" class="input-mask" bindtap="onClickOutside"></view>
+    
     <!--内容区域-->
     <view class="bottom-height content-view">
         <scroll-view
@@ -94,8 +97,50 @@
     </view>
     
     <!-- 输入区域 -->
-    <view class="title-view" style="height: {{inputAreaHeight}}px;">
-        <view class="input-container">
+    <view class="title-view" style="height: {{inputAreaHeight}}px;" catchtap="onClickInside">
+        <!-- 输入方式切换 -->
+        <view class="input-mode-switch">
+            <view class="mode-button {{inputMode === 'voice' ? 'active' : ''}}" bindtap="switchToVoice">
+                <van-icon name="volume-o" size="18" color="{{inputMode === 'voice' ? '#ffffff' : '#4CAF50'}}"/>
+                <text>语音</text>
+            </view>
+            <view class="mode-button {{inputMode === 'text' ? 'active' : ''}}" bindtap="switchToText">
+                <van-icon name="edit" size="18" color="{{inputMode === 'text' ? '#ffffff' : '#4CAF50'}}"/>
+                <text>文字</text>
+            </view>
+        </view>
+        
+        <!-- 语音输入区域 -->
+        <view wx:if="{{inputMode === 'voice' && isInputExpanded}}" class="voice-input-area">
+            <view class="voice-container">
+                <view class="voice-button {{isRecording ? 'recording' : ''}}" bindtap="toggleRecording">
+                    <van-icon name="{{isRecording ? 'pause' : 'volume-o'}}" size="32" color="#ffffff"/>
+                </view>
+                <view class="voice-status">
+                    <text wx:if="{{!isRecording && !voiceText}}">点击开始语音输入</text>
+                    <text wx:if="{{isRecording}}">正在录音中...</text>
+                    <text wx:if="{{!isRecording && voiceText}}">语音识别完成</text>
+                </view>
+            </view>
+            
+            <!-- 识别后的文字显示和编辑 -->
+            <view wx:if="{{voiceText}}" class="voice-text-edit">
+                <textarea model:value="{{voiceText}}" 
+                      class="voice-textarea"
+                      placeholder="您可以在此修改识别的文字..."
+                      auto-height="{{true}}"
+                      maxlength="500"
+                      bindinput="onVoiceTextChange"
+                />
+                <view class="voice-actions">
+                    <view class="action-button secondary" bindtap="clearVoiceText">重录</view>
+                    <view class="action-button primary" bindtap="sendVoiceText">发送</view>
+                </view>
+            </view>
+        </view>
+        
+        <!-- 文字输入区域 -->
+        <view wx:if="{{inputMode === 'text' && isInputExpanded}}" class="input-container">
             <textarea model:value="{{title}}" 
                   class="input-textarea"
                   show-confirm-bar="{{false}}"
@@ -113,10 +158,10 @@
         </view>
     </view>
 </view>
-    <!-- 添加会话按钮 -->
-<view bindtap="openAddChat" class="add-chat-btn">
-    <text>+</text>
-</view>
+    <!-- 新增聊天按钮 -->
+    <view bindtap="openAddChat" class="add-chat-btn" style="bottom: {{inputAreaHeight + 90}}px;">
+        <text>+</text>
+    </view>
 
 
     <!-- 侧边栏 -->
