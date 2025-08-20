@@ -1,11 +1,11 @@
 Page({
     data: {
         appInfo: {
-            name: '智慧社区小程序',
+            name: '上地小e养老',
             version: '1.0.0',
-            description: '致力于为社区居民提供便民服务和智能化生活体验',
-            developer: '智慧社区开发团队',
-            contact: 'support@zhihui.com'
+            description: '小e助手是通过智能化数字人虚拟助手为核心抓手，致力于通过科技手段提升为老服务水平，满足老年人日益增长的智能化生活需求。',
+            developer: '北京邮电大学开发团队',
+            contact: '	302511800@qq.com'
         }
     },
 

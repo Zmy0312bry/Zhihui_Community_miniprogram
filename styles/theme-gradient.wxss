@@ -1,0 +1,134 @@
+/* 全局柔和渐变黄色主题样式 */
+
+/* 全局页面背景 */
+page {
+  background: linear-gradient(135deg, #FFFDE7 0%, #FFF9C4 50%, #FFF59D 100%);
+  min-height: 100vh;
+}
+
+/* 主要渐变背景类 */
+.gradient-primary {
+  background: linear-gradient(135deg, #FFF59D 0%, #FFEB3B 50%, #FFC107 100%);
+}
+
+/* 次要渐变背景类 */
+.gradient-secondary {
+  background: linear-gradient(135deg, #FFFDE7 0%, #FFF9C4 100%);
+}
+
+/* 强调渐变背景类 */
+.gradient-accent {
+  background: linear-gradient(135deg, #FFE082 0%, #FFCC02 100%);
+}
+
+/* 柔和阴影效果 */
+.soft-shadow {
+  box-shadow: 0 4rpx 20rpx rgba(255, 193, 7, 0.2);
+}
+
+/* 温暖阴影效果 */
+.warm-shadow {
+  box-shadow: 0 6rpx 30rpx rgba(255, 235, 59, 0.3);
+}
+
+/* 主题颜色变量类 */
+.theme-bg-light {
+  background-color: #FFFDE7; /* 极浅黄色 */
+}
+
+.theme-bg-soft {
+  background-color: #FFF9C4; /* 柔和黄色 */
+}
+
+.theme-bg-warm {
+  background-color: #FFF59D; /* 温暖黄色 */
+}
+
+.theme-bg-primary {
+  background-color: #FFEB3B; /* 主黄色 */
+}
+
+.theme-bg-deep {
+  background-color: #FFC107; /* 深黄色 */
+}
+
+.theme-bg-accent {
+  background-color: #FFCC02; /* 强调黄色 */
+}
+
+/* 文字颜色 */
+.theme-text-primary {
+  color: #F57F17; /* 深黄色文字 */
+}
+
+.theme-text-secondary {
+  color: #FF8F00; /* 橙黄色文字 */
+}
+
+.theme-text-muted {
+  color: #FFA000; /* 柔和黄色文字 */
+}
+
+/* 卡片样式 */
+.gradient-card {
+  background: linear-gradient(135deg, #FFFDE7 0%, #FFF9C4 100%);
+  border-radius: 16rpx;
+  box-shadow: 0 4rpx 20rpx rgba(255, 193, 7, 0.15);
+  border: 1rpx solid rgba(255, 235, 59, 0.3);
+}
+
+/* 按钮样式 */
+.gradient-button {
+  background: linear-gradient(135deg, #FFE082 0%, #FFCC02 100%);
+  border-radius: 12rpx;
+  box-shadow: 0 4rpx 16rpx rgba(255, 204, 2, 0.4);
+  border: none;
+  color: #5D4037;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.gradient-button:active {
+  background: linear-gradient(135deg, #FFD54F 0%, #FFB300 100%);
+  box-shadow: 0 2rpx 12rpx rgba(255, 179, 0, 0.6);
+  transform: translateY(2rpx);
+}
+
+/* 输入框样式 */
+.gradient-input {
+  background: linear-gradient(135deg, #FFFDE7 0%, #FFF8E1 100%);
+  border: 2rpx solid rgba(255, 235, 59, 0.4);
+  border-radius: 12rpx;
+  padding: 20rpx;
+  transition: all 0.3s ease;
+}
+
+.gradient-input:focus {
+  border-color: rgba(255, 193, 7, 0.8);
+  box-shadow: 0 0 0 4rpx rgba(255, 235, 59, 0.2);
+}
+
+/* 导航栏渐变 */
+.nav-gradient {
+  background: linear-gradient(135deg, #FFF59D 0%, #FFEB3B 100%);
+}
+
+/* 标签页渐变 */
+.tab-gradient {
+  background: linear-gradient(135deg, #FFFDE7 0%, #FFF9C4 100%);
+}
+
+/* 选中状态渐变 */
+.selected-gradient {
+  background: linear-gradient(135deg, #FFE082 0%, #FFCC02 100%);
+}
+
+/* 悬浮效果 */
+.hover-lift {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.hover-lift:hover {
+  transform: translateY(-4rpx);
+  box-shadow: 0 8rpx 25rpx rgba(255, 193, 7, 0.25);
+}

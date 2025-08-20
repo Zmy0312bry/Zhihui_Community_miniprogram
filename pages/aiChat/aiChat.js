@@ -6,7 +6,8 @@ const {
   startRecording, 
   stopRecording, 
   recognizeVoice, 
-  getInputAreaHeight 
+  getInputAreaHeight,
+  getErrorMessage 
 } = require('../../utils/voiceUtils.js');
 const { 
   formatChatTime, 
@@ -46,7 +47,7 @@ Page({
         typingContent: '', // 当前正在显示的消息内容
         isThisChatOver: true, // 本轮对话是否结束
         textareaHeight: 60, // 文本区域高度，默认高度
-        inputAreaHeight: 190, // 整个输入区域的高度，固定为190px
+        inputAreaHeight: 170, // 整个输入区域的高度，固定为170px
         isInputExpanded: false, // 输入框是否展开（用于控制点击外部收起）
         // 语音输入相关
         inputMode: 'voice', // 默认语音输入模式：'voice' | 'text'
@@ -69,6 +70,7 @@ Page({
 服务对象：社区老年人
 性格：耐心温暖、语速缓慢、主动关怀
 语言：简体中文（带儿化音）、字号放大效果、避免专业术语
+回答字数：不要超过300字
 
 核心能力
 1️⃣ 社区百事通（基于海淀区上地信息）
@@ -113,6 +115,8 @@ Page({
 
 每次回复带温暖表情(🌷☕🎵)，不超过3个
 
+每次回答简短不要超过300字！
+
 操作步骤必须分点说明（每步≤15字）
 
 政策类信息标注来源："根据海淀老龄办2025年8月通知"
@@ -133,7 +137,7 @@ Page({
             newMessageQueue: [],
             aiResponseContent: '', // 初始化流式输出内容
             textareaHeight: 60, // 文本区域初始高度
-            inputAreaHeight: 120, // 收起状态的高度，展开时为190px
+            inputAreaHeight: 100, // 收起状态的高度，展开时为170px
             isInputExpanded: false, // 初始状态为收起
             conversationHistory: [] // 初始化对话历史
         });
@@ -159,29 +163,63 @@ Page({
     // 初始化语音功能
     initVoiceFeatures() {
         const recorderManager = initRecorderManager({
-            onStart: () => {
-                console.log('录音开始');
+            onStart: (res) => {
+                console.log('录音识别开始:', res);
                 this.setData({
                     isRecording: true
                 });
+                wx.showToast({
+                    title: '正在录音...',
+                    icon: 'none',
+                    duration: 30000
+                });
             },
             onStop: (res) => {
-                console.log('录音结束', res);
+                console.log('录音识别结束:', res);
                 this.setData({
                     isRecording: false
                 });
+                wx.hideToast();
                 
-                // 调用语音识别
-                this.handleVoiceRecognition(res.tempFilePath);
+                // WechatSI插件直接返回识别结果
+                if (res.result) {
+                    console.log('识别结果:', res.result);
+                    
+                    // 自动切换到文字模式并将识别结果填入文字输入框
+                    this.setData({
+                        inputMode: 'text',  // 切换到文字模式
+                        title: res.result,  // 将识别结果填入文字输入框
+                        voiceText: '',      // 清空语音文字显示
+                        inputAreaHeight: 170,
+                        isInputExpanded: true  // 确保输入框展开状态
+                    });
+                    this.updateAddButtonPosition(170);
+                    
+                    wx.showToast({
+                        title: '识别成功，已切换到文字模式',
+                        icon: 'success',
+                        duration: 2000
+                    });
+                } else {
+                    console.warn('未获取到识别结果');
+                    wx.showToast({
+                        title: '识别失败，请重试',
+                        icon: 'none'
+                    });
+                }
             },
             onError: (res) => {
-                console.error('录音错误', res);
+                console.error('录音识别错误:', res);
                 this.setData({
                     isRecording: false
                 });
+                wx.hideToast();
+                
+                const errorMsg = getErrorMessage(res.retcode) || res.msg || '录音识别失败';
                 wx.showToast({
-                    title: '录音失败，请重试',
-                    icon: 'none'
+                    title: errorMsg,
+                    icon: 'none',
+                    duration: 2000
                 });
             }
         });
@@ -195,20 +233,20 @@ Page({
     switchToVoice() {
         this.setData({
             inputMode: 'voice',
-            inputAreaHeight: 190, // 保持固定高度
+            inputAreaHeight: 170, // 保持固定高度
             isInputExpanded: true // 切换时展开输入框
         });
-        this.updateAddButtonPosition(190);
+        this.updateAddButtonPosition(170);
     },
 
     // 切换到文字输入
     switchToText() {
         this.setData({
             inputMode: 'text',
-            inputAreaHeight: 190, // 保持固定高度
+            inputAreaHeight: 170, // 保持固定高度
             isInputExpanded: true // 切换时展开输入框
         });
-        this.updateAddButtonPosition(190);
+        this.updateAddButtonPosition(170);
     },
 
     // 更新新增按钮位置
@@ -222,7 +260,7 @@ Page({
     expandInput() {
         this.setData({
             isInputExpanded: true,
-            inputAreaHeight: 190 // 展开时的高度
+            inputAreaHeight: 170 // 展开时的高度
         });
     },
 
@@ -253,67 +291,57 @@ Page({
     // 开始/停止录音
     toggleRecording() {
         if (this.data.isRecording) {
+            // 停止录音识别
             stopRecording(this.data.recorderManager);
         } else {
-            startRecording(this.data.recorderManager);
-        }
-    },
-
-    // 处理语音识别
-    async handleVoiceRecognition(filePath) {
-        try {
-            const result = await recognizeVoice(filePath);
-            this.setData({
-                voiceText: result,
-                inputAreaHeight: 190 // 保持固定高度
+            // 开始录音识别，配置最大30秒，中文识别
+            startRecording(this.data.recorderManager, {
+                duration: 30000,
+                lang: 'zh_CN',
+                onError: (error) => {
+                    console.error('启动录音识别失败:', error);
+                    this.setData({
+                        isRecording: false
+                    });
+                    wx.hideToast();
+                    wx.showToast({
+                        title: '启动录音失败',
+                        icon: 'none'
+                    });
+                }
             });
-            this.updateAddButtonPosition(190);
-        } catch (error) {
-            console.error('语音识别处理失败:', error);
         }
     },
 
-    // 清除语音文字，重新录音
+    // 处理语音识别（WechatSI插件中已不需要此方法，保留用于兼容性）
+    async handleVoiceRecognition(filePath) {
+        // WechatSI插件中，语音识别结果直接在onStop回调中返回
+        // 此方法仅用于兼容性，实际不会被调用
+        console.log('使用WechatSI插件时，此方法不需要调用');
+    },
+
+    // 清除语音文字，重新录音（现在用于重新开始语音输入）
     clearVoiceText() {
         this.setData({
             voiceText: '',
-            inputAreaHeight: 190 // 保持固定高度
+            title: '',  // 同时清空文字输入框
+            inputMode: 'voice',  // 切换回语音模式
+            inputAreaHeight: 170
         });
-        this.updateAddButtonPosition(190);
+        this.updateAddButtonPosition(170);
     },
 
-    // 语音文字变化
+    // 语音文字变化（保留兼容性，但实际不会被调用）
     onVoiceTextChange(e) {
         this.setData({
             voiceText: e.detail.value
         });
     },
 
-    // 发送语音识别的文字
+    // 发送语音识别的文字（现在重定向到发送文字）
     sendVoiceText() {
-        const validation = validateMessage(this.data.voiceText);
-        if (!validation.valid) {
-            wx.showToast({
-                title: validation.message,
-                icon: 'none'
-            });
-            return;
-        }
-        
-        // 将语音文字设置为title并发送
-        this.setData({
-            title: this.data.voiceText
-        });
-        
+        // 由于语音识别后已经切换到文字模式，这个方法重定向到sendChat
         this.sendChat();
-        
-        // 清空语音文字并收起界面
-        this.setData({
-            voiceText: '',
-            inputAreaHeight: 120, // 发送后收起
-            isInputExpanded: false // 收起输入框
-        });
-        this.updateAddButtonPosition(120);
     },
     
     /**
@@ -506,21 +534,30 @@ Page({
                 (error) => {
                     // 错误回调
                     console.error('智谱AI调用失败:', error);
+                    
+                    // 尝试使用备用回复策略
+                    let errorResponse = this.getFallbackResponse(userInput, error);
+                    
                     if (onError) onError(error);
                     
-                    // 返回一个更具体的错误回复，提示用户可能的问题
-                    let errorResponse = '';
-                    
-                    if (error && error.errorCode === 'NO_CONTENT') {
-                        errorResponse = `很抱歉，AI助手暂时无法回答您的问题。可能是由于网络连接问题或服务繁忙，请稍后再试。🌷`;
-                    } else if (error && error.errorCode) {
-                        errorResponse = `很抱歉，AI助手遇到了问题(${error.errorCode})。请稍后再试或联系社区客服获取帮助。🌷`;
+                    // 模拟流式输出错误回复
+                    if (onData) {
+                        let index = 0;
+                        const chunkSize = 3;
+                        const intervalId = setInterval(() => {
+                            if (index < errorResponse.length) {
+                                const end = Math.min(index + chunkSize, errorResponse.length);
+                                const chunk = errorResponse.substring(index, end);
+                                onData(chunk, errorResponse.substring(0, end));
+                                index = end;
+                            } else {
+                                clearInterval(intervalId);
+                                if (onComplete) onComplete(errorResponse);
+                            }
+                        }, 50);
                     } else {
-                        errorResponse = `很抱歉，AI助手暂时无法回答您的问题。请稍后再试或联系社区客服获取帮助。🌷`;
+                        if (onComplete) onComplete(errorResponse);
                     }
-                    
-                    if (onData) onData(errorResponse, errorResponse);
-                    if (onComplete) onComplete(errorResponse);
                 },
                 {
                     max_tokens: 500, // 限制回复长度不超过500字
@@ -548,6 +585,55 @@ Page({
         return genericResponses[randomIndex];
     },
     
+    /**
+     * 获取备用回复（当API调用失败时使用）
+     * @param {string} userInput 用户输入
+     * @param {Object} error 错误信息
+     * @returns {string} 备用回复
+     */
+    getFallbackResponse(userInput, error) {
+        // 智能匹配关键词，提供相关回复
+        const keywordResponses = {
+            '智慧社区|社区功能|功能': '🏠 智慧社区平台主要功能包括：\n• 社区公告：及时获取重要通知\n• 物业服务：报修、投诉、建议\n• 便民服务：水电缴费、家政预约\n• 智能门禁：手机开门\n• 社区活动：线上报名参与\n\n如需详细了解，请联系社区客服：62988899',
+            
+            '天气|气温|降温|下雨': '🌤️ 今天北京天气变化较大，请您出门记得添加衣物。老年朋友外出时要特别注意保暖，社区门口有天气提示牌可供查看。',
+            
+            '活动|报名|参加': '📅 社区定期举办丰富活动：\n• 老年大学课程：书法班(每周二)、智能手机课(每周四)\n• 健康讲座：每月第一个周五\n• 文艺表演：节假日举办\n\n活动地点：社区活动中心二楼\n报名电话：62988899',
+            
+            '物业|服务|维修|报修': '🔧 物业服务指南：\n• 报修电话：62988899（24小时）\n• 在线报修：智慧社区APP-物业服务\n• 常见问题：水电维修、门禁卡补办、停车问题\n• 服务时间：周一至周日 8:00-18:00',
+            
+            '医疗|看病|医院|药房': '🏥 社区医疗资源：\n• 上地医院：周一、周三免挂号费\n• 社区卫生站：基础医疗服务\n• 同仁堂上地店：药品购买\n• 紧急情况：拨打120或社区热线62988899',
+            
+            '交通|公交|地铁|出行': '🚌 交通出行指南：\n• 公交站：上地南口站(447路/521路)\n• 地铁站：13号线上地站(4号口有电梯)\n• 老年卡政策：满65岁可申请公交补贴\n• 办理地点：社区服务站'
+        };
+        
+        // 查找匹配的关键词
+        for (const [keywords, response] of Object.entries(keywordResponses)) {
+            const keywordArray = keywords.split('|');
+            if (keywordArray.some(keyword => userInput.includes(keyword))) {
+                return response + '\n\n💭 温馨提示：AI助手暂时遇到网络问题，以上是为您准备的帮助信息。';
+            }
+        }
+        
+        // 根据错误类型返回不同的回复
+        let errorResponse = '';
+        
+        if (error && error.errorCode === 'PROXY_ERROR') {
+            errorResponse = '🌐 检测到网络代理问题，AI助手暂时无法连接。请您：\n• 检查网络设置\n• 稍后重试\n• 或直接联系社区客服：62988899\n\n我们正在努力解决此问题。';
+        } else if (error && error.errorCode === 'TIMEOUT') {
+            errorResponse = '⏰ 网络响应超时，这可能是网络繁忙导致的。建议您：\n• 稍等片刻再试\n• 检查网络连接\n• 联系社区客服获取人工帮助：62988899';
+        } else if (error && error.errorCode === 'FETCH_FAILED') {
+            errorResponse = '📡 网络连接中断，AI助手暂时无法为您服务。请您：\n• 检查WiFi或数据网络连接\n• 确认网络设置正常\n• 联系社区技术支持或客服：62988899';
+        } else {
+            errorResponse = '🤖 AI助手暂时遇到技术问题，无法回答您的问题。您可以：\n• 稍后重新尝试\n• 联系社区客服获取人工帮助：62988899\n• 在社区APP首页查看相关信息';
+        }
+        
+        return errorResponse + '\n\n🌷 感谢您的理解，智慧社区团队正在努力为您提供更好的服务。';
+    },
+    
+    /**
+     * 显示网络诊断结果（开发调试用）
+     */
     /**
      * 构建系统提示词，只需要基本提示，不包含对话历史
      */

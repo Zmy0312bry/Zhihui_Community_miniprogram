@@ -2,50 +2,62 @@
  * 语音输入相关工具函数
  */
 
+// 引入微信同声传译插件
+const plugin = requirePlugin("WechatSI");
+
 /**
- * 初始化录音管理器
+ * 初始化录音识别管理器（使用WechatSI插件）
  * @param {Object} callbacks - 回调函数对象
  * @param {Function} callbacks.onStart - 录音开始回调
- * @param {Function} callbacks.onStop - 录音停止回调
+ * @param {Function} callbacks.onStop - 录音停止回调  
  * @param {Function} callbacks.onError - 录音错误回调
- * @returns {Object} 录音管理器实例
+ * @returns {Object} 录音识别管理器实例
  */
 const initRecorderManager = (callbacks) => {
-  const recorderManager = wx.getRecorderManager();
+  // 使用WechatSI插件的录音识别管理器
+  const manager = plugin.getRecordRecognitionManager();
   
   if (callbacks.onStart) {
-    recorderManager.onStart(callbacks.onStart);
+    manager.onStart = callbacks.onStart;
   }
   
   if (callbacks.onStop) {
-    recorderManager.onStop(callbacks.onStop);
+    manager.onStop = callbacks.onStop;
   }
   
   if (callbacks.onError) {
-    recorderManager.onError(callbacks.onError);
+    manager.onError = callbacks.onError;
   }
   
-  return recorderManager;
+  return manager;
 };
 
 /**
- * 开始录音
- * @param {Object} recorderManager - 录音管理器实例
+ * 开始录音识别（使用WechatSI插件）
+ * @param {Object} manager - 录音识别管理器实例
  * @param {Object} options - 录音配置选项
  */
-const startRecording = (recorderManager, options = {}) => {
+const startRecording = (manager, options = {}) => {
   const defaultOptions = {
-    duration: 60000, // 最长60秒
-    sampleRate: 16000,
-    numberOfChannels: 1,
-    encodeBitRate: 96000,
-    format: 'mp3'
+    duration: 30000, // 最长30秒
+    lang: 'zh_CN' // 中文识别
   };
   
   wx.authorize({
     scope: 'scope.record',
     success: () => {
-      recorderManager.start({ ...defaultOptions, ...options });
+      try {
+        manager.start({ ...defaultOptions, ...options });
+        console.log('开始录音识别，配置:', { ...defaultOptions, ...options });
+      } catch (error) {
+        console.error('启动录音识别失败:', error);
+        if (options.onError) {
+          options.onError({
+            retcode: -30007,
+            msg: 'start启动参数错误'
+          });
+        }
+      }
     },
     fail: () => {
       wx.showModal({
@@ -53,72 +65,45 @@ const startRecording = (recorderManager, options = {}) => {
         content: '需要录音权限才能使用语音输入功能',
         showCancel: false
       });
+      if (options.onError) {
+        options.onError({
+          retcode: -30001,
+          msg: '录音接口出错'
+        });
+      }
     }
   });
 };
 
 /**
- * 停止录音
- * @param {Object} recorderManager - 录音管理器实例
+ * 停止录音识别
+ * @param {Object} manager - 录音识别管理器实例
  */
-const stopRecording = (recorderManager) => {
-  recorderManager.stop();
+const stopRecording = (manager) => {
+  try {
+    manager.stop();
+    console.log('停止录音识别');
+  } catch (error) {
+    console.error('停止录音识别失败:', error);
+  }
 };
 
 /**
- * 语音识别 - 使用微信官方接口
- * @param {string} filePath - 录音文件路径
+ * 语音识别 - 使用WechatSI插件（已内置在录音识别管理器中）
+ * 注意：使用WechatSI插件时，语音识别是在录音过程中自动完成的
+ * 识别结果通过manager.onStop回调返回
+ * @param {string} filePath - 录音文件路径（WechatSI插件中不需要此参数）
  * @param {Object} options - 识别选项
  * @returns {Promise} 识别结果Promise
  */
 const recognizeVoice = (filePath, options = {}) => {
   return new Promise((resolve, reject) => {
-    const defaultOptions = {
-      lang: 'zh_CN',
-      ...options
-    };
+    // 使用WechatSI插件时，语音识别已经在录音过程中完成
+    // 这个函数主要用于兼容性，实际识别结果通过onStop回调获取
+    console.warn('使用WechatSI插件时，语音识别已在录音过程中自动完成，请通过onStop回调获取结果');
     
-    wx.showLoading({
-      title: '识别中...'
-    });
-    
-    // 使用微信官方语音识别
-    wx.translateVoice({
-      ...defaultOptions,
-      filePath: filePath,
-      success: (res) => {
-        wx.hideLoading();
-        console.log('语音识别成功:', res);
-        resolve(res.result);
-      },
-      fail: (error) => {
-        wx.hideLoading();
-        console.error('语音识别失败:', error);
-        
-        // 降级方案：模拟识别
-        const mockTexts = [
-          '请介绍一下智慧社区的概念',
-          '如何使用智慧社区的便民服务？',
-          '社区活动报名如何操作？',
-          '智慧社区有哪些功能？',
-          '今天天气怎么样？',
-          '社区里有什么便民设施吗？',
-          '如何联系物业服务？',
-          '附近有哪些医疗资源？'
-        ];
-        
-        const randomText = mockTexts[Math.floor(Math.random() * mockTexts.length)];
-        
-        setTimeout(() => {
-          wx.showToast({
-            title: '模拟识别完成',
-            icon: 'success',
-            duration: 1000
-          });
-          resolve(randomText);
-        }, 1000);
-      }
-    });
+    // 返回提示信息
+    resolve('请使用录音识别管理器的onStop回调获取识别结果');
   });
 };
 
@@ -133,10 +118,37 @@ const getInputAreaHeight = (inputMode, hasVoiceText = false) => {
   return 180;
 };
 
+/**
+ * 处理WechatSI插件的错误码
+ * @param {number} retcode - 错误码
+ * @returns {string} 错误描述
+ */
+const getErrorMessage = (retcode) => {
+  const errorMessages = {
+    '-30001': '录音接口出错',
+    '-30002': '录音暂停接口被调用，录音终止，识别终止',
+    '-30003': '录音帧数据未产生或者发送失败导致的数据传输失败',
+    '-30004': '因网络或者其他非正常状态导致的未查询识别结果',
+    '-30005': '语音识别服务内部错误',
+    '-30006': '语音识别服务未在限定时间内识别完成',
+    '-30007': 'start启动参数错误',
+    '-30008': '查询请求时网络失败',
+    '-30009': '创建鉴权内部失败',
+    '-30010': '发送鉴权时网络失败',
+    '-30011': '试图在识别正在进行中是再次调用start，返回错误，正在进行的识别任务正常进行',
+    '-30012': '当前无识别任务进行时调用stop错误',
+    '-30013': '其他未知错误',
+    '-40001': '达到接口调用频率限制'
+  };
+  
+  return errorMessages[retcode.toString()] || '未知错误';
+};
+
 module.exports = {
   initRecorderManager,
   startRecording,
   stopRecording,
   recognizeVoice,
-  getInputAreaHeight
+  getInputAreaHeight,
+  getErrorMessage
 };

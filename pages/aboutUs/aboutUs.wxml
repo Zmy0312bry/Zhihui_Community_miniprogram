@@ -53,7 +53,7 @@
 
     <!-- 版权信息 -->
     <view class="copyright-section">
-        <text class="copyright-text">© 2025 智慧社区开发团队</text>
+        <text class="copyright-text">© 2025 北京邮电大学开发团队</text>
         <text class="copyright-text">All rights reserved</text>
     </view>
 

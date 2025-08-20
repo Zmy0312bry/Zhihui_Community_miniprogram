@@ -376,27 +376,49 @@ function callZhipuAIStream(messages, onData, onComplete, onError, options) {
     }
   };
 
+  // 检查网络连接状态
+  wx.getNetworkType({
+    success: function (res) {
+      console.log("当前网络类型:", res.networkType);
+      if (res.networkType === "none") {
+        console.error("网络连接不可用");
+        if (onError) {
+          onError({
+            errorCode: "NO_NETWORK",
+            errorMsg: "网络连接不可用，请检查网络设置",
+          });
+        }
+        return;
+      }
+    },
+    fail: function () {
+      console.warn("无法获取网络状态");
+    }
+  });
+
   console.log("发起智谱AI流式请求:", {
     url: config.apiUrl,
     model: requestData.model,
-    messageCount: messages,
+    messageCount: formattedMessages.length,
+    headers: Object.keys(headers)
   });
 
-
-  // 创建任务来处理流式响应 - 请求格式保持不变
+  // 创建任务来处理流式响应 - 改进错误处理
   const task = wx.request({
     url: config.apiUrl,
     method: "POST",
     header: headers,
     data: requestData,
     enableChunked: true,
-    responseType: "arraybuffer", // 根据博客，微信小程序返回ArrayBuffer
+    responseType: "arraybuffer",
+    timeout: 60000, // 设置60秒超时
     success: (res) => {
       console.log("请求完成 - 状态码:", res.statusCode);
+      console.log("响应头:", res.header);
 
       // 检查HTTP状态码
       if (res.statusCode !== 200) {
-        console.error("HTTP请求失败:", res.statusCode);
+        console.error("HTTP请求失败:", res.statusCode, res.data);
         if (onError && !hasCompleteCalled) {
           hasCompleteCalled = true;
           onError({
@@ -434,12 +456,37 @@ function callZhipuAIStream(messages, onData, onComplete, onError, options) {
       }
     },
     fail: (err) => {
-      console.error("请求失败:", err);
+      console.error("网络请求失败:", err);
+      console.error("错误详情:", {
+        errMsg: err.errMsg,
+        errno: err.errno,
+        errCode: err.errCode
+      });
+      
       if (onError && !hasCompleteCalled) {
         hasCompleteCalled = true;
+        
+        // 根据错误类型提供更详细的错误信息
+        let errorMsg = "网络请求失败";
+        let errorCode = "NETWORK_ERROR";
+        
+        if (err.errMsg) {
+          if (err.errMsg.includes("timeout")) {
+            errorMsg = "请求超时，请检查网络连接";
+            errorCode = "TIMEOUT";
+          } else if (err.errMsg.includes("Failed to fetch")) {
+            errorMsg = "网络连接失败，请检查网络设置和域名配置";
+            errorCode = "FETCH_FAILED";
+          } else if (err.errMsg.includes("ERR_PROXY_CONNECTION_FAILED")) {
+            errorMsg = "代理连接失败，请检查网络代理设置";
+            errorCode = "PROXY_ERROR";
+          }
+        }
+        
         onError({
-          errorCode: "NETWORK_ERROR",
-          errorMsg: err.errMsg || "网络请求失败",
+          errorCode: errorCode,
+          errorMsg: errorMsg,
+          originalError: err
         });
       }
     },
