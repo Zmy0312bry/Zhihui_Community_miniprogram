@@ -28,13 +28,13 @@
             <van-cell title="昵称" value="{{nickname || '未设置'}}" />
             <van-cell title="手机号" value="{{phone || '未绑定'}}" />
             <van-cell title="用户ID" value="{{userInfo.id || '未知'}}" />
-            <van-cell title="注册时间" value="{{userInfo.createTime || '未知'}}" />
+            <van-cell title="注册时间" value="{{userInfo.formattedCreatedAt || '未知'}}" />
         </van-cell-group>
     </view>
 
     <!-- 功能按钮 -->
     <view class="action-buttons">
-        <van-button round type="primary" block bind:click="goBack">
+        <van-button round color="linear-gradient(to right, #FFEB3B, #FFC107)" custom-style="color:#333;font-weight:bold;" block bind:click="goBack">
             返回
         </van-button>
     </view>

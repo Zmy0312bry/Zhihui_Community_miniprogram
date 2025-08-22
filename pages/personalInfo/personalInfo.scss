@@ -1,12 +1,12 @@
 .personal-info-container {
     min-height: 100vh;
-    background: linear-gradient(180deg, #fce4ec 0%, #f8e9ec 100%);
+    background: #FFF8E1;
     padding-bottom: 40rpx;
 }
 
 /* 用户信息区域 */
 .user-info-section {
-    background: linear-gradient(135deg, #f8bbd9 0%, #f48fb1 100%);
+    background: linear-gradient(to right, #FFEB3B, #FFC107);
     padding: 80rpx 40rpx 80rpx;
     display: flex;
     flex-direction: column;
@@ -49,7 +49,7 @@
     bottom: 10rpx;
     width: 60rpx;
     height: 60rpx;
-    background: linear-gradient(135deg, #f48fb1 0%, #ec407a 100%);
+    background: linear-gradient(135deg, #FFEB3B 0%, #FFC107 100%);
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -103,7 +103,7 @@
     height: 100rpx !important;
     font-size: 36rpx !important;
     font-weight: 700 !important;
-    background: linear-gradient(135deg, #f8bbd9 0%, #f48fb1 100%) !important;
+    background: linear-gradient(135deg, #FFEB3B 0%, #FFC107 100%) !important;
     border: none !important;
-    box-shadow: 0 6rpx 20rpx rgba(248, 187, 217, 0.3) !important;
+    box-shadow: 0 6rpx 20rpx rgba(255, 193, 7, 0.3) !important;
 }

@@ -1,5 +1,4 @@
 <view class="ui-container">
-    <view class="mem-top-img"></view>
     <view class="avatar-box">
         <button class="avatar-wrapper" open-type="chooseAvatar" bind:chooseavatar="onChooseAvatar">
             <image class="avatar" src="{{avatarUrl}}"></image>
@@ -16,7 +15,7 @@
     <view class="white-box">
         <button class="row" style="width: 100%;" bindtap="goToPersonalInfo">
             <view class="left">
-                <van-icon name="contact" color="#4ECDC4" size="24"/>
+                <van-icon name="contact" color="#FFC107" size="24"/>
                 <text class="text">个人信息 </text>
             </view>
             <view class="right">
@@ -25,7 +24,7 @@
         </button>
         <button class="row" style="width: 100%;" bindtap="onClickShow">
             <view class="left">
-                <van-icon name="enlarge" color="green" size="24"/>
+                <van-icon name="enlarge" color="#FFC107" size="24"/>
                 <text class="text">关注公众号 </text>
             </view>
             <view class="right">
@@ -34,7 +33,7 @@
         </button>
         <button class="row" style="width: 100%;" bindtap="goToAboutUs">
             <view class="left">
-                <van-icon name="info-o" color="#FF6B6B" size="24"/>
+                <van-icon name="info-o" color="#FFC107" size="24"/>
                 <text class="text">关于我们 </text>
             </view>
             <view class="right">
@@ -52,7 +51,7 @@
             <view class="qrcode-container">
                 <image 
                     class="qrcode-image" 
-                    src="/static/img/gzh.jpg?v={{timestamp}}" 
+                    src="{{qrcodeImage}}?v={{timestamp}}" 
                     mode="scaleToFill"
                     show-menu-by-longpress="{{true}}"
                     binderror="onImageError"
@@ -66,17 +65,22 @@
 </view>
 <view class="flex-bar fixed-bottom my-4">
     <view class="flex-sub pl-3">
-        <view wx:if="{{isAuth && !isLogin}}" class="text-xl">
-            <van-button round type="primary" bindtap="setLogin" block>授权登录</van-button>
+        <view wx:if="{{!isLogin}}" class="text-xl">
+            <van-button round color="linear-gradient(to right, #FFEB3B, #FFC107)" custom-style="color:#333;font-weight:bold;" bindtap="setLogin" block>
+                <view class="login-button-content">
+                    <van-icon name="user-circle-o" size="20px" />
+                    <text style="margin-left:8px;">点击登录</text>
+                </view>
+            </van-button>
         </view>
-        <view wx:if="{{isAuth && isLogin}}" class="text-xl">
-            <van-button round type="default" bindtap="cancelLogin" block>退出登录</van-button>
+        <view wx:if="{{isLogin}}" class="text-xl">
+            <van-button round color="linear-gradient(to right, #FFF59D, #FFC107)" custom-style="color:#333;font-weight:bold;" block>
+                <view class="login-button-content">
+                    <van-icon name="passed" size="20px" color="#FF8F00" />
+                    <text style="margin-left:8px;">已登录</text>
+                </view>
+            </van-button>
         </view>
-        <view wx:if="{{!isAuth}}">
-            <button class="ui-btn block bg-red-gradient shadow" bindtap="setLogin">登录失败
-            </button>
-        </view>
-
     </view>
 </view>
 <app-privacy></app-privacy>

@@ -1,4 +1,5 @@
 var api = require('./../../utils/api')
+var app = getApp();
 
 Page({
     data: {
@@ -18,137 +19,93 @@ Page({
     },
 
     // 获取用户信息
+    // 格式化日期为"某年某月某日"
+    formatDate(dateString) {
+        if (!dateString) return '未知';
+        const date = new Date(dateString);
+        return `${date.getFullYear()}年${date.getMonth() + 1}月${date.getDate()}日`;
+    },
+    
     getUserInfo() {
         const that = this;
-        const config = {
-            url: api.userInfo_url,
-            method: 'GET',
-        };
-
-        api.getRequest(config).then(res => {
-            console.log('获取用户信息', res);
-            if (res.data) {
-                that.setData({
-                    userInfo: res.data,
-                    isLogin: true
-                });
-                
-                if (res.data.avatar) {
-                    that.setData({
-                        avatarUrl: res.data.avatar
-                    });
-                }
-                
-                if (res.data.nickname) {
-                    that.setData({
-                        nickname: res.data.nickname
-                    });
-                }
-                
-                if (res.data.phone) {
-                    that.setData({
-                        phone: res.data.phone
-                    });
-                }
-            } else {
-                that.setData({
-                    userInfo: {},
-                    isLogin: false
-                });
-            }
-        }).catch(err => {
-            console.log('获取用户信息失败', err);
-            if (err.code == 500) {
-                that.setData({
-                    userInfo: {},
-                    isLogin: false
-                });
-                wx.showToast({
-                    title: '请先登录',
-                    icon: 'none'
-                });
-                setTimeout(() => {
-                    wx.navigateBack();
-                }, 1500);
-            }
-        });
-    },
-
-    // 选择头像
-    onChooseAvatar(e) {
-        const that = this;
-        const avatarUrl = e.detail.avatarUrl;
-        console.log('选择头像', avatarUrl);
         
-        const config = {
-            url: api.upload_url,
-            filePath: avatarUrl
-        };
-        
-        api.uploadFile(config).then(res => {
-            const data = JSON.parse(res);
-            const updateInfo = {
-                url: api.userUpdate_url,
-                method: 'POST',
-                data: {
-                    "avatar": data.data.url
-                }
-            };
-            
-            api.getRequest(updateInfo).then(() => {
-                that.setData({
-                    avatarUrl: data.data.url
-                });
-                wx.showToast({
-                    title: '头像更新成功',
-                    icon: 'success'
-                });
-            });
-        }).catch(err => {
-            console.log('头像上传失败', err);
+        // 确保使用内存中的token
+        if (!app.globalData.token) {
+            console.error("获取用户资料失败: 无可用token");
             wx.showToast({
-                title: '头像上传失败',
+                title: '请先登录',
                 icon: 'none'
             });
-        });
-    },
-
-    // 修改昵称
-    onChooseNickname(e) {
-        const that = this;
-        console.log("昵称框触发完成事件", e.detail);
-        const value = e.detail.value;
-        
-        if (!value.trim()) {
-            wx.showToast({
-                title: '昵称不能为空',
-                icon: 'none'
-            });
+            setTimeout(() => {
+                wx.navigateBack();
+            }, 1500);
             return;
         }
         
-        const updateInfo = {
-            url: api.userUpdate_url,
-            method: 'POST',
-            data: {
-                "nickname": value
+        wx.request({
+            url: api.userInfo_url,
+            method: 'GET',
+            header: {
+                'Authorization': 'Bearer ' + app.globalData.token
+            },
+            success: function(res) {
+                console.log('获取用户信息', res.data);
+                if (res.data && res.data.code === 200 && res.data.data) {
+                    // 格式化创建时间
+                    const formattedDate = that.formatDate(res.data.data.created_at);
+                    
+                    const updatedUserInfo = {
+                        ...res.data.data,
+                        formattedCreatedAt: formattedDate
+                    };
+                    
+                    that.setData({
+                        userInfo: updatedUserInfo,
+                        isLogin: true,
+                        avatarUrl: res.data.data.avatar_url || '/static/icon/default.png',
+                        nickname: res.data.data.nickname || '',
+                        phone: res.data.data.phone || ''
+                    });
+                } else {
+                    that.setData({
+                        userInfo: {},
+                        isLogin: false
+                    });
+                    wx.showToast({
+                        title: '获取用户信息失败',
+                        icon: 'none'
+                    });
+                }
+            },
+            fail: function(err) {
+                console.error('获取用户信息失败', err);
+                that.setData({
+                    userInfo: {},
+                    isLogin: false
+                });
+                wx.showToast({
+                    title: '网络请求失败',
+                    icon: 'none'
+                });
             }
-        };
-        
-        api.getRequest(updateInfo).then(() => {
-            that.setData({
-                nickname: value
-            });
-            wx.showToast({
-                title: '昵称更新成功',
-                icon: 'success'
-            });
-        }).catch(err => {
-            console.log('昵称更新失败', err);
-            wx.showToast({
-                title: '昵称更新失败',
-                icon: 'none'
-            });
+        });
+    },
+
+    // 选择头像 - 不再支持上传功能
+    onChooseAvatar(e) {
+        const that = this;
+        wx.showToast({
+            title: '功能暂不可用',
+            icon: 'none'
+        });
+    },
+
+    // 修改昵称 - 不再支持更新功能
+    onChooseNickname(e) {
+        const that = this;
+        wx.showToast({
+            title: '功能暂不可用',
+            icon: 'none'
         });
     },
 

@@ -1,8 +1,8 @@
 {
   "navigationBarTitleText": "个人信息",
-  "navigationBarBackgroundColor": "#FF6B6B",
+  "navigationBarBackgroundColor": "#FFC107",
   "navigationBarTextStyle": "white",
-  "backgroundColor": "#f8f9fa",
+  "backgroundColor": "#FFF8E1",
   "usingComponents": {
     "van-button": "@vant/weapp/button/index",
     "van-icon": "@vant/weapp/icon/index",

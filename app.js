@@ -19,11 +19,22 @@ App({
         // 获取系统信息
         this.getSystemInfo();
         
+        // 尝试从本地存储获取token
+        const userLogin = wx.getStorageSync('userLogin');
+        if (userLogin && userLogin.loginToken) {
+            this.globalData.token = userLogin.loginToken;
+            // 注意：这里只是初始化token，实际登录状态还需要通过接口验证
+            // 登录状态会在页面onLoad中验证
+        }
     },
     
     globalData: {
         userInfo: null,
+        token: null, // 存储JWT token，便于全局访问
+        isLoggedIn: false, // 用户登录状态
         config: {},
+        baseApiUrl: 'http://127.0.0.1:8080/', // API基础URL，所有API请求都在此基础上拼接
+        mediaBaseUrl: 'http://127.0.0.1:8080/media/picture/', // 媒体文件URL前缀
         theme: 'yellow',
         backgroundColor: '#FFF8E1', // 柔和的浅黄色背景
         gradientColors: {
@@ -115,4 +126,30 @@ App({
      */
     getThemeColor: function(colorName = 'primaryYellow') {
         return this.globalData.colors[colorName] || this.globalData.colors.primaryYellow;
+    },
+    
+    /**
+     * 拼接API路径
+     * @param {string} path - API路径，例如：'api/login'
+     * @returns {string} 完整的API URL
+     */
+    getApiUrl: function(path) {
+        // 确保path不以/开头
+        if (path && path.startsWith('/')) {
+            path = path.substring(1);
+        }
+        return this.globalData.baseApiUrl + path;
+    },
+    
+    /**
+     * 拼接媒体文件路径
+     * @param {string} filename - 媒体文件名，例如：'avatar.jpg'
+     * @returns {string} 完整的媒体文件URL
+     */
+    getMediaUrl: function(filename) {
+        // 确保filename不以/开头
+        if (filename && filename.startsWith('/')) {
+            filename = filename.substring(1);
+        }
+        return this.globalData.mediaBaseUrl + filename;
     }})

@@ -1,18 +1,20 @@
 .ui-container {
     padding-bottom: 200rpx;
-    background: linear-gradient(180deg, #f8f9fa 0%, #e9ecef 100%);
+    background: transparent;
     min-height: 100vh;
 }
 
+/* 移除顶部色块 */
 .mem-top-img {
-    height: 50px;
+    display: none;
 }
 
 .avatar-box {
     width: 140rpx;
     height: 140rpx;
     position: relative;
-    margin: 0 auto;
+    margin: 40rpx auto 0;
+    z-index: 10;
     
     .avatar-wrapper {
         position: absolute;
@@ -53,9 +55,10 @@
 
 .white-box {
     background-color: white;
-    margin-top: 20rpx;
+    margin: 20rpx;
     border-radius: 20rpx;
     padding: 0 40rpx;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
 }
 
 .row {
@@ -145,4 +148,12 @@
     z-index: 1001;
     display: block;
     border: 2px solid #e0e0e0;
+}
+
+.login-button-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 6px 0;
+    font-size: 16px;
 }
