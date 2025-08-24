@@ -1,3 +1,6 @@
+<van-toast id="van-toast" />
+<van-dialog id="van-dialog" />
+
 <view class="personal-info-container">
     <!-- 用户信息区域 -->
     <view class="user-info-section">
@@ -25,8 +28,73 @@
     <!-- 个人信息详情 -->
     <view class="info-details">
         <van-cell-group>
-            <van-cell title="昵称" value="{{nickname || '未设置'}}" />
-            <van-cell title="手机号" value="{{phone || '未绑定'}}" />
+            <!-- 昵称 -->
+            <van-cell title="昵称" bind:click="startEdit" data-field="nickname" center>
+                <view wx:if="{{editField !== 'nickname'}}" class="cell-value">{{nickname || '未设置'}}</view>
+                <view wx:else class="edit-field">
+                    <input 
+                        class="edit-input" 
+                        value="{{nickname}}" 
+                        bindinput="onInputChange" 
+                        focus="{{true}}"
+                        data-field="nickname"
+                        placeholder="请输入昵称"
+                    />
+                    <van-button size="small" type="primary" color="#FFC107" bind:click="saveField" data-field="nickname">修改</van-button>
+                </view>
+            </van-cell>
+            
+            <!-- 姓名 -->
+            <van-cell title="姓名" bind:click="startEdit" data-field="real_name" center>
+                <view wx:if="{{editField !== 'real_name'}}" class="cell-value">{{userInfo.real_name || '未设置'}}</view>
+                <view wx:else class="edit-field">
+                    <input 
+                        class="edit-input" 
+                        value="{{userInfo.real_name}}" 
+                        bindinput="onInputChange" 
+                        focus="{{true}}"
+                        data-field="real_name"
+                        placeholder="请输入姓名"
+                    />
+                    <van-button size="small" type="primary" color="#FFC107" bind:click="saveField" data-field="real_name">修改</van-button>
+                </view>
+            </van-cell>
+            
+            <!-- 手机号 -->
+            <van-cell title="手机号" bind:click="startEdit" data-field="phone" center>
+                <view wx:if="{{editField !== 'phone'}}" class="cell-value">{{phone || '未绑定'}}</view>
+                <view wx:else class="edit-field">
+                    <input 
+                        class="edit-input" 
+                        value="{{phone}}" 
+                        bindinput="onInputChange" 
+                        focus="{{true}}"
+                        data-field="phone"
+                        type="number"
+                        maxlength="11"
+                        placeholder="请输入手机号"
+                    />
+                    <van-button size="small" type="primary" color="#FFC107" bind:click="saveField" data-field="phone">修改</van-button>
+                </view>
+            </van-cell>
+            
+            <!-- 住址 -->
+            <van-cell title="住址" bind:click="startEdit" data-field="address" center>
+                <view wx:if="{{editField !== 'address'}}" class="cell-value">{{userInfo.address || '未设置'}}</view>
+                <view wx:else class="edit-field">
+                    <input 
+                        class="edit-input" 
+                        value="{{userInfo.address}}" 
+                        bindinput="onInputChange" 
+                        focus="{{true}}"
+                        data-field="address"
+                        placeholder="请输入住址"
+                    />
+                    <van-button size="small" type="primary" color="#FFC107" bind:click="saveField" data-field="address">修改</van-button>
+                </view>
+            </van-cell>
+            
+            <!-- 不可编辑的字段 -->
             <van-cell title="用户ID" value="{{userInfo.id || '未知'}}" />
             <van-cell title="注册时间" value="{{userInfo.formattedCreatedAt || '未知'}}" />
         </van-cell-group>

@@ -21,17 +21,17 @@
       {
         "pagePath": "pages/index/index",
         "text": "首页",
-        "iconPath": "/static/icon/left.png"
+        "iconPath": "static/icon/left.png"
       },
       {
         "pagePath": "pages/aiChat/aiChat",
         "text": "聊天",
-        "iconPath": "/static/icon/left.png"
+        "iconPath": "static/icon/left.png"
       },
       {
         "pagePath": "pages/mine/mine",
         "text": "我的",
-        "iconPath": "/static/icon/left.png"
+        "iconPath": "static/icon/left.png"
       }
     ]
   },

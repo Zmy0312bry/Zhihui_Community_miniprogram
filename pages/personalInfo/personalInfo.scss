@@ -94,6 +94,27 @@
     overflow: hidden;
 }
 
+/* 编辑字段样式 */
+.edit-field {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.edit-input {
+    flex: 1;
+    padding: 10rpx;
+    border-bottom: 2rpx solid #FFC107;
+    font-size: 28rpx;
+    margin-right: 16rpx;
+}
+
+.cell-value {
+    color: #666;
+    font-size: 28rpx;
+}
+
 /* 功能按钮 */
 .action-buttons {
     padding: 40rpx 30rpx;

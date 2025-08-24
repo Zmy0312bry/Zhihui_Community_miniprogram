@@ -9,6 +9,13 @@
         wx:for="{{ list }}" 
         wx:key="index"
         icon="{{ item.icon }}">
+        <!-- 如果要使用自定义图片而不是Vant图标，可以取消下面注释并注释上面的icon属性 -->
+        <!-- <image 
+            slot="icon" 
+            src="{{app.getMediaUrl(item.imageUrl)}}" 
+            mode="aspectFit"
+            style="width: 25px; height: 25px;"
+        /> -->
         {{item.text}}
     </van-tabbar-item>
 </van-tabbar>

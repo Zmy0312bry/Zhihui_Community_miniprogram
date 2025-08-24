@@ -19,7 +19,7 @@
                 <!-- 欢迎页面 -->
                 <view wx:if="{{chatList.length<=0}}" class="begin">
                     <view class="welcome-header">
-                        <image src="/static/icon/icowwn.png" class="welcome-avatar" mode="aspectFit"/>
+                        <image src="{{mediaUrls.icowwn}}" class="welcome-avatar" mode="aspectFit"/>
                     </view>
                     <view class="begin-title">{{beginTitle}}</view>
                     <view class="begin-tips">{{beginTips}}</view>
@@ -45,13 +45,13 @@
                             <view wx:if="{{item.role == 'assistant'}}" class="message-container ai-message">
                                 <view class="item-left">
                                     <view class="item-img">
-                                        <image src="/static/icon/icowwn.png" mode="aspectFit" class="item-photo ai-avatar"/>
+                                        <image src="{{mediaUrls.icowwn}}" mode="aspectFit" class="item-photo ai-avatar"/>
                                     </view>
                                     <view class="item-content ai-content">
                                         <wemark md="{{item.content}}" highlight type="wemark"></wemark>
                                         <view class="copy-button" data-content="{{item.content}}"
                                               bindtap="copyChatContent">
-                                            <image src="/static/icon/copy.svg" mode="aspectFit"/>
+                                            <image src="{{mediaUrls.copy}}" mode="aspectFit"/>
                                         </view>
                                     </view>
                                 </view>
@@ -62,7 +62,7 @@
                                 <view class="item-right">
                                     <view class="item-content user-content">{{item.content}}</view>
                                     <view class="item-img">
-                                        <image src="/static/icon/default.png" mode="aspectFill" class="item-photo user-avatar"/>
+                                        <image src="{{mediaUrls.default}}" mode="aspectFill" class="item-photo user-avatar"/>
                                     </view>
                                 </view>
                             </view>
@@ -73,7 +73,7 @@
                     <view wx:if="{{answer_loading}}" class="message-container ai-message">
                         <view class="item-left">
                             <view class="item-img">
-                                <image src="/static/icon/icowwn.png" mode="aspectFit" class="item-photo ai-avatar"/>
+                                <image src="{{mediaUrls.icowwn}}" mode="aspectFit" class="item-photo ai-avatar"/>
                             </view>
                             <view class="item-content ai-content">
                                 <view class="typing-indicator" wx:if="{{!answerDesc}}">
@@ -83,7 +83,7 @@
                                 </view>
                                 <wemark md="{{answerDesc}}" highlight type="wemark"></wemark>
                                 <view class="copy-button" wx:if="{{answerDesc}}" data-content="{{answerDesc}}" bindtap="copyChatContent">
-                                    <image src="/static/icon/copy.svg" mode="aspectFit"/>
+                                    <image src="{{mediaUrls.copy}}" mode="aspectFit"/>
                                 </view>
                             </view>
                         </view>
@@ -197,7 +197,7 @@
             <!--    <view bindtap="cancelChat" class="cancel-chat-btn">{{'关闭弹窗'}}</view>-->
         </view>
         <view class="close-icon" bindtap="cancelChat">
-            <image src="/static/icon/left.png" mode="aspectFit"></image>
+            <image src="{{app.getMediaUrl('left.png')}}" mode="aspectFit"></image>
         </view>
     </view>
 </view>

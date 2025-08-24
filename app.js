@@ -33,8 +33,8 @@ App({
         token: null, // 存储JWT token，便于全局访问
         isLoggedIn: false, // 用户登录状态
         config: {},
-        baseApiUrl: 'http://127.0.0.1:8080/', // API基础URL，所有API请求都在此基础上拼接
-        mediaBaseUrl: 'http://127.0.0.1:8080/media/picture/', // 媒体文件URL前缀
+        baseApiUrl: 'https://shangdi.bjseeyoung.com/', // API基础URL，所有API请求都在此基础上拼接
+        mediaBaseUrl: 'https://shangdi.bjseeyoung.com/media/picture/', // 媒体文件URL前缀
         theme: 'yellow',
         backgroundColor: '#FFF8E1', // 柔和的浅黄色背景
         gradientColors: {

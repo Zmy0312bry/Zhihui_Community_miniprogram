@@ -2,7 +2,7 @@
     <!-- 应用信息区域 -->
     <view class="app-info-section">
         <view class="app-logo">
-            <image class="logo-image" src="/static/icon/bupt.png" mode="aspectFit"/>
+            <image class="logo-image" src="{{logoUrl}}" mode="aspectFit"/>
         </view>
         
         <view class="app-name">{{appInfo.name}}</view>

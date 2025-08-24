@@ -3,13 +3,15 @@
 const app = getApp();
 Page({
   data: {
+      // 添加时间戳确保图片正确加载
+      timestamp: Date.now(),
       // 轮播图数据（目前使用相同图片，后续可替换为不同的轮播图）
       bannerList: [
-          '/static/img/lunbo.jpg',
-          '/static/img/gzh.jpg',
-          '/static/img/lunbo.jpg',
-          '/static/img/gzh.jpg',
-          '/static/img/lunbo.jpg'
+          app.getMediaUrl('lunbo.jpg'),
+          app.getMediaUrl('gzh.jpg'),
+          app.getMediaUrl('lunbo.jpg'),
+          app.getMediaUrl('gzh.jpg'),
+          app.getMediaUrl('lunbo.jpg')
       ],
       // 健康指导弹窗显示状态
       showHealthPopup: false,
@@ -55,7 +57,29 @@ Page({
         });
     },
 
+    onLoad: function() {
+        // 刷新图片缓存
+        this.refreshImages();
+    },
+    
     onShow(){
         this.getTabBar().init();
+    },
+    
+    // 刷新图片，确保能正确加载最新的图片
+    refreshImages: function() {
+        const timestamp = Date.now();
+        this.setData({
+            timestamp: timestamp,
+            bannerList: [
+                app.getMediaUrl('lunbo.jpg'),
+                // gzh.jpg不添加时间戳参数，避免502错误
+                app.getMediaUrl('gzh.jpg'),
+                app.getMediaUrl('lunbo.jpg'),
+                // gzh.jpg不添加时间戳参数，避免502错误
+                app.getMediaUrl('gzh.jpg'),
+                app.getMediaUrl('lunbo.jpg')
+            ]
+        });
     },
 })

@@ -1,5 +1,11 @@
+const app = getApp();
+
 Page({
     data: {
+        app: app, // 添加app对象到data中，用于在wxml中访问app.getMediaUrl
+        // 预先生成图片URL，不添加时间戳参数
+        logoUrl: null,
+        timestamp: Date.now(), // 添加时间戳，用于刷新图片缓存
         appInfo: {
             name: '上地小e养老',
             version: '1.0.0',
@@ -11,6 +17,15 @@ Page({
 
     onLoad() {
         console.log('关于我们页面加载');
+        // 预生成图片URL，不添加查询参数
+        const logoUrl = app.getMediaUrl('bupt.png');
+        console.log('Logo URL:', logoUrl);
+        
+        // 更新数据，使用预生成的URL
+        this.setData({
+            timestamp: Date.now(),
+            logoUrl: logoUrl
+        });
     },
 
     // 复制联系方式

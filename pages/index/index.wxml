@@ -35,7 +35,7 @@
 
     <!-- 底部logo -->
     <view class="bottom-logo">
-        <image src="/static/img/logo_bottom.png" class="logo-image" mode="aspectFit"></image>
+        <image src="{{app.getMediaUrl('logo_bottom.png')}}" class="logo-image" mode="aspectFit"></image>
     </view>
 
     <!-- 健康指导弹窗 -->

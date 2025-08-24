@@ -1,6 +1,7 @@
 // pages/aiChat/aiChat.js
 const app = getApp();
 const api = require('../../utils/api.js');
+const zhipuAI = require('../../utils/zhipuAI.js'); // 导入zhipuAI模块
 const { 
   initRecorderManager, 
   startRecording, 
@@ -25,6 +26,7 @@ Page({
      * 页面的初始数据
      */
     data: {
+        app: app, // 添加app对象到data中，用于在wxml中访问app.getMediaUrl
         dialogueId: 0,
         dialogue_list: [],
         open: false,
@@ -133,7 +135,20 @@ Page({
      */
     onLoad() {
         // 初始化消息队列和流式输出所需变量
+        // 预先生成所有需要的完整媒体URL，包含时间戳，避免在模板中拼接
+        const timestamp = Date.now();
+        const icowwnUrl = app.getMediaUrl('icowwn.png') + '?v=' + timestamp;
+        const copyUrl = app.getMediaUrl('copy.svg');
+        const defaultUrl = app.getMediaUrl('default.png');
+        
         this.setData({
+            app: app, // 确保app对象可在wxml中访问
+            timestamp: timestamp, // 添加时间戳以刷新图片缓存
+            mediaUrls: {
+                icowwn: icowwnUrl,
+                copy: copyUrl,
+                default: defaultUrl
+            },
             newMessageQueue: [],
             aiResponseContent: '', // 初始化流式输出内容
             textareaHeight: 60, // 文本区域初始高度
@@ -518,7 +533,7 @@ Page({
             });
             
             // 调用智谱AI流式API
-            const requestTask = api.callZhipuAIStream(
+            const requestTask = zhipuAI.callZhipuAIStream(
                 messages,
                 (chunk, fullContent) => {
                     // 流式输出回调
