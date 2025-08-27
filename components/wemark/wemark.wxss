@@ -142,6 +142,7 @@
 }
 .wemark_inline_text{
 	word-wrap:break-word;
+	font-size: 32rpx; /* 增加字体大小为32rpx */
 }
 .wemark_inline_link{
 	display: inline;

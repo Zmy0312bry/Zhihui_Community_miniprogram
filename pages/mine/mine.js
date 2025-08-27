@@ -189,6 +189,9 @@ Page({
         app.globalData.token = data.token;
         app.globalData.isLoggedIn = true;
         
+        // 打印token
+        console.log('登录成功，token:', data.token);
+        
         const userData = {
             loginToken: data.token,
             user_info: data.user_info
