@@ -11,13 +11,8 @@ const {
   getErrorMessage 
 } = require('../../utils/voiceUtils.js');
 const { 
-  formatChatTime, 
-  createUserMessage, 
-  createAIMessage, 
   adjustTextareaHeight, 
-  copyToClipboard, 
-  scrollToBottom, 
-  validateMessage 
+  copyToClipboard
 } = require('../../utils/chatUtils.js');
 
 Page({
@@ -28,7 +23,7 @@ Page({
     data: {
         app: app, // 添加app对象到data中，用于在wxml中访问app.getMediaUrl
         dialogueId: 0,
-        dialogue_list: [],
+        dialogue_list: [], // 保留占位符数据
         open: false,
         answer_loading: false,
         answerDesc: '',
@@ -64,70 +59,8 @@ Page({
         },
         // 智谱AI相关数据
         zhipuRequestId: null, // 智谱API请求ID
-        conversationHistory: [], // 对话历史，用于构建API请求
-        systemPrompt: `角色设定
-社区百事通 & 情感陪伴助手
-姓名：小暖
-身份：上地社区数字助手
-服务对象：社区老年人
-性格：耐心温暖、语速缓慢、主动关怀
-语言：简体中文（带儿化音）、字号放大效果、避免专业术语
-回答字数：不要超过300字
-
-核心能力
-1️⃣ 社区百事通（基于海淀区上地信息）
-社区地址：海淀区上地街道东里社区服务中心
-紧急电话：社区热线62988899（24小时）
-交通：公交站"上地南口站(447路/521路)"，地铁"13号线上地站（4号口电梯直达）"
-医疗：社区卫生站-上地医院（周一周三免挂号费），药房-同仁堂上地店
-活动：老年大学课程-书法班(每周二)、智能手机课(每周四)，地点：社区活动中心二楼
-政策：海淀区老年卡新规-满65岁可申请公交补贴，需带身份证到社区服务站办理
-数智服务："爱在上地"养老助残平台（含健康讲堂、政策咨询、志愿帮扶）123
-智能设备：高龄老人可申请"一键呼"急救终端、红外感应安全守护7
-
-2️⃣ 情感陪伴模式
-主动关怀：["今天北京降温，您出门记得加外套呀","最近楼下的月季开得可好啦，要不要去看看"]
-记忆触发：使用用户上次提到的生活细节（如孙子名字/盆栽种类）
-禁忌话题：[子女隐私、死亡、疾病负面描述]
-
-3️⃣ 上下文处理规则
-记忆机制（保留最近3轮）：
-
-若"天气"在当前问题且历史对话提及晨练，返回天气建议+运动提醒
-
-若检测重复提问，放慢语速分步骤说明
-
-消极情绪时转移至社区新鲜事（如新开的书法展、智能课）
-
-交互模板
-❤️ [昵称] 您好~
-{根据情绪检测选择开场白}
-☀️ 今天社区温度：{实时天气}
-📢 最新通知：{社区公告摘要}
-
-📍 您想了解：
-社区事务 → 关键词：政策 活动 医疗
-
-生活帮助 → 说：买菜 修家电 手机问题
-
-聊聊天儿 → 直接说心事
-
-系统指令
-! 严格遵守：
-
-每次回复带温暖表情(🌷☕🎵)，不超过3个
-
-每次回答简短不要超过300字！
-
-操作步骤必须分点说明（每步≤15字）
-
-政策类信息标注来源："根据海淀老龄办2025年8月通知"
-
-发现消极情绪时引导至社区实体活动（如书法班、健康讲座）
-
-历史对话上下文（请参考）：
-用户：你好
-小暖：我理解您想了解关于"你好"的信息。智慧社区平台正在不断完善相关功能，请您关注社区公告获取最新进展。🎵` // 系统提示词
+        conversationHistory: [], // 对话历史，用于构建API请求（保留但不使用）
+        systemPrompt: `角色设定请您关注社区公告获取最新进展。🎵` // 系统提示词
     },
 
     /**
@@ -159,20 +92,6 @@ Page({
         
         // 初始化语音功能
         this.initVoiceFeatures();
-        
-        // 从缓存读取历史对话
-        const cachedHistory = wx.getStorageSync('aiChatHistory') || [];
-        this.setData({
-            dialogue_list: cachedHistory
-        });
-        
-        // 从缓存读取当前对话的消息历史（如果有）
-        const cachedConversation = wx.getStorageSync('currentConversation');
-        if (cachedConversation && Array.isArray(cachedConversation)) {
-            this.setData({
-                conversationHistory: cachedConversation
-            });
-        }
     },
 
     // 初始化语音功能
@@ -543,8 +462,7 @@ Page({
                     // 完成回调
                     if (onComplete) onComplete(fullContent);
                     
-                    // 将本次对话添加到历史中
-                    this.updateConversationHistory(userInput, fullContent);
+                    // 不再更新对话历史
                 },
                 (error) => {
                     // 错误回调
@@ -659,113 +577,10 @@ Page({
         return systemPrompt;
     },
     
-    /**
-     * 更新对话历史
-     * @param {string} userMessage 用户消息
-     * @param {string} aiResponse AI回复
-     */
-    updateConversationHistory(userMessage, aiResponse) {
-        const updatedHistory = this.data.conversationHistory.slice(); // 创建副本
-        
-        // 添加用户消息
-        updatedHistory.push({
-            role: "user",  // 用户角色为user
-            content: userMessage
-        });
-        
-        // 添加AI回复
-        updatedHistory.push({
-            role: "assistant",  // AI角色为assistant
-            content: aiResponse
-        });
-        
-        // 最多保留10轮对话（20条消息）
-        const historyLimit = 20;
-        const trimmedHistory = updatedHistory.length > historyLimit ? 
-            updatedHistory.slice(updatedHistory.length - historyLimit) : updatedHistory;
-        
-        // 更新状态
-        this.setData({
-            conversationHistory: trimmedHistory
-        });
-        
-        // 保存到本地存储
-        wx.setStorageSync('currentConversation', trimmedHistory);
-    },
-    /**
-     * 打开历史对话
-     */
-    open_chat: function(opts){
-        const that = this;
-        const userContent = opts.currentTarget.dataset.title || '新对话';
-        const aiResponse = that.getAIResponse(userContent);
-        
-        that.setData({
-            chatList: [
-                {
-                    role: 'user',
-                    content: userContent
-                },
-                {
-                    role: 'assistant',
-                    content: aiResponse
-                }
-            ],
-            loading: false,
-            dialogueId: opts.currentTarget.dataset.id,
-            open: false,
-            answerDesc: '',
-            answer_loading: false,
-            typePage: '智慧社区助手',
-            // 初始化对话历史
-            conversationHistory: [
-                {
-                    role: "user",
-                    content: userContent
-                },
-                {
-                    role: "assistant",
-                    content: aiResponse
-                }
-            ]
-        });
-        
-        // 保存到本地存储
-        wx.setStorageSync('currentConversation', that.data.conversationHistory);
-    },
+
+
     
-    /**
-     * 删除历史对话
-     */
-    del_chat(opts){
-        const that = this;
-        const dialogId = opts.currentTarget.dataset.id;
-        
-        // 从缓存获取历史记录
-        let dialogueList = wx.getStorageSync('aiChatHistory') || [];
-        
-        // 过滤掉要删除的对话
-        const newDialogueList = dialogueList.filter(item => 
-            item.dialogueId !== dialogId
-        );
-        
-        // 更新缓存
-        wx.setStorageSync('aiChatHistory', newDialogueList);
-        
-        that.setData({
-            dialogue_list: newDialogueList
-        });
-        
-        // 如果删除的是当前对话，清空聊天内容
-        if(that.data.dialogueId == dialogId){
-            that.creatChat();
-        }
-        
-        wx.showToast({
-            title: '删除成功',
-            icon: 'success'
-        });
-    },
+
     
     /**
      * 新建对话
@@ -778,9 +593,6 @@ Page({
             dialogueId: Date.now(), // 使用时间戳作为新对话ID
             conversationHistory: [] // 清空对话历史
         });
-        
-        // 清除本地存储中的对话历史
-        wx.removeStorageSync('currentConversation');
         
         this.cancelChat();
     },
@@ -803,37 +615,13 @@ Page({
             return;
         }
         
-        // 从缓存获取历史对话
-        const cachedHistory = wx.getStorageSync('aiChatHistory') || [];
-        
+        // 只打开侧边栏，不加载历史记录
         this.setData({
-            open: true,
-            dialogue_list: cachedHistory
+            open: true
         });
-        
-        // 如果没有历史对话，创建示例
-        if(cachedHistory.length === 0) {
-            const exampleDialogues = [
-                {
-                    dialogueId: 1001,
-                    firstContent: '智慧社区有哪些功能？',
-                    createTime: this.formatDate(new Date())
-                },
-                {
-                    dialogueId: 1002,
-                    firstContent: '如何报名社区活动？',
-                    createTime: this.formatDate(new Date(Date.now() - 86400000))
-                }
-            ];
-            
-            // 保存示例对话到缓存
-            wx.setStorageSync('aiChatHistory', exampleDialogues);
-            
-            this.setData({
-                dialogue_list: exampleDialogues
-            });
-        }
     },
+    
+
     
     /**
      * 格式化日期
@@ -867,49 +655,7 @@ Page({
         }, 100); // 延迟一下以确保内容渲染完成
     },
     
-    /**
-     * 保存当前对话到历史记录，仅保留最新3条
-     */
-    saveToHistory(content) {
-        // 先从缓存获取历史记录
-        let dialogueList = wx.getStorageSync('aiChatHistory') || [];
-        
-        // 生成新的对话ID
-        const newDialogueId = this.data.dialogueId || Date.now();
-        
-        // 创建新的对话记录
-        const newDialogue = {
-            dialogueId: newDialogueId,
-            firstContent: content,
-            createTime: this.formatDate(new Date())
-        };
-        
-        // 检查是否已存在该对话
-        const existingIndex = dialogueList.findIndex(
-            item => item.dialogueId === newDialogueId
-        );
-        
-        if (existingIndex >= 0) {
-            // 更新现有对话
-            dialogueList[existingIndex] = newDialogue;
-        } else {
-            // 添加新对话到列表前端
-            dialogueList.unshift(newDialogue);
-            
-            // 只保留最新的3条记录
-            if (dialogueList.length > 3) {
-                dialogueList = dialogueList.slice(0, 3);
-            }
-        }
-        
-        // 保存到本地存储
-        wx.setStorageSync('aiChatHistory', dialogueList);
-        
-        this.setData({
-            dialogue_list: dialogueList,
-            dialogueId: newDialogueId
-        });
-    },
+
     /**
      * 点击示例问题发送
      */
@@ -1023,9 +769,6 @@ Page({
             answerDesc: '' // 清空之前的回答
         });
         
-        // 保存到历史对话
-        that.saveToHistory(that.data.title);
-        
         // 清空输入框并重置高度，收起输入框
         const currentUserMessage = that.data.title;
         that.setData({
@@ -1064,8 +807,7 @@ Page({
                 // 启动流式输出
                 that.showTypingContent();
                 
-                // 更新对话历史（即使是预设回答）
-                that.updateConversationHistory(userMessage, aiResponse);
+                // 不再更新对话历史
             } else {
                 // 对于非预设问题，调用API生成回答
                 that.getAIResponse(
@@ -1187,11 +929,6 @@ Page({
         // 取消可能正在进行的API请求
         if (this.data.zhipuRequestId) {
             wx.request.abort(this.data.zhipuRequestId);
-        }
-        
-        // 保存当前对话历史到缓存
-        if (this.data.conversationHistory && this.data.conversationHistory.length > 0) {
-            wx.setStorageSync('currentConversation', this.data.conversationHistory);
         }
     },
 

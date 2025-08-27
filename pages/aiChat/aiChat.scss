@@ -616,46 +616,6 @@ scroll-view {
   padding: 20rpx;
 }
 
-.nav-list {
-  margin-bottom: 20rpx;
-}
-
-.nav-item-item {
-  display: flex;
-  background-color: #f5f7fa;
-  border-radius: 12rpx;
-  padding: 20rpx;
-  margin-bottom: 20rpx;
-  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.05);
-}
-
-.nav-item-con {
-  flex: 1;
-  overflow: hidden;
-}
-
-.nav-item-title {
-  font-size: 32rpx;
-  color: #333;
-  margin-bottom: 10rpx;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.nav-item-time {
-  font-size: 24rpx;
-  color: #999;
-}
-
-.nav-item-del {
-  display: flex;
-  align-items: center;
-  padding: 0 20rpx;
-  color: #ff5252;
-  font-size: 40rpx;
-}
-
 .empty-history {
   display: flex;
   flex-direction: column;
@@ -705,36 +665,6 @@ scroll-view {
  .page-scroll {
    overflow: auto;
    height: 100%;
- }
- .nav-item-item{
-   display: flex;
-   align-items: center;
-   .nav-item-con {
-     flex: 5;
-     position: relative;
-     .nav-item-title {
-       overflow: hidden;
-       text-overflow: ellipsis;
-       white-space: nowrap;
-       max-width: 13rem;
-     }
-     .nav-item-time {
-       font-size: x-small;
-       color: rgb(103, 102, 102);
-     }
-   }
-   .nav-item-del {
-     flex: 1;
-     text {
-       display: inline-block;
-       padding: .2rem .6rem;
-       width: 2rem;
-       border-radius: 8rpx;
-       font-size: large;
-       color: rgb(151, 111, 111);
-      // background-color: rgb(163, 141, 141);
-     }
-   }
  }
 
 .copy-button {
