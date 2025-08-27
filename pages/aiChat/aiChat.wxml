@@ -101,11 +101,11 @@
         <!-- 输入方式切换 -->
         <view class="input-mode-switch">
             <view class="mode-button {{inputMode === 'voice' ? 'active' : ''}}" bindtap="switchToVoice">
-                <van-icon name="volume-o" size="18" color="{{inputMode === 'voice' ? '#ffffff' : '#4CAF50'}}"/>
+                <van-icon name="volume-o" size="18" color="{{inputMode === 'voice' ? '#ffffff' : '#FF9800'}}"/>
                 <text>语音</text>
             </view>
             <view class="mode-button {{inputMode === 'text' ? 'active' : ''}}" bindtap="switchToText">
-                <van-icon name="edit" size="18" color="{{inputMode === 'text' ? '#ffffff' : '#4CAF50'}}"/>
+                <van-icon name="edit" size="18" color="{{inputMode === 'text' ? '#ffffff' : '#FF9800'}}"/>
                 <text>文字</text>
             </view>
         </view>
@@ -113,11 +113,14 @@
         <!-- 语音输入区域 -->
         <view wx:if="{{inputMode === 'voice' && isInputExpanded}}" class="voice-input-area">
             <view class="voice-container">
-                <view class="voice-button {{isRecording ? 'recording' : ''}}" bindtap="toggleRecording">
+                <view class="voice-button {{isRecording ? 'recording' : ''}} {{isVoiceButtonPressed ? 'pressed' : ''}}" 
+                      bindtouchstart="startVoiceRecording" 
+                      bindtouchend="stopVoiceRecording"
+                      bindtouchcancel="cancelVoiceRecording">
                     <van-icon name="{{isRecording ? 'pause' : 'volume-o'}}" size="32" color="#ffffff"/>
                 </view>
                 <view class="voice-status">
-                    <text wx:if="{{!isRecording && !voiceText}}">点击开始语音输入</text>
+                    <text wx:if="{{!isRecording && !voiceText}}">按住说话，松开停止</text>
                     <text wx:if="{{isRecording}}">正在录音中...</text>
                     <text wx:if="{{!isRecording && voiceText}}">语音识别完成</text>
                 </view>

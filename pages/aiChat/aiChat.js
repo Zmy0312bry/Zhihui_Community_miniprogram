@@ -31,13 +31,13 @@ Page({
         title: '',
         loading: false,
         scrollTop: 0,
-        beginTitle: '您好，欢迎使用智慧社区AI助手',
-        beginTips: '我是一名智能聊天机器人，随时为您解答问题，提供帮助',
+        beginTitle: '您好，欢迎使用上地街道小e智能AI助手',
+        beginTips: '我是小e助手，我可以随时为您解答问题，提供帮助🌷',
         beginList: [
-            {id: 1, tips: '请介绍一下智慧社区的概念'},
-            {id: 2, tips: '如何使用智慧社区的便民服务？'},
-            {id: 3, tips: '社区活动报名如何操作？'},
-            {id: 4, tips: '智慧社区有哪些功能？'},
+            {id: 1, tips: '上地街道有哪些卫生服务站？'},
+            {id: 2, tips: '申请家庭养老床位照护有哪些步骤？'},
+            {id: 3, tips: '有哪些卫生服务站提供中医服务？'},
+            {id: 4, tips: '什么样的人群可以申请家庭养老床位照护？'},
         ],
         chatList: [],
         isTyping: false, // 是否正在显示消息
@@ -49,14 +49,9 @@ Page({
         // 语音输入相关
         inputMode: 'voice', // 默认语音输入模式：'voice' | 'text'
         isRecording: false, // 是否正在录音
+        isVoiceButtonPressed: false, // 语音按钮是否被按住
         voiceText: '', // 语音识别的文字
         recorderManager: null, // 录音管理器
-        mockResponses: { // 模拟AI回复内容
-            '请介绍一下智慧社区的概念': '智慧社区是运用物联网、云计算、人工智能等技术，为社区居民提供便捷、高效、智能的生活服务平台。它包含社区管理、便民服务、安防监控、环境监测等功能，旨在提高居民生活质量和社区管理效率。',
-            '如何使用智慧社区的便民服务？': '使用智慧社区的便民服务很简单：\n1. 在首页找到"便民服务"入口\n2. 选择您需要的服务类型（如水电缴费、快递代收、维修服务等）\n3. 按提示填写相关信息\n4. 提交请求后等待服务完成\n\n您也可以在"我的服务"中查看历史记录和进度。',
-            '社区活动报名如何操作？': '社区活动报名步骤：\n1. 点击首页"社区活动"模块\n2. 浏览可参与的活动列表\n3. 点击感兴趣的活动查看详情\n4. 点击"立即报名"按钮\n5. 填写报名信息并提交\n\n报名成功后，您将收到确认通知，也可在"我的活动"中查看报名状态。',
-            '智慧社区有哪些功能？': '智慧社区平台主要功能包括：\n- **社区公告**：重要通知及时获取\n- **物业服务**：报修、投诉、建议等\n- **便民服务**：水电缴费、家政服务预约\n- **邻里社交**：社区论坛、兴趣小组\n- **智能门禁**：手机一键开门\n- **访客管理**：预约访客、临时通行证\n- **社区活动**：线上报名、活动提醒\n- **健康服务**：社区医疗资源对接\n\n所有服务都可以在小程序中一站式完成，让社区生活更便捷。'
-        },
         // DashScope AI相关数据
         dashScopeRequestId: null // DashScope API请求ID
     },
@@ -108,7 +103,8 @@ Page({
             onStop: (res) => {
                 console.log('录音识别结束:', res);
                 this.setData({
-                    isRecording: false
+                    isRecording: false,
+                    isVoiceButtonPressed: false // 清除按住状态
                 });
                 wx.hideToast();
                 
@@ -142,7 +138,8 @@ Page({
             onError: (res) => {
                 console.error('录音识别错误:', res);
                 this.setData({
-                    isRecording: false
+                    isRecording: false,
+                    isVoiceButtonPressed: false // 清除按住状态
                 });
                 wx.hideToast();
                 
@@ -219,29 +216,71 @@ Page({
         }
     },
 
-    // 开始/停止录音
-    toggleRecording() {
+    // 开始语音录音（触摸开始）
+    startVoiceRecording() {
         if (this.data.isRecording) {
-            // 停止录音识别
-            stopRecording(this.data.recorderManager);
-        } else {
-            // 开始录音识别，配置最大30秒，中文识别
-            startRecording(this.data.recorderManager, {
-                duration: 30000,
-                lang: 'zh_CN',
-                onError: (error) => {
-                    console.error('启动录音识别失败:', error);
-                    this.setData({
-                        isRecording: false
-                    });
-                    wx.hideToast();
-                    wx.showToast({
-                        title: '启动录音失败',
-                        icon: 'none'
-                    });
-                }
-            });
+            return; // 如果已经在录音中，忽略
         }
+        
+        // 设置按钮按住状态
+        this.setData({
+            isVoiceButtonPressed: true
+        });
+        
+        // 开始录音识别，配置最大30秒，中文识别
+        startRecording(this.data.recorderManager, {
+            duration: 30000,
+            lang: 'zh_CN',
+            onError: (error) => {
+                console.error('启动录音识别失败:', error);
+                this.setData({
+                    isRecording: false,
+                    isVoiceButtonPressed: false
+                });
+                wx.hideToast();
+                wx.showToast({
+                    title: '启动录音失败',
+                    icon: 'none'
+                });
+            }
+        });
+    },
+
+    // 停止语音录音（触摸结束）
+    stopVoiceRecording() {
+        if (!this.data.isRecording) {
+            return; // 如果没有在录音中，忽略
+        }
+        
+        // 清除按钮按住状态
+        this.setData({
+            isVoiceButtonPressed: false
+        });
+        
+        // 停止录音识别
+        stopRecording(this.data.recorderManager);
+    },
+
+    // 取消语音录音（触摸取消）
+    cancelVoiceRecording() {
+        if (!this.data.isRecording) {
+            return; // 如果没有在录音中，忽略
+        }
+        
+        // 清除按钮按住状态
+        this.setData({
+            isVoiceButtonPressed: false
+        });
+        
+        // 停止录音识别
+        stopRecording(this.data.recorderManager);
+        
+        // 显示取消提示
+        wx.showToast({
+            title: '已取消录音',
+            icon: 'none',
+            duration: 1500
+        });
     },
 
     // 处理语音识别（WechatSI插件中已不需要此方法，保留用于兼容性）
@@ -399,98 +438,59 @@ Page({
 
     /**
      * 获取AI回复内容
-     * 根据用户输入匹配预设回答或调用智谱AI生成回答
+     * 调用DashScope AI生成回答
      * @param {string} userInput 用户输入
-     * @param {boolean} useAPI 是否使用API
      * @param {Function} onData 流式输出回调函数
      * @param {Function} onComplete 完成回调函数
      * @param {Function} onError 错误回调函数
      */
-    getAIResponse(userInput, useAPI = false, onData, onComplete, onError) {
-        // 检查是否有匹配的预设回答
-        if (this.data.mockResponses[userInput]) {
-            const response = this.data.mockResponses[userInput];
-            
-            // 如果设置了回调函数，以模拟流式输出的方式调用回调
-            if (onData && onComplete) {
-                let index = 0;
-                const chunkSize = 5; // 每次发送的字符数
-                const intervalId = setInterval(() => {
-                    if (index < response.length) {
-                        const end = Math.min(index + chunkSize, response.length);
-                        const chunk = response.substring(index, end);
-                        onData(chunk, response.substring(0, end));
-                        index = end;
-                    } else {
-                        clearInterval(intervalId);
-                        onComplete(response);
-                    }
-                }, 30);
-            }
-            
-            return response;
-        }
-        
-        // 如果需要使用API且不是预设回答
-        if (useAPI) {
-            // 调用DashScope AI流式API
-            const requestTask = dashScopeAI.callDashScopeAI(
-                userInput,
-                (chunk, fullContent) => {
-                    // 流式输出回调
-                    if (onData) onData(chunk, fullContent);
-                },
-                (fullContent) => {
-                    // 完成回调
-                    if (onComplete) onComplete(fullContent);
-                },
-                (error) => {
-                    // 错误回调
-                    console.error('DashScope AI调用失败:', error);
+    getAIResponse(userInput, onData, onComplete, onError) {
+        // 调用DashScope AI流式API
+        const requestTask = dashScopeAI.callDashScopeAI(
+            userInput,
+            (chunk, fullContent) => {
+                // 流式输出回调
+                if (onData) onData(chunk, fullContent);
+            },
+            (fullContent) => {
+                // 完成回调
+                if (onComplete) onComplete(fullContent);
+            },
+            (error) => {
+                // 错误回调
+                console.error('DashScope AI调用失败:', error);
 
-                    // 尝试使用备用回复策略
-                    let errorResponse = this.getFallbackResponse(userInput, error);
+                // 尝试使用备用回复策略
+                let errorResponse = this.getFallbackResponse(userInput, error);
 
-                    if (onError) onError(error);
+                if (onError) onError(error);
 
-                    // 模拟流式输出错误回复
-                    if (onData) {
-                        let index = 0;
-                        const chunkSize = 3;
-                        const intervalId = setInterval(() => {
-                            if (index < errorResponse.length) {
-                                const end = Math.min(index + chunkSize, errorResponse.length);
-                                const chunk = errorResponse.substring(index, end);
-                                onData(chunk, errorResponse.substring(0, end));
-                                index = end;
-                            } else {
-                                clearInterval(intervalId);
-                                if (onComplete) onComplete(errorResponse);
-                            }
-                        }, 50);
-                    } else {
-                        if (onComplete) onComplete(errorResponse);
-                    }
+                // 模拟流式输出错误回复
+                if (onData) {
+                    let index = 0;
+                    const chunkSize = 3;
+                    const intervalId = setInterval(() => {
+                        if (index < errorResponse.length) {
+                            const end = Math.min(index + chunkSize, errorResponse.length);
+                            const chunk = errorResponse.substring(index, end);
+                            onData(chunk, errorResponse.substring(0, end));
+                            index = end;
+                        } else {
+                            clearInterval(intervalId);
+                            if (onComplete) onComplete(errorResponse);
+                        }
+                    }, 50);
+                } else {
+                    if (onComplete) onComplete(errorResponse);
                 }
-            );
+            }
+        );
 
-            // 保存请求任务ID
-            this.data.dashScopeRequestId = requestTask;
+        // 保存请求任务ID
+        this.data.dashScopeRequestId = requestTask;
 
-            // 返回空字符串，实际内容将通过回调函数处理
-            return '';
-        }
-        
-        // 如果不使用API且没有预设回答，返回通用回复
-        const genericResponses = [
-            `感谢您的问题"${userInput}"。作为智慧社区AI助手，我正在不断学习中。这个问题我需要进一步了解，您可以联系社区客服获取更准确的信息。🌷`,
-            `您好，关于"${userInput}"，我建议您可以在智慧社区APP首页查看相关指南，或联系物业服务中心获取帮助。☕`,
-            `我理解您想了解关于"${userInput}"的信息。智慧社区平台正在不断完善相关功能，请您关注社区公告获取最新进展。🎵`
-        ];
-        
-        // 随机选择一个通用回复
-        const randomIndex = Math.floor(Math.random() * genericResponses.length);
-        return genericResponses[randomIndex];
+        // 返回空字符串，实际内容将通过回调函数处理
+        return '';
     },
     
     /**
@@ -756,57 +756,33 @@ Page({
         
         that.autoScroll(); // 滚动到底部
         
-        // 检查是否是预设问题，使用不同的处理方式
-        const isPresetQuestion = Object.keys(that.data.mockResponses).includes(currentUserMessage);
-        
-        // 设置延迟模拟AI思考时间
+        // 调用DashScope AI生成回答
         setTimeout(() => {
-            // 对于预设问题，使用本地回答，对于其他问题，调用API
-            if (isPresetQuestion) {
-                // 获取预设AI回复内容
-                const aiResponse = that.getAIResponse(currentUserMessage, false);
-                
-                // 设置流式输出状态，但不立即添加到chatList
-                that.setData({
-                    answerDesc: '',
-                    typingContent: aiResponse,
-                    aiResponseContent: aiResponse, // 暂存完整回复内容
-                    answer_loading: true // 确保loading状态保持
-                });
-                
-                // 启动流式输出
-                that.showTypingContent();
-                
-                // 不再更新对话历史
-            } else {
-                // 对于非预设问题，调用API生成回答
-                that.getAIResponse(
-                    currentUserMessage, 
-                    true, // 使用API
-                    (chunk, fullContent) => {
-                        // 流式输出回调
-                        that.handleStreamingOutput(chunk, fullContent);
-                    },
-                    (fullContent) => {
-                        // 完成回调
-                        that.handleStreamingComplete(fullContent);
-                    },
-                    (error) => {
-                        // 错误回调
-                        console.error('DashScope AI调用失败:', error);
-                        wx.showToast({
-                            title: '获取回答失败，请重试',
-                            icon: 'none'
-                        });
+            that.getAIResponse(
+                currentUserMessage,
+                (chunk, fullContent) => {
+                    // 流式输出回调
+                    that.handleStreamingOutput(chunk, fullContent);
+                },
+                (fullContent) => {
+                    // 完成回调
+                    that.handleStreamingComplete(fullContent);
+                },
+                (error) => {
+                    // 错误回调
+                    console.error('DashScope AI调用失败:', error);
+                    wx.showToast({
+                        title: '获取回答失败，请重试',
+                        icon: 'none'
+                    });
 
-                        // 恢复UI状态
-                        that.setData({
-                            isThisChatOver: true,
-                            answer_loading: false
-                        });
-                    }
-                );
-            }
+                    // 恢复UI状态
+                    that.setData({
+                        isThisChatOver: true,
+                        answer_loading: false
+                    });
+                }
+            );
         }, 800); // 模拟思考时间
     },
 
