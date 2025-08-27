@@ -1,7 +1,7 @@
 // pages/aiChat/aiChat.js
 const app = getApp();
 const api = require('../../utils/api.js');
-const zhipuAI = require('../../utils/zhipuAI.js'); // 导入zhipuAI模块
+const dashScopeAI = require('../../utils/dashScopeAI.js'); // 导入dashScopeAI模块
 const { 
   initRecorderManager, 
   startRecording, 
@@ -57,10 +57,8 @@ Page({
             '社区活动报名如何操作？': '社区活动报名步骤：\n1. 点击首页"社区活动"模块\n2. 浏览可参与的活动列表\n3. 点击感兴趣的活动查看详情\n4. 点击"立即报名"按钮\n5. 填写报名信息并提交\n\n报名成功后，您将收到确认通知，也可在"我的活动"中查看报名状态。',
             '智慧社区有哪些功能？': '智慧社区平台主要功能包括：\n- **社区公告**：重要通知及时获取\n- **物业服务**：报修、投诉、建议等\n- **便民服务**：水电缴费、家政服务预约\n- **邻里社交**：社区论坛、兴趣小组\n- **智能门禁**：手机一键开门\n- **访客管理**：预约访客、临时通行证\n- **社区活动**：线上报名、活动提醒\n- **健康服务**：社区医疗资源对接\n\n所有服务都可以在小程序中一站式完成，让社区生活更便捷。'
         },
-        // 智谱AI相关数据
-        zhipuRequestId: null, // 智谱API请求ID
-        conversationHistory: [], // 对话历史，用于构建API请求（保留但不使用）
-        systemPrompt: `角色设定请您关注社区公告获取最新进展。🎵` // 系统提示词
+        // DashScope AI相关数据
+        dashScopeRequestId: null // DashScope API请求ID
     },
 
     /**
@@ -87,7 +85,6 @@ Page({
             textareaHeight: 60, // 文本区域初始高度
             inputAreaHeight: 100, // 收起状态的高度，展开时为170px
             isInputExpanded: false, // 初始状态为收起
-            conversationHistory: [] // 初始化对话历史
         });
         
         // 初始化语音功能
@@ -436,24 +433,9 @@ Page({
         
         // 如果需要使用API且不是预设回答
         if (useAPI) {
-            // 构建消息历史，按照您提供的格式：user在前，system在后
-            const messages = [];
-            
-            // 添加当前用户问题（放在前面）
-            messages.push({
-                role: "user",
-                content: userInput
-            });
-            
-            // 添加系统提示（放在后面）
-            messages.push({
-                role: "system", 
-                content: this.buildSystemPrompt()
-            });
-            
-            // 调用智谱AI流式API
-            const requestTask = zhipuAI.callZhipuAIStream(
-                messages,
+            // 调用DashScope AI流式API
+            const requestTask = dashScopeAI.callDashScopeAI(
+                userInput,
                 (chunk, fullContent) => {
                     // 流式输出回调
                     if (onData) onData(chunk, fullContent);
@@ -461,18 +443,16 @@ Page({
                 (fullContent) => {
                     // 完成回调
                     if (onComplete) onComplete(fullContent);
-                    
-                    // 不再更新对话历史
                 },
                 (error) => {
                     // 错误回调
-                    console.error('智谱AI调用失败:', error);
-                    
+                    console.error('DashScope AI调用失败:', error);
+
                     // 尝试使用备用回复策略
                     let errorResponse = this.getFallbackResponse(userInput, error);
-                    
+
                     if (onError) onError(error);
-                    
+
                     // 模拟流式输出错误回复
                     if (onData) {
                         let index = 0;
@@ -491,17 +471,12 @@ Page({
                     } else {
                         if (onComplete) onComplete(errorResponse);
                     }
-                },
-                {
-                    max_tokens: 500, // 限制回复长度不超过500字
-                    temperature: 0.7, // 控制创意度，较高的值会使输出更多样化
-                    top_p: 0.95 // 保持高概率词的输出质量
                 }
             );
-            
+
             // 保存请求任务ID
-            this.data.zhipuRequestId = requestTask;
-            
+            this.data.dashScopeRequestId = requestTask;
+
             // 返回空字符串，实际内容将通过回调函数处理
             return '';
         }
@@ -525,6 +500,11 @@ Page({
      * @returns {string} 备用回复
      */
     getFallbackResponse(userInput, error) {
+        // 确保userInput是有效字符串
+        if (!userInput || typeof userInput !== 'string') {
+            userInput = '';
+        }
+        
         // 智能匹配关键词，提供相关回复
         const keywordResponses = {
             '智慧社区|社区功能|功能': '🏠 智慧社区平台主要功能包括：\n• 社区公告：及时获取重要通知\n• 物业服务：报修、投诉、建议\n• 便民服务：水电缴费、家政预约\n• 智能门禁：手机开门\n• 社区活动：线上报名参与\n\n如需详细了解，请联系社区客服：62988899',
@@ -567,15 +547,6 @@ Page({
     /**
      * 显示网络诊断结果（开发调试用）
      */
-    /**
-     * 构建系统提示词，只需要基本提示，不包含对话历史
-     */
-    buildSystemPrompt() {
-        // 直接返回基础系统提示词
-        return this.data.systemPrompt;
-        
-        return systemPrompt;
-    },
     
 
 
@@ -590,8 +561,7 @@ Page({
             chatList: [],
             answerDesc: "",
             loading: false,
-            dialogueId: Date.now(), // 使用时间戳作为新对话ID
-            conversationHistory: [] // 清空对话历史
+            dialogueId: Date.now() // 使用时间戳作为新对话ID
         });
         
         this.cancelChat();
@@ -787,14 +757,14 @@ Page({
         that.autoScroll(); // 滚动到底部
         
         // 检查是否是预设问题，使用不同的处理方式
-        const isPresetQuestion = Object.keys(that.data.mockResponses).includes(userMessage);
+        const isPresetQuestion = Object.keys(that.data.mockResponses).includes(currentUserMessage);
         
         // 设置延迟模拟AI思考时间
         setTimeout(() => {
             // 对于预设问题，使用本地回答，对于其他问题，调用API
             if (isPresetQuestion) {
                 // 获取预设AI回复内容
-                const aiResponse = that.getAIResponse(userMessage, false);
+                const aiResponse = that.getAIResponse(currentUserMessage, false);
                 
                 // 设置流式输出状态，但不立即添加到chatList
                 that.setData({
@@ -811,7 +781,7 @@ Page({
             } else {
                 // 对于非预设问题，调用API生成回答
                 that.getAIResponse(
-                    userMessage, 
+                    currentUserMessage, 
                     true, // 使用API
                     (chunk, fullContent) => {
                         // 流式输出回调
@@ -823,12 +793,12 @@ Page({
                     },
                     (error) => {
                         // 错误回调
-                        console.error('智谱AI调用失败:', error);
+                        console.error('DashScope AI调用失败:', error);
                         wx.showToast({
                             title: '获取回答失败，请重试',
                             icon: 'none'
                         });
-                        
+
                         // 恢复UI状态
                         that.setData({
                             isThisChatOver: true,
@@ -899,8 +869,8 @@ Page({
         }
         
         // 取消可能正在进行的API请求
-        if (this.data.zhipuRequestId) {
-            wx.request.abort(this.data.zhipuRequestId);
+        if (this.data.dashScopeRequestId) {
+            wx.request.abort(this.data.dashScopeRequestId);
         }
     },
 
@@ -927,8 +897,8 @@ Page({
         }
         
         // 取消可能正在进行的API请求
-        if (this.data.zhipuRequestId) {
-            wx.request.abort(this.data.zhipuRequestId);
+        if (this.data.dashScopeRequestId) {
+            wx.request.abort(this.data.dashScopeRequestId);
         }
     },
 
