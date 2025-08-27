@@ -16,6 +16,26 @@
     justify-content: center !important;
     padding: 18rpx 0 !important;
     min-height: 110rpx !important;
+    position: relative !important;
+    transition: all 0.3s ease !important;
+}
+
+/* 选中状态的背景效果 */
+.van-tabbar-item--active {
+    position: relative !important;
+}
+
+.van-tabbar-item--active::before {
+    content: '' !important;
+    position: absolute !important;
+    top: 8rpx !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    width: 120rpx !important;
+    height: 8rpx !important;
+    background: linear-gradient(90deg, #FF9800 0%, #FFB74D 100%) !important;
+    border-radius: 4rpx !important;
+    opacity: 0.8 !important;
 }
 
 /* 图标容器和大小 */
@@ -32,21 +52,32 @@
 .van-tabbar-item__icon .van-icon {
     font-size: 90rpx !important;
     font-weight: 700 !important;
+    color: rgba(102, 102, 102, 0.4) !important;
+    transition: all 0.3s ease !important;
+}
+
+/* 选中状态图标样式 */
+.van-tabbar-item--active .van-tabbar-item__icon .van-icon {
+    color: #FF9800 !important;
+    transform: scale(1.1) !important;
+    filter: drop-shadow(0 2rpx 4rpx rgba(255, 152, 0, 0.3)) !important;
 }
 
 /* 文字样式 */
 .van-tabbar-item__text {
     font-size: 32rpx !important;
-    font-weight: 800 !important;
+    font-weight: 500 !important;
     line-height: 1.2 !important;
-    color: #666666 !important;
+    color: rgba(102, 102, 102, 0.4) !important;
+    transition: all 0.3s ease !important;
 }
 
 /* 选中状态样式 */
 .van-tabbar-item--active .van-tabbar-item__text {
-    color: #FFD000 !important;
+    color: #FF9800 !important;
     font-weight: 900 !important;
-    font-size: 38rpx !important;
+    font-size: 36rpx !important;
+    text-shadow: 0 1rpx 3rpx rgba(255, 152, 0, 0.3) !important;
 }
 
 .van-tabbar-item--active .van-tabbar-item__icon .van-icon {

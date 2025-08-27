@@ -1,0 +1,60 @@
+<view class="feedback-container">
+    <!-- 反馈类型选择 -->
+    <view class="feedback-section">
+        <view class="section-title">
+            <van-icon name="comment-o" color="#FF9800" size="20"/>
+            <text>反馈类型</text>
+        </view>
+        <van-radio-group value="{{feedbackType}}" bind:change="onFeedbackTypeChange" direction="horizontal" class="feedback-types">
+            <van-radio name="suggestion" checked-color="#FF9800">建议</van-radio>
+            <van-radio name="bug" checked-color="#FF9800">问题</van-radio>
+            <van-radio name="other" checked-color="#FF9800">其他</van-radio>
+        </van-radio-group>
+    </view>
+
+    <!-- 反馈内容 -->
+    <view class="feedback-section">
+        <view class="section-title">
+            <van-icon name="edit" color="#FF9800" size="20"/>
+            <text>反馈内容</text>
+        </view>
+        <van-field
+            value="{{feedbackContent}}"
+            placeholder="请详细描述您的反馈内容..."
+            type="textarea"
+            autosize
+            border="{{false}}"
+            class="feedback-content"
+            bind:input="onContentInput"
+        />
+    </view>
+
+    <!-- 联系方式 -->
+    <view class="feedback-section">
+        <view class="section-title">
+            <van-icon name="phone-o" color="#FF9800" size="20"/>
+            <text>联系方式（选填）</text>
+        </view>
+        <van-field
+            value="{{contactInfo}}"
+            placeholder="手机号或邮箱，方便我们联系您"
+            border="{{false}}"
+            class="contact-field"
+            bind:input="onContactInput"
+        />
+    </view>
+
+    <!-- 提交按钮 -->
+    <view class="submit-section">
+        <van-button
+            round
+            color="linear-gradient(to right, #FF9800, #FFB74D)"
+            custom-style="color:#fff;font-weight:bold;width:100%;"
+            loading="{{isSubmitting}}"
+            bindtap="submitFeedback"
+            block
+        >
+            提交反馈
+        </van-button>
+    </view>
+</view>

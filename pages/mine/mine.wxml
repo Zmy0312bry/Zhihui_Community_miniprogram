@@ -1,43 +1,96 @@
 <view class="ui-container">
-    <view class="avatar-box">
-        <button class="avatar-wrapper" open-type="chooseAvatar" bind:chooseavatar="onChooseAvatar">
-            <image class="avatar" src="{{avatarUrl}}"></image>
-        </button>
-    </view>
-    <view class="avatar-nick">
-        <view>
-            <input type="nickname" class="weui-input" placeholder="请输入昵称" bind:change="onChooseNickname"
-                   value="{{nickname}}"/>
+    <!-- 用户信息卡片区域 -->
+    <view class="user-profile-card">
+        <!-- 顶部装饰 -->
+        <view class="card-decoration">
+            <view class="decoration-circle circle-1"></view>
+            <view class="decoration-circle circle-2"></view>
+            <view class="decoration-circle circle-3"></view>
         </view>
 
+        <!-- 头像区域 -->
+        <view class="avatar-section">
+            <view class="avatar-box">
+                <button class="avatar-wrapper" open-type="chooseAvatar" bind:chooseavatar="onChooseAvatar">
+                    <image class="avatar" src="{{avatarUrl}}"></image>
+                    <view class="avatar-edit-icon">
+                        <van-icon name="edit" size="16" color="#fff"/>
+                    </view>
+                </button>
+            </view>
+        </view>
+
+        <!-- 用户信息区域 -->
+        <view class="user-info-section">
+            <view class="nickname-row">
+                <view class="nickname-input-wrapper">
+                    <input type="nickname" class="weui-input" placeholder="请输入昵称" bind:change="onChooseNickname" value="{{nickname}}"/>
+                </view>
+            </view>
+
+            <!-- 用户状态信息 -->
+            <view class="user-status-row">
+                <view class="status-item">
+                    <van-icon name="clock-o" size="14" color="#FF9800"/>
+                    <text class="status-text">注册时间：{{userInfo.create_time || '未知'}}</text>
+                </view>
+                <view class="status-item">
+                    <van-icon name="location-o" size="14" color="#FF9800"/>
+                    <text class="status-text">社区：上地街道</text>
+                </view>
+            </view>
+
+            <!-- 登录状态指示器 -->
+            <view class="login-status-indicator" wx:if="{{isLogin}}">
+                <view class="status-badge">
+                    <van-icon name="passed" size="12" color="#fff"/>
+                    <text class="status-badge-text">已登录</text>
+                </view>
+            </view>
+            <view class="login-status-indicator" wx:else>
+                <view class="status-badge status-badge-offline">
+                    <van-icon name="user-circle-o" size="12" color="#fff"/>
+                    <text class="status-badge-text">未登录</text>
+                </view>
+            </view>
+        </view>
     </view>
 
     <view class="white-box">
         <button class="row" style="width: 100%;" bindtap="goToPersonalInfo">
             <view class="left">
-                <van-icon name="contact" color="#FFC107" size="24"/>
+                <van-icon name="contact" color="#FF9800" size="24"/>
                 <text class="text">个人信息 </text>
             </view>
             <view class="right">
-                <van-icon name="arrow" size="16"/>
+                <van-icon name="arrow" color="#999" size="16"/>
             </view>
         </button>
         <button class="row" style="width: 100%;" bindtap="onClickShow">
             <view class="left">
-                <van-icon name="enlarge" color="#FFC107" size="24"/>
+                <van-icon name="enlarge" color="#FF9800" size="24"/>
                 <text class="text">关注公众号 </text>
             </view>
             <view class="right">
-                <van-icon name="arrow" size="16"/>
+                <van-icon name="arrow" color="#999" size="16"/>
             </view>
         </button>
         <button class="row" style="width: 100%;" bindtap="goToAboutUs">
             <view class="left">
-                <van-icon name="info-o" color="#FFC107" size="24"/>
+                <van-icon name="info-o" color="#FF9800" size="24"/>
                 <text class="text">关于我们 </text>
             </view>
             <view class="right">
-                <van-icon name="arrow" size="16"/>
+                <van-icon name="arrow" color="#999" size="16"/>
+            </view>
+        </button>
+        <button class="row" style="width: 100%;" bindtap="goToFeedback">
+            <view class="left">
+                <van-icon name="comment-o" color="#FF9800" size="24"/>
+                <text class="text">填写反馈 </text>
+            </view>
+            <view class="right">
+                <van-icon name="arrow" color="#999" size="16"/>
             </view>
         </button>
         <van-dialog
@@ -49,9 +102,9 @@
             showConfirmButton="false"
         >
             <view class="qrcode-container">
-                <image 
-                    class="qrcode-image" 
-                    src="{{qrcodeImage}}?v={{timestamp}}" 
+                <image
+                    class="qrcode-image"
+                    src="{{qrcodeImage}}?v={{timestamp}}"
                     mode="scaleToFill"
                     show-menu-by-longpress="{{true}}"
                     binderror="onImageError"
@@ -59,29 +112,29 @@
                 />
             </view>
         </van-dialog>
-
     </view>
-
 </view>
+
 <view class="flex-bar fixed-bottom my-4">
     <view class="flex-sub pl-3">
         <view wx:if="{{!isLogin}}" class="text-xl">
-            <van-button round color="linear-gradient(to right, #FFEB3B, #FFC107)" custom-style="color:#333;font-weight:bold;" bindtap="setLogin" block>
+            <van-button round color="linear-gradient(to right, #FF9800, #FFB74D)" custom-style="color:#fff;font-weight:bold;" bindtap="setLogin" block>
                 <view class="login-button-content">
-                    <van-icon name="user-circle-o" size="20px" />
-                    <text style="margin-left:8px;">点击登录</text>
+                    <van-icon name="user-circle-o" size="20px" color="#fff" />
+                    <text style="margin-left:8px;color:#fff;">点击登录</text>
                 </view>
             </van-button>
         </view>
         <view wx:if="{{isLogin}}" class="text-xl">
             <van-button round color="linear-gradient(to right, #FFF59D, #FFC107)" custom-style="color:#333;font-weight:bold;" block>
                 <view class="login-button-content">
-                    <van-icon name="passed" size="20px" color="#FF8F00" />
-                    <text style="margin-left:8px;">已登录</text>
+                    <van-icon name="passed" size="20px" color="#E65100" />
+                    <text style="margin-left:8px;color:#333;">已登录</text>
                 </view>
             </van-button>
         </view>
     </view>
 </view>
+
 <app-privacy></app-privacy>
 

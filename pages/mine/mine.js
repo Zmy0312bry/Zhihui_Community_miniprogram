@@ -11,7 +11,10 @@ Page({
         nickname: '',
         isLogin: false,
         phone: '',
-        userInfo: {},
+        userInfo: {
+            create_time: '',
+            community: '上地街道'
+        },
         isAuth: true,
         isIphone: false,
         show: false,
@@ -74,6 +77,13 @@ Page({
     goToAboutUs() {
         wx.navigateTo({
             url: '/pages/aboutUs/aboutUs'
+        });
+    },
+
+    // 跳转到反馈页面
+    goToFeedback() {
+        wx.navigateTo({
+            url: '/pages/feedback/feedback'
         });
     },
 
@@ -209,7 +219,11 @@ Page({
             isLogin: false,
             isAuth: true,
             avatarUrl: app.getMediaUrl('default.png'),
-            nickname: ''
+            nickname: '',
+            userInfo: {
+                create_time: '未登录',
+                community: '上地街道'
+            }
         });
     },
     
@@ -308,8 +322,22 @@ Page({
                     console.log("获取用户资料结果:", res.data);
                     if (res.data && res.data.code === 200 && res.data.data) {
                         const userData = res.data.data;
+                        
+                        // 格式化创建时间
+                        let formattedCreateTime = '未知';
+                        if (userData.create_time) {
+                            const createDate = new Date(userData.create_time);
+                            formattedCreateTime = createDate.getFullYear() + '年' + 
+                                                (createDate.getMonth() + 1) + '月' + 
+                                                createDate.getDate() + '日';
+                        }
+                        
                         that.setData({
-                            userInfo: userData,
+                            userInfo: {
+                                ...userData,
+                                create_time: formattedCreateTime,
+                                community: '上地街道'
+                            },
                             avatarUrl: userData.avatar_url || app.getMediaUrl('default.png'),
                             nickname: userData.nickname || '',
                         });

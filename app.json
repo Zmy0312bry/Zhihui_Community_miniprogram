@@ -8,6 +8,7 @@
     "pages/aboutUs/aboutUs",
     "pages/contactCommunity/contactCommunity",
     "pages/elderlyMeals/elderlyMeals",
+    "pages/feedback/feedback",
     "custom-tab-bar/index"
   ],
   "window": {

@@ -33,6 +33,13 @@
         </view>
     </view>
 
+    <!-- 装饰分割线 -->
+    <view class="decoration-divider">
+        <view class="divider-line"></view>
+        <view class="divider-icon">✨</view>
+        <view class="divider-line"></view>
+    </view>
+
     <!-- 底部logo -->
     <view class="bottom-logo">
         <image src="{{app.getMediaUrl('logo_bottom.png')}}" class="logo-image" mode="aspectFit"></image>

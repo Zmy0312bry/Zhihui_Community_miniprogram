@@ -2,6 +2,13 @@
     padding-bottom: 200rpx;
     background: transparent;
     min-height: 100vh;
+    position: relative;
+    z-index: 2;
+}
+
+/* 页面标题样式 */
+page {
+    background: #f5f7fa;
 }
 
 /* 移除顶部色块 */
@@ -9,56 +16,215 @@
     display: none;
 }
 
-.avatar-box {
-    width: 140rpx;
-    height: 140rpx;
+/* 用户信息卡片区域 */
+.user-profile-card {
     position: relative;
-    margin: 40rpx auto 0;
+    margin: 20rpx;
+    margin-top: 40rpx;
+    background: linear-gradient(135deg, #FFF8E1 0%, #FFE0B2 50%, #FFCC80 100%);
+    border-radius: 30rpx;
+    padding: 60rpx 40rpx 40rpx;
+    box-shadow: 0 8rpx 32rpx rgba(255, 152, 0, 0.15);
+    border: 2rpx solid rgba(255, 152, 0, 0.1);
+    overflow: hidden;
+}
+
+/* 卡片装饰元素 */
+.card-decoration {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 120rpx;
+    overflow: hidden;
+}
+
+.decoration-circle {
+    position: absolute;
+    border-radius: 50%;
+    background: linear-gradient(135deg, rgba(255, 152, 0, 0.1), rgba(255, 152, 0, 0.05));
+}
+
+.circle-1 {
+    width: 80rpx;
+    height: 80rpx;
+    top: 20rpx;
+    right: 60rpx;
+}
+
+.circle-2 {
+    width: 60rpx;
+    height: 60rpx;
+    top: 60rpx;
+    right: 120rpx;
+}
+
+.circle-3 {
+    width: 40rpx;
+    height: 40rpx;
+    top: 40rpx;
+    left: 80rpx;
+}
+
+/* 头像区域 */
+.avatar-section {
+    text-align: center;
+    margin-bottom: 30rpx;
+}
+
+.avatar-box {
+    width: 160rpx;
+    height: 160rpx;
+    position: relative;
+    margin: 0 auto;
     z-index: 10;
-    
+
     .avatar-wrapper {
         position: absolute;
         width: 100%;
         height: 100%;
         padding: 0;
         border-radius: 50%;
-        border: none;
-        
+        border: 4rpx solid #FF9800;
+        background: linear-gradient(135deg, #FFF3E0, #FFE0B2);
+        box-shadow: 0 8rpx 24rpx rgba(255, 152, 0, 0.3);
+        transition: all 0.3s ease;
+
         &::after {
             border: none;
         }
+
+        &:hover {
+            transform: scale(1.05);
+            box-shadow: 0 12rpx 32rpx rgba(255, 152, 0, 0.4);
+        }
     }
-    
+
     .avatar {
         border: none;
-        width: 140rpx;
-        height: 140rpx;
+        width: 152rpx;
+        height: 152rpx;
         overflow: hidden;
         border-radius: 50%;
         object-fit: cover;
     }
-}
 
-.avatar-nick {
-    padding: 40rpx 40rpx;
-    text-align: center;
-    
-    .weui-input {
-        color: #333;
-        font-size: 32rpx;
-        text-align: center;
-        background: transparent;
-        border: none;
-        outline: none;
+    .avatar-edit-icon {
+        position: absolute;
+        bottom: 8rpx;
+        right: 8rpx;
+        width: 32rpx;
+        height: 32rpx;
+        background: linear-gradient(135deg, #FF9800, #FFB74D);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 2rpx 8rpx rgba(255, 152, 0, 0.3);
     }
 }
 
+/* 用户信息区域 */
+.user-info-section {
+    text-align: center;
+}
+
+/* 昵称输入区域 */
+.nickname-row {
+    margin-bottom: 30rpx;
+}
+
+.nickname-input-wrapper {
+    position: relative;
+    display: inline-block;
+    min-width: 300rpx;
+
+    .weui-input {
+        color: #333;
+        font-size: 36rpx;
+        font-weight: bold;
+        text-align: center;
+        background: rgba(255, 255, 255, 0.8);
+        border: none;
+        outline: none;
+        border-radius: 20rpx;
+        padding: 20rpx 30rpx;
+        min-width: 300rpx;
+        box-shadow: 0 4rpx 12rpx rgba(255, 152, 0, 0.1);
+        transition: all 0.3s ease;
+
+        &::placeholder {
+            color: rgba(51, 51, 51, 0.6);
+            font-weight: normal;
+        }
+
+        &:focus {
+            background: rgba(255, 255, 255, 0.95);
+            box-shadow: 0 6rpx 20rpx rgba(255, 152, 0, 0.2);
+            transform: translateY(-2rpx);
+        }
+    }
+}
+
+/* 用户状态信息 */
+.user-status-row {
+    display: flex;
+    flex-direction: column;
+    gap: 15rpx;
+    margin-bottom: 30rpx;
+}
+
+.status-item {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8rpx;
+
+    .status-text {
+        color: #E65100;
+        font-size: 26rpx;
+        font-weight: 500;
+    }
+}
+
+/* 登录状态指示器 */
+.login-status-indicator {
+    display: flex;
+    justify-content: center;
+}
+
+.status-badge {
+    display: flex;
+    align-items: center;
+    gap: 8rpx;
+    background: linear-gradient(135deg, #4CAF50, #66BB6A);
+    color: #fff;
+    padding: 12rpx 24rpx;
+    border-radius: 20rpx;
+    font-size: 24rpx;
+    font-weight: bold;
+    box-shadow: 0 4rpx 12rpx rgba(76, 175, 80, 0.3);
+}
+
+.status-badge-offline {
+    background: linear-gradient(135deg, #FF9800, #FFB74D);
+    box-shadow: 0 4rpx 12rpx rgba(255, 152, 0, 0.3);
+}
+
+.status-badge-text {
+    color: #fff;
+    font-size: 24rpx;
+    font-weight: bold;
+}
+
 .white-box {
-    background-color: white;
+    background-color: rgba(255, 255, 255, 0.9);
     margin: 20rpx;
     border-radius: 20rpx;
     padding: 0 40rpx;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    box-shadow: 0 2px 8px rgba(255, 152, 0, 0.15);
+    border: 1rpx solid rgba(255, 152, 0, 0.1);
+    margin-top: 10rpx;
 }
 
 .row {
@@ -68,17 +234,29 @@
     font-size: 30rpx;
     font-weight: inherit;
     background-color: rgba(0, 0, 0, 0);
-    border-bottom: 1rpx solid #f1f1f1;
+    border-bottom: 1rpx solid rgba(255, 152, 0, 0.2);
     height: 100rpx;
-}
+    transition: all 0.3s ease;
+    border-radius: 12rpx;
+    margin: 8rpx 0;
 
-.row::after {
+    &:hover {
+        background-color: rgba(255, 152, 0, 0.08);
+        transform: translateX(4rpx);
+        box-shadow: 0 4rpx 12rpx rgba(255, 152, 0, 0.1);
+    }
+
+    &:active {
+        transform: translateX(2rpx);
+        transition: transform 0.1s ease;
+    }
+}.row::after {
     border: none;
 }
 
 .text {
     margin-left: 55rpx;
-    color: #636262;
+    color: #333;
     font-weight: bold;
 }
 
@@ -87,13 +265,13 @@
     text-align: left;
     display: flex;
     align-items: center;
-    color: rgb(59, 59, 59);
+    color: #333;
 }
 
 .right {
     width: 50%;
     text-align: right;
-    color: rgb(148, 147, 147);
+    color: #666;
 }
 
 .flex-bar {
@@ -123,9 +301,17 @@
 /* van-dialog 样式覆盖 */
 #van-dialog {
     z-index: 999 !important;
-}
 
-/* 二维码弹窗样式 */
+    .van-dialog__header {
+        color: #333 !important;
+        font-weight: bold;
+        font-size: 32rpx;
+    }
+
+    .van-dialog__content {
+        border-radius: 20rpx;
+    }
+}/* 二维码弹窗样式 */
 .qrcode-container {
     display: flex;
     justify-content: center;
@@ -133,21 +319,22 @@
     padding: 40rpx 20rpx;
     width: 100%;
     min-height: 400rpx;
-    background-color: #fff;
+    background: linear-gradient(135deg, #FFF8E1 0%, #FFE0B2 100%);
     position: relative;
     z-index: 1000;
+    border-radius: 20rpx;
 }
 
 .qrcode-image {
     width: 250px;
     height: 250px;
-    border-radius: 10rpx;
-    box-shadow: 0 4rpx 12rpx rgba(0, 0, 0, 0.1);
+    border-radius: 20rpx;
+    box-shadow: 0 8rpx 24rpx rgba(255, 152, 0, 0.2);
     background-color: #fff;
     position: relative;
     z-index: 1001;
     display: block;
-    border: 2px solid #e0e0e0;
+    border: 3rpx solid #FFCC80;
 }
 
 .login-button-content {
@@ -156,4 +343,49 @@
     justify-content: center;
     padding: 6px 0;
     font-size: 16px;
+    font-weight: bold;
+}
+
+/* 页面整体美化 */
+.ui-container {
+    position: relative;
+}
+
+.ui-container::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background:
+        radial-gradient(circle at 20% 80%, rgba(255, 152, 0, 0.03) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(255, 152, 0, 0.03) 0%, transparent 50%),
+        radial-gradient(circle at 40% 40%, rgba(255, 152, 0, 0.02) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: 1;
+}
+
+/* 增强卡片间的视觉层次 */
+.white-box {
+    position: relative;
+    z-index: 2;
+}
+
+/* 按钮组美化 */
+.row:last-child {
+    border-bottom: none;
+}
+
+/* 响应式调整 */
+@media screen and (max-width: 750rpx) {
+    .user-profile-card {
+        margin: 15rpx;
+        padding: 50rpx 30rpx 30rpx;
+    }
+
+    .nickname-input-wrapper .weui-input {
+        min-width: 250rpx;
+        font-size: 32rpx;
+    }
 }
