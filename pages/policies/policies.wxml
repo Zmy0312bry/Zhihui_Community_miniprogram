@@ -98,7 +98,7 @@
             </view>
 
             <view class="viewer-content">
-                <web-view src="{{viewerUrl}}" class="pdf-webview"></web-view>
+                <web-view src="{{pdfUrl}}" class="pdf-webview"></web-view>
             </view>
         </view>
     </view>
