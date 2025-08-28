@@ -1,7 +1,20 @@
 <view doc navBg="bg-gradient-green" title="{{typePage}}" ui="text-white">
     <!-- 点击外部区域的遮罩层 -->
     <view wx:if="{{isInputExpanded}}" class="input-mask" bindtap="onClickOutside"></view>
-    
+
+    <!-- 自定义加载动画 -->
+    <view wx:if="{{ttsLoading}}" class="tts-loading-overlay">
+        <view class="tts-loading-container">
+            <view class="tts-loading-spinner">
+                <view class="tts-loading-dot" wx:for="{{[1,2,3]}}" wx:key="*this"></view>
+            </view>
+            <view class="tts-loading-text">{{ttsLoadingText}}</view>
+            <view class="tts-loading-progress">
+                <view class="tts-progress-bar" style="width: {{ttsProgress}}%"></view>
+            </view>
+        </view>
+    </view>
+
     <!--内容区域-->
     <view class="bottom-height content-view">
         <scroll-view
@@ -23,6 +36,10 @@
                     </view>
                     <view class="begin-title">{{beginTitle}}</view>
                     <view class="begin-tips">{{beginTips}}</view>
+                    <view class="tts-feature-hint">
+                        <van-icon name="volume-o" size="16" color="#FF9800"/>
+                        <text>💡 点击AI回复内容即可播放语音</text>
+                    </view>
                     <view class="suggestion-list">
                         <view wx:for="{{beginList}}" wx:for-item="item" wx:key="id">
                             <view bindtap="beginChatSend" data-title="{{item.tips}}" class="begin-item">
@@ -47,11 +64,16 @@
                                     <view class="item-img">
                                         <image src="{{mediaUrls.icowwn}}" mode="aspectFit" class="item-photo ai-avatar"/>
                                     </view>
-                                    <view class="item-content ai-content">
+                                    <view class="item-content ai-content" bindtap="playTextToSpeech" data-content="{{item.content}}">
                                         <wemark md="{{item.content}}" highlight type="wemark"></wemark>
                                         <view class="copy-button" data-content="{{item.content}}"
                                               bindtap="copyChatContent">
                                             <image src="{{mediaUrls.copy}}" mode="aspectFit"/>
+                                        </view>
+                                        <!-- 语音播放提示 -->
+                                        <view class="tts-hint">
+                                            <van-icon name="volume-o" size="12" color="#FF9800"/>
+                                            <text>点击播放语音</text>
                                         </view>
                                     </view>
                                 </view>
@@ -75,7 +97,7 @@
                             <view class="item-img">
                                 <image src="{{mediaUrls.icowwn}}" mode="aspectFit" class="item-photo ai-avatar"/>
                             </view>
-                            <view class="item-content ai-content">
+                            <view class="item-content ai-content" wx:if="{{answerDesc}}" bindtap="playTextToSpeech" data-content="{{answerDesc}}">
                                 <view class="typing-indicator" wx:if="{{!answerDesc}}">
                                     <view class="typing-dot"></view>
                                     <view class="typing-dot"></view>
@@ -84,6 +106,11 @@
                                 <wemark md="{{answerDesc}}" highlight type="wemark"></wemark>
                                 <view class="copy-button" wx:if="{{answerDesc}}" data-content="{{answerDesc}}" bindtap="copyChatContent">
                                     <image src="{{mediaUrls.copy}}" mode="aspectFit"/>
+                                </view>
+                                <!-- 语音播放提示 -->
+                                <view class="tts-hint" wx:if="{{answerDesc}}">
+                                    <van-icon name="volume-o" size="12" color="#FF9800"/>
+                                    <text>点击播放语音</text>
                                 </view>
                             </view>
                         </view>

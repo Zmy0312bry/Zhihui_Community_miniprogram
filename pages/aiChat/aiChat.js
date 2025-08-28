@@ -14,6 +14,9 @@ const {
   adjustTextareaHeight, 
   copyToClipboard
 } = require('../../utils/chatUtils.js');
+const {
+  textToSpeechWithStreaming
+} = require('../../utils/ttsUtils.js');
 
 Page({
 
@@ -53,7 +56,11 @@ Page({
         voiceText: '', // 语音识别的文字
         recorderManager: null, // 录音管理器
         // DashScope AI相关数据
-        dashScopeRequestId: null // DashScope API请求ID
+        dashScopeRequestId: null, // DashScope API请求ID
+        // 文字转语音相关
+        ttsLoading: false, // 是否正在进行文字转语音
+        ttsLoadingText: '正在准备语音...', // 加载提示文字
+        ttsProgress: 0, // 加载进度百分比
     },
 
     /**
@@ -883,6 +890,80 @@ Page({
      */
     onReachBottom() {
 
+    },
+
+    /**
+     * 文字转语音播放（支持长文本分片处理）
+     */
+    playTextToSpeech(e) {
+        const dataset = e.currentTarget.dataset;
+        const content = dataset.content;
+
+        if (!content || content.trim() === '') {
+            wx.showToast({
+                title: '没有可播放的内容',
+                icon: 'none'
+            });
+            return;
+        }
+
+        // 显示自定义加载动画
+        this.setData({
+            ttsLoading: true,
+            ttsLoadingText: '正在准备语音...',
+            ttsProgress: 0
+        });
+
+        // 使用流式处理的长文本转语音功能（边处理边播放）
+        textToSpeechWithStreaming(content, {
+            lang: 'zh_CN',
+            chunkSize: 100, // 每段150字
+            onStart: (totalChunks) => {
+                this.setData({
+                    ttsLoadingText: '正在合成语音...',
+                    ttsProgress: 10
+                });
+            },
+            onProgress: (progress) => {
+                const progressPercent = Math.round((progress.current / progress.total) * 80) + 10;
+                this.setData({
+                    ttsLoadingText: '正在处理中...',
+                    ttsProgress: progressPercent
+                });
+            },
+            onComplete: (audioFiles) => {
+                this.setData({
+                    ttsLoading: false,
+                    ttsLoadingText: '播放完成',
+                    ttsProgress: 100
+                });
+                // 短暂延迟后隐藏加载动画
+                setTimeout(() => {
+                    this.setData({
+                        ttsLoading: false
+                    });
+                }, 1500);
+            },
+            onError: (error) => {
+                this.setData({
+                    ttsLoading: false
+                });
+                console.error('文字转语音失败:', error);
+                wx.showToast({
+                    title: '语音服务不可用',
+                    icon: 'none'
+                });
+            }
+        }).catch((error) => {
+            this.setData({
+                ttsLoading: false
+            });
+            console.error('文字转语音过程出错:', error);
+            wx.showToast({
+                title: '播放失败，请重试',
+                icon: 'none'
+            });
+        });
     },
 
     /**
