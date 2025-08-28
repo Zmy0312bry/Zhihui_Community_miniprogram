@@ -240,7 +240,7 @@ function playAudioSequence(audioFiles, options = {}) {
 function textToSpeechWithStreaming(text, options = {}) {
   const {
     lang = 'zh_CN',
-    chunkSize = 100,
+    chunkSize = 50,
     onProgress,
     onStart,
     onComplete,
@@ -390,10 +390,297 @@ function textToSpeechWithStreaming(text, options = {}) {
   });
 }
 
+/**
+ * 流式文字转语音（支持播放控制，第一段完成后隐藏加载界面）
+ * @param {string} text - 要转换的文本
+ * @param {Object} options - 配置选项
+ * @param {string} options.lang - 语言设置，默认'zh_CN'
+ * @param {number} options.chunkSize - 分片大小，默认150
+ * @param {Function} options.onProgress - 处理进度回调
+ * @param {Function} options.onStart - 开始回调
+ * @param {Function} options.onFirstChunkReady - 第一段准备完成回调
+ * @param {Function} options.onComplete - 完成回调
+ * @param {Function} options.onError - 错误回调
+ * @returns {Object} 控制接口 {pause, resume, stop, getStatus}
+ */
+function textToSpeechWithStreamingControl(text, options = {}) {
+  const {
+    lang = 'zh_CN',
+    chunkSize = 150,
+    onProgress,
+    onStart,
+    onFirstChunkReady,
+    onComplete,
+    onError
+  } = options;
+
+  // 1. 分片处理
+  const textChunks = splitTextIntoChunks(text, chunkSize);
+
+  if (textChunks.length === 0) {
+    const error = new Error('文本为空或无效');
+    if (onError) onError(error);
+    // 返回空的控制对象，避免返回null
+    return {
+      pause: () => {},
+      resume: () => {},
+      stop: () => {},
+      getStatus: () => ({ isPlaying: false, isPaused: false, currentIndex: 0, total: 0 })
+    };
+  }
+
+  if (onStart) {
+    onStart(textChunks.length);
+  }
+
+  const audioFiles = [];
+  let processingIndex = 0;
+  let playingIndex = 0;
+  let isPlaying = false;
+  let isPaused = false;
+  let currentAudioContext = null;
+  let hasError = false;
+
+  // 播放下一段音频
+  function playNextAudio() {
+    if (hasError || isPaused || playingIndex >= audioFiles.length) {
+      return;
+    }
+
+    // 如果没有音频文件可播放，等待
+    if (playingIndex >= audioFiles.length) {
+      isPlaying = false;
+      return;
+    }
+
+    isPlaying = true;
+    const audioFile = audioFiles[playingIndex];
+
+    // 销毁之前的音频上下文
+    if (currentAudioContext) {
+      currentAudioContext.destroy();
+    }
+
+    currentAudioContext = wx.createInnerAudioContext();
+    currentAudioContext.src = audioFile.filename;
+
+    console.log(`开始播放第${playingIndex + 1}段:`, audioFile.text);
+
+    currentAudioContext.play();
+
+    currentAudioContext.onEnded(() => {
+      playingIndex++;
+      // 检查是否还有更多音频需要播放
+      if (playingIndex < audioFiles.length) {
+        playNextAudio();
+      } else if (processingIndex >= textChunks.length) {
+        // 所有处理和播放都完成
+        isPlaying = false;
+        if (onComplete) {
+          onComplete(audioFiles);
+        }
+      } else {
+        // 等待更多音频文件
+        isPlaying = false;
+      }
+    });
+
+    currentAudioContext.onError((error) => {
+      console.error(`第${playingIndex + 1}段播放失败:`, error);
+      hasError = true;
+      if (onError) {
+        onError(error, audioFile, playingIndex);
+      }
+    });
+  }
+
+  // 处理下一段文本
+  function processNextChunk() {
+    if (hasError || processingIndex >= textChunks.length) {
+      return;
+    }
+
+    const chunk = textChunks[processingIndex];
+
+    // 显示处理进度
+    if (onProgress) {
+      onProgress({
+        current: processingIndex + 1,
+        total: textChunks.length,
+        text: chunk
+      });
+    }
+
+    // 调用文字转语音接口
+    const plugin = requirePlugin('WechatSI');
+    plugin.textToSpeech({
+      lang: lang,
+      tts: true,
+      content: chunk,
+      success: (res) => {
+        console.log(`语音合成成功 (${processingIndex + 1}/${textChunks.length}):`, res.filename);
+
+        const audioFile = {
+          filename: res.filename,
+          text: chunk,
+          index: processingIndex
+        };
+
+        audioFiles.push(audioFile);
+
+        // 如果这是第一段，通知第一段准备完成
+        if (processingIndex === 0 && onFirstChunkReady) {
+          onFirstChunkReady(audioFile);
+        }
+
+        // 如果这是第一段，或者当前没有在播放，开始播放
+        if (processingIndex === 0 || !isPlaying) {
+          playNextAudio();
+        }
+
+        processingIndex++;
+
+        // 继续处理下一段（如果有）
+        if (processingIndex < textChunks.length) {
+          // 短暂延迟后处理下一段，给第一段播放留出时间
+          setTimeout(processNextChunk, 50);
+        } else {
+          // 所有段落都已开始处理
+          console.log('所有段落处理完成');
+        }
+      },
+      fail: (error) => {
+        console.error(`语音合成失败 (${processingIndex + 1}/${textChunks.length}):`, error);
+        hasError = true;
+        if (onError) {
+          onError(error, processingIndex, chunk);
+        }
+      }
+    });
+  }
+
+  // 开始处理第一段
+  processNextChunk();
+
+  // 立即返回控制接口（异步操作会在后台继续）
+  return {
+    pause: () => {
+      if (currentAudioContext && isPlaying && !isPaused) {
+        currentAudioContext.pause();
+        isPaused = true;
+        isPlaying = false;
+      }
+    },
+    resume: () => {
+      if (currentAudioContext && isPaused) {
+        currentAudioContext.play();
+        isPaused = false;
+        isPlaying = true;
+      } else if (!isPlaying && !isPaused && playingIndex < audioFiles.length) {
+        playNextAudio();
+      }
+    },
+    stop: () => {
+      if (currentAudioContext) {
+        currentAudioContext.stop();
+        currentAudioContext.destroy();
+        currentAudioContext = null;
+      }
+      isPlaying = false;
+      isPaused = false;
+      playingIndex = audioFiles.length; // 停止播放
+    },
+    getStatus: () => ({
+      isPlaying,
+      isPaused,
+      currentIndex: playingIndex,
+      total: audioFiles.length
+    })
+  };
+}
+
+/**
+ * 完整的文字转语音流程（分片 + 批量处理 + 依次播放）
+ * @param {string} text - 要转换的文本
+ * @param {Object} options - 配置选项
+ * @param {string} options.lang - 语言设置，默认'zh_CN'
+ * @param {number} options.chunkSize - 分片大小，默认150
+ * @param {Function} options.onProgress - 处理进度回调
+ * @param {Function} options.onStart - 开始回调
+ * @param {Function} options.onComplete - 完成回调
+ * @param {Function} options.onError - 错误回调
+ */
+function textToSpeechWithChunking(text, options = {}) {
+  const {
+    lang = 'zh_CN',
+    chunkSize = 50,
+    onProgress,
+    onStart,
+    onComplete,
+    onError
+  } = options;
+
+  return new Promise((resolve, reject) => {
+    // 1. 分片处理
+    const textChunks = splitTextIntoChunks(text, chunkSize);
+
+    if (textChunks.length === 0) {
+      const error = new Error('文本为空或无效');
+      if (onError) onError(error);
+      reject(error);
+      return;
+    }
+
+    if (onStart) {
+      onStart(textChunks.length);
+    }
+
+    // 2. 批量调用文字转语音
+    batchTextToSpeech(textChunks, {
+      lang,
+      onProgress: (progress) => {
+        if (onProgress) {
+          onProgress(progress);
+        }
+      },
+      onSuccess: (audioFiles) => {
+        // 3. 依次播放音频
+        playAudioSequence(audioFiles, {
+          onPlayStart: (audioFile, index) => {
+            console.log(`开始播放第${index + 1}段:`, audioFile.text);
+          },
+          onPlayEnd: () => {
+            console.log('所有音频播放完成');
+            if (onComplete) {
+              onComplete(audioFiles);
+            }
+            resolve(audioFiles);
+          },
+          onError: (error, audioFile, index) => {
+            console.error(`第${index + 1}段播放失败:`, error);
+            if (onError) {
+              onError(error, audioFile, index);
+            }
+            reject(error);
+          }
+        });
+      },
+      onError: (error) => {
+        if (onError) {
+          onError(error);
+        }
+        reject(error);
+      }
+    });
+  });
+}
+
 module.exports = {
   splitTextIntoChunks,
   batchTextToSpeech,
   mergeAudioFiles,
   playAudioSequence,
-  textToSpeechWithStreaming
+  textToSpeechWithChunking,
+  textToSpeechWithStreaming,
+  textToSpeechWithStreamingControl
 };

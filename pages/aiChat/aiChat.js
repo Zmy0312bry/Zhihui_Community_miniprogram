@@ -15,7 +15,8 @@ const {
   copyToClipboard
 } = require('../../utils/chatUtils.js');
 const {
-  textToSpeechWithStreaming
+  textToSpeechWithStreaming,
+  textToSpeechWithStreamingControl
 } = require('../../utils/ttsUtils.js');
 
 Page({
@@ -61,6 +62,12 @@ Page({
         ttsLoading: false, // 是否正在进行文字转语音
         ttsLoadingText: '正在准备语音...', // 加载提示文字
         ttsProgress: 0, // 加载进度百分比
+        // 语音播放状态
+        currentPlayingContent: '', // 当前正在播放的内容
+        currentAudioContext: null, // 当前音频上下文
+        audioFiles: [], // 音频文件队列
+        currentPlayingIndex: -1, // 当前播放的音频索引
+        currentTTSControl: null, // 当前TTS控制接口
     },
 
     /**
@@ -422,7 +429,11 @@ Page({
         const aiReplyItem = {
             role: 'assistant',
             content: fullContent,
-            time: this.formatDate(new Date())
+            time: this.formatDate(new Date()),
+            ttsHintText: '点击播放语音', // 语音提示文本
+            ttsIconName: 'volume-o', // 语音图标名称
+            ttsHintClass: '', // 语音提示样式类
+            isPlayingTTS: false // 是否正在播放该消息的语音
         };
         const updatedChatList = this.data.chatList.concat([aiReplyItem]);
         this.setData({
@@ -893,11 +904,12 @@ Page({
     },
 
     /**
-     * 文字转语音播放（支持长文本分片处理）
+     * 文字转语音播放（支持长文本分片处理和播放控制）
      */
     playTextToSpeech(e) {
         const dataset = e.currentTarget.dataset;
         const content = dataset.content;
+        const index = dataset.index;
 
         if (!content || content.trim() === '') {
             wx.showToast({
@@ -907,17 +919,69 @@ Page({
             return;
         }
 
+        // 获取当前消息
+        const currentMessage = this.data.chatList[index];
+        if (!currentMessage) return;
+
+        // 如果正在播放，则暂停
+        if (currentMessage.isPlayingTTS && this.data.currentPlayingContent === content) {
+            this.pauseTTS(index);
+            return;
+        }
+
+        // 如果暂停了，恢复播放
+        if (this.currentTTSControl && this.currentTTSControl.getStatus().isPaused && this.data.currentPlayingContent === content) {
+            this.resumeTTS(index);
+            return;
+        }
+
+        // 开始新的播放
+        this.startNewTTSPlayback(content, index);
+    },
+
+    /**
+     * 开始新的TTS播放
+     */
+    startNewTTSPlayback(content, messageIndex) {
+        // 停止之前的播放
+        if (this.currentTTSControl) {
+            this.currentTTSControl.stop();
+            this.currentTTSControl = null;
+        }
+
+        // 重置之前播放的消息状态
+        const chatList = this.data.chatList;
+        chatList.forEach((item, index) => {
+            if (item.isPlayingTTS) {
+                item.isPlayingTTS = false;
+                item.ttsHintText = '点击播放语音';
+                item.ttsIconName = 'volume-o';
+                item.ttsHintClass = '';
+            }
+        });
+
+        // 设置当前播放消息的状态
+        if (chatList[messageIndex]) {
+            chatList[messageIndex].isPlayingTTS = true;
+            chatList[messageIndex].ttsHintText = '播放中';
+            chatList[messageIndex].ttsIconName = 'volume-o';
+            chatList[messageIndex].ttsHintClass = 'playing';
+        }
+
         // 显示自定义加载动画
         this.setData({
             ttsLoading: true,
             ttsLoadingText: '正在准备语音...',
-            ttsProgress: 0
+            ttsProgress: 0,
+            currentPlayingContent: content,
+            currentPlayingIndex: messageIndex, // 保存当前播放消息的索引
+            chatList: chatList
         });
 
-        // 使用流式处理的长文本转语音功能（边处理边播放）
-        textToSpeechWithStreaming(content, {
+        // 使用流式控制的长文本转语音功能
+        const ttsControl = textToSpeechWithStreamingControl(content, {
             lang: 'zh_CN',
-            chunkSize: 100, // 每段150字
+            chunkSize: 50, // 每段150字
             onStart: (totalChunks) => {
                 this.setData({
                     ttsLoadingText: '正在合成语音...',
@@ -931,39 +995,146 @@ Page({
                     ttsProgress: progressPercent
                 });
             },
-            onComplete: (audioFiles) => {
+            onFirstChunkReady: (audioFile) => {
+                // 第一段准备完成后隐藏加载界面并更新对应消息状态
+                const chatList = this.data.chatList;
+                const currentIndex = this.data.currentPlayingIndex;
+                
+                if (chatList[currentIndex]) {
+                    chatList[currentIndex].isPlayingTTS = true;
+                    chatList[currentIndex].ttsHintText = '播放中';
+                    chatList[currentIndex].ttsIconName = 'volume-o';
+                    chatList[currentIndex].ttsHintClass = 'playing';
+                }
+                
                 this.setData({
                     ttsLoading: false,
-                    ttsLoadingText: '播放完成',
-                    ttsProgress: 100
+                    chatList: chatList
                 });
-                // 短暂延迟后隐藏加载动画
-                setTimeout(() => {
-                    this.setData({
-                        ttsLoading: false
-                    });
-                }, 1500);
+                // 保存播放控制接口
+                this.currentTTSControl = ttsControl;
+            },
+            onComplete: (audioFiles) => {
+                // 更新对应消息的状态
+                const chatList = this.data.chatList;
+                const currentIndex = this.data.currentPlayingIndex;
+                
+                if (chatList[currentIndex]) {
+                    chatList[currentIndex].isPlayingTTS = false;
+                    chatList[currentIndex].ttsHintText = '点击播放语音';
+                    chatList[currentIndex].ttsIconName = 'volume-o';
+                    chatList[currentIndex].ttsHintClass = '';
+                }
+                
+                this.setData({
+                    chatList: chatList,
+                    currentPlayingContent: ''
+                });
+                this.currentTTSControl = null;
             },
             onError: (error) => {
+                // 更新对应消息的状态
+                const chatList = this.data.chatList;
+                const currentIndex = this.data.currentPlayingIndex;
+                
+                if (chatList[currentIndex]) {
+                    chatList[currentIndex].isPlayingTTS = false;
+                    chatList[currentIndex].ttsHintText = '点击播放语音';
+                    chatList[currentIndex].ttsIconName = 'volume-o';
+                    chatList[currentIndex].ttsHintClass = '';
+                }
+                
                 this.setData({
-                    ttsLoading: false
+                    ttsLoading: false,
+                    chatList: chatList,
+                    currentPlayingContent: ''
                 });
                 console.error('文字转语音失败:', error);
                 wx.showToast({
                     title: '语音服务不可用',
                     icon: 'none'
                 });
+                this.currentTTSControl = null;
             }
-        }).catch((error) => {
+        });
+
+        // 保存播放控制接口
+        this.currentTTSControl = ttsControl;
+
+        if (!ttsControl) {
             this.setData({
                 ttsLoading: false
             });
-            console.error('文字转语音过程出错:', error);
-            wx.showToast({
-                title: '播放失败，请重试',
-                icon: 'none'
-            });
-        });
+        }
+    },
+
+    /**
+     * 暂停语音播放
+     */
+    pauseTTS(messageIndex) {
+        if (this.currentTTSControl) {
+            this.currentTTSControl.pause();
+            
+            // 更新对应消息的状态
+            const chatList = this.data.chatList;
+            if (chatList[messageIndex]) {
+                chatList[messageIndex].isPlayingTTS = false;
+                chatList[messageIndex].ttsHintText = '暂停中';
+                chatList[messageIndex].ttsIconName = 'pause';
+                chatList[messageIndex].ttsHintClass = 'paused';
+                
+                this.setData({
+                    chatList: chatList
+                });
+            }
+        }
+    },
+
+    /**
+     * 继续语音播放
+     */
+    resumeTTS(messageIndex) {
+        if (this.currentTTSControl) {
+            this.currentTTSControl.resume();
+            
+            // 更新对应消息的状态
+            const chatList = this.data.chatList;
+            if (chatList[messageIndex]) {
+                chatList[messageIndex].isPlayingTTS = true;
+                chatList[messageIndex].ttsHintText = '播放中';
+                chatList[messageIndex].ttsIconName = 'volume-o';
+                chatList[messageIndex].ttsHintClass = 'playing';
+                
+                this.setData({
+                    chatList: chatList
+                });
+            }
+        }
+    },
+
+    /**
+     * 停止语音播放
+     */
+    stopTTS(messageIndex) {
+        if (this.currentTTSControl) {
+            this.currentTTSControl.stop();
+            
+            // 更新对应消息的状态
+            const chatList = this.data.chatList;
+            if (chatList[messageIndex]) {
+                chatList[messageIndex].isPlayingTTS = false;
+                chatList[messageIndex].ttsHintText = '点击播放语音';
+                chatList[messageIndex].ttsIconName = 'volume-o';
+                chatList[messageIndex].ttsHintClass = '';
+                
+                this.setData({
+                    chatList: chatList,
+                    currentPlayingContent: ''
+                });
+            }
+            
+            this.currentTTSControl = null;
+        }
     },
 
     /**

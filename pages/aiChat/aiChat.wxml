@@ -64,16 +64,16 @@
                                     <view class="item-img">
                                         <image src="{{mediaUrls.icowwn}}" mode="aspectFit" class="item-photo ai-avatar"/>
                                     </view>
-                                    <view class="item-content ai-content" bindtap="playTextToSpeech" data-content="{{item.content}}">
+                                    <view class="item-content ai-content" bindtap="playTextToSpeech" data-content="{{item.content}}" data-index="{{index}}">
                                         <wemark md="{{item.content}}" highlight type="wemark"></wemark>
                                         <view class="copy-button" data-content="{{item.content}}"
                                               bindtap="copyChatContent">
                                             <image src="{{mediaUrls.copy}}" mode="aspectFit"/>
                                         </view>
                                         <!-- 语音播放提示 -->
-                                        <view class="tts-hint">
-                                            <van-icon name="volume-o" size="12" color="#FF9800"/>
-                                            <text>点击播放语音</text>
+                                        <view class="tts-hint {{item.ttsHintClass}}" bindtap="playTextToSpeech" data-content="{{item.content}}" data-index="{{index}}">
+                                            <van-icon name="{{item.ttsIconName}}" size="14"/>
+                                            <text>{{item.ttsHintText}}</text>
                                         </view>
                                     </view>
                                 </view>
@@ -108,8 +108,8 @@
                                     <image src="{{mediaUrls.copy}}" mode="aspectFit"/>
                                 </view>
                                 <!-- 语音播放提示 -->
-                                <view class="tts-hint" wx:if="{{answerDesc}}">
-                                    <van-icon name="volume-o" size="12" color="#FF9800"/>
+                                <view class="tts-hint" wx:if="{{answerDesc}}" bindtap="playTextToSpeech" data-content="{{answerDesc}}">
+                                    <van-icon name="volume-o" size="14"/>
                                     <text>点击播放语音</text>
                                 </view>
                             </view>

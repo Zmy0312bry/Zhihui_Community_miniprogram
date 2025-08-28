@@ -61,29 +61,6 @@ scroll-view {
   border-radius: 25rpx 25rpx 0 0;
 }
 
-/* 语音播放提示样式 */
-.tts-hint {
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-  margin-top: 16rpx;
-  padding: 12rpx 20rpx;
-  background: rgba(255, 152, 0, 0.1);
-  border-radius: 20rpx;
-  font-size: 26rpx;
-  color: #FF9800;
-  border: 2rpx solid rgba(255, 152, 0, 0.2);
-  width: fit-content;
-  animation: fadeIn 0.5s ease;
-  box-shadow: 0 2rpx 8rpx rgba(255, 152, 0, 0.15);
-}
-
-.tts-hint text {
-  margin-left: 10rpx;
-  font-size: 26rpx;
-  font-weight: 500;
-}
-
 /* 输入方式切换 */
 .input-mode-switch {
   display: flex;
@@ -784,19 +761,49 @@ scroll-view {
   align-items: center;
   justify-content: flex-start;
   margin-top: 12rpx;
-  padding: 6rpx 12rpx;
+  padding: 8rpx 16rpx;
   background: rgba(255, 152, 0, 0.1);
-  border-radius: 15rpx;
-  font-size: 22rpx;
+  border-radius: 20rpx;
+  font-size: 28rpx;
   color: #FF9800;
   border: 1rpx solid rgba(255, 152, 0, 0.2);
   width: fit-content;
   animation: fadeIn 0.5s ease;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.tts-hint.playing {
+  background: rgba(76, 175, 80, 0.1);
+  border-color: rgba(76, 175, 80, 0.3);
+  color: #4CAF50;
+}
+
+.tts-hint.playing van-icon,
+.tts-hint.playing .van-icon {
+  color: #4CAF50 !important;
+}
+
+.tts-hint.paused {
+  background: rgba(255, 193, 7, 0.1);
+  border-color: rgba(255, 193, 7, 0.3);
+  color: #FFC107;
+}
+
+.tts-hint.paused van-icon,
+.tts-hint.paused .van-icon {
+  color: #FFC107 !important;
+}
+
+.tts-hint:active {
+  transform: scale(0.95);
+  background: rgba(255, 152, 0, 0.15);
 }
 
 .tts-hint text {
-  margin-left: 6rpx;
-  font-size: 22rpx;
+  margin-left: 8rpx;
+  font-size: 28rpx;
+  font-weight: 600;
 }
 
 /* 欢迎页面语音功能提示 */
