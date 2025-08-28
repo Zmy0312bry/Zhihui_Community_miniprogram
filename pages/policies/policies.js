@@ -73,21 +73,33 @@ Page({
 
     console.log('查看PDF:', file, title, fileUrl);
 
+    // 使用embed版本的PDF查看器HTML文件
+    const baseUrl = 'https://shangdi.bjseeyoung.com/media/file/pdf-viewer.html';
+    const viewerUrl = `${baseUrl}?url=${encodeURIComponent(fileUrl)}&title=${encodeURIComponent(title)}`;
+
+    console.log('构建的查看器URL:', viewerUrl);
+
     // 显示PDF预览
     this.setData({
       showPdfViewer: true,
-      pdfUrl: fileUrl,
+      pdfUrl: viewerUrl,
       currentPdfTitle: title
     });
+
+    console.log('PDF预览已显示');
   },
 
   // 关闭PDF预览
   closePdfViewer: function () {
+    console.log('关闭PDF预览');
+
     this.setData({
       showPdfViewer: false,
       pdfUrl: '',
       currentPdfTitle: ''
     });
+
+    console.log('PDF预览已关闭');
   },
 
   // 阻止web-view区域的点击事件冒泡

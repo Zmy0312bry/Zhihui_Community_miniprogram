@@ -86,25 +86,19 @@
     </view>
 
     <!-- PDF预览区域 -->
-    <view class="pdf-viewer" wx:if="{{showPdfViewer}}" bindtap="closePdfViewer">
-        <view class="viewer-header">
-            <view class="viewer-title-section">
-                <text class="viewer-title">{{currentPdfTitle}}</text>
+    <view class="pdf-viewer-overlay" wx:if="{{showPdfViewer}}" bindtap="closePdfViewer">
+        <view class="pdf-viewer" bindtap="preventClose">
+            <view class="viewer-header">
+                <view class="viewer-title-section">
+                    <text class="viewer-title">{{currentPdfTitle}}</text>
+                </view>
+                <view class="close-btn" bindtap="closePdfViewer" catch:tap="">
+                    <van-icon name="cross" size="28rpx" color="#FF6B35"/>
+                </view>
             </view>
-            <view class="close-btn" bindtap="closePdfViewer" catch:tap="">
-                <van-icon name="cross" size="28rpx" color="#FF6B35"/>
-            </view>
-        </view>
 
-        <view class="viewer-content" bindtap="closePdfViewer" catch:tap="">
-            <web-view src="{{pdfUrl}}" class="pdf-webview" bindtap="preventClose"></web-view>
-        </view>
-
-        <!-- 底部操作栏 -->
-        <view class="viewer-footer" bindtap="closePdfViewer" catch:tap="">
-            <view class="footer-btn" bindtap="closePdfViewer" catch:tap="">
-                <van-icon name="arrow-left" size="24rpx" color="white"/>
-                <text class="footer-btn-text">返回上一页</text>
+            <view class="viewer-content">
+                <web-view src="{{viewerUrl}}" class="pdf-webview"></web-view>
             </view>
         </view>
     </view>

@@ -206,14 +206,27 @@
 }
 
 /* PDF预览区域 */
-.pdf-viewer {
+.pdf-viewer-overlay {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background: white;
+  background: rgba(0, 0, 0, 0.5);
   z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40rpx;
+}
+
+.pdf-viewer {
+  width: 100%;
+  height: 100%;
+  background: white;
+  border-radius: 20rpx;
+  overflow: hidden;
+  box-shadow: 0 10rpx 40rpx rgba(0, 0, 0, 0.3);
   display: flex;
   flex-direction: column;
 }
@@ -268,65 +281,6 @@
 .pdf-webview {
   width: 100%;
   height: 100%;
-}
-
-/* 底部操作栏 */
-.viewer-footer {
-  background: linear-gradient(135deg, #FF6B35, #FF8C42);
-  padding: 20rpx 25rpx;
-  box-shadow: 0 -4rpx 15rpx rgba(255, 107, 53, 0.3);
-  position: relative;
-  z-index: 1001;
-}
-
-.footer-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 20rpx 30rpx;
-  background: rgba(255, 255, 255, 0.2);
-  border-radius: 25rpx;
-  transition: all 0.3s ease;
-}
-
-.footer-btn:active {
-  background: rgba(255, 255, 255, 0.3);
-  transform: translateY(-2rpx);
-}
-
-.footer-btn .van-icon {
-  margin-right: 10rpx;
-}
-
-.footer-btn-text {
-  font-size: 28rpx;
-  font-weight: 600;
-  color: white;
-  text-shadow: 0 1rpx 4rpx rgba(0, 0, 0, 0.3);
-}
-
-/* 底部提示 */
-.footer-tip {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 30rpx 40rpx;
-  background: linear-gradient(135deg, rgba(255, 107, 53, 0.05) 0%, rgba(255, 140, 66, 0.05) 100%);
-  margin: 0 20rpx 20rpx 20rpx;
-  border-radius: 20rpx;
-  border: 1rpx solid rgba(255, 107, 53, 0.1);
-}
-
-.footer-tip .van-icon {
-  margin-right: 12rpx;
-  flex-shrink: 0;
-}
-
-.tip-text {
-  font-size: 26rpx;
-  color: #FF6B35;
-  text-align: center;
-  line-height: 1.4;
 }
 
 /* 响应式设计 */
