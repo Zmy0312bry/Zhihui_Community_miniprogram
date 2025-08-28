@@ -1,0 +1,15 @@
+<view class="container">
+    <view class="header">
+        <text class="title">健康指导</text>
+    </view>
+    <view class="content">
+        <view class="tips-section">
+            <text class="section-title">温馨提示</text>
+            <text class="tips-content">{{healthTips.warmTips}}</text>
+        </view>
+        <view class="advice-section">
+            <text class="section-title">健康建议</text>
+            <text class="advice-content">{{healthTips.healthAdvice}}</text>
+        </view>
+    </view>
+</view>

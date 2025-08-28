@@ -80,13 +80,6 @@ Page({
         });
     },
 
-    // 跳转到反馈页面
-    goToFeedback() {
-        wx.navigateTo({
-            url: '/pages/feedback/feedback'
-        });
-    },
-
     // 图片加载成功
     onImageLoad(e) {
         console.log('二维码图片加载成功:', e);

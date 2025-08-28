@@ -1,0 +1,32 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #FFF8F0 0%, #FFFFFF 100%);
+}
+
+.header {
+  padding: 40rpx;
+  text-align: center;
+  background: linear-gradient(45deg, #4CAF50, #81C784);
+  color: white;
+}
+
+.title {
+  font-size: 36rpx;
+  font-weight: bold;
+}
+
+.content {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40rpx;
+}
+
+.placeholder {
+  font-size: 32rpx;
+  color: #666;
+  text-align: center;
+}

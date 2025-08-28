@@ -4,15 +4,35 @@
 }
 
 .bg-green-gradient {
-    background: linear-gradient(45deg, #FF9800, #FFB74D);
+    background: linear-gradient(45deg, #4CAF50, #81C784);
 }
 
 .bg-orange-gradient {
-    background: linear-gradient(45deg, #f37b1d, #fbbd08);
+    background: linear-gradient(45deg, #FF9800, #FFB74D);
 }
 
 .bg-purple-gradient {
-    background: linear-gradient(45deg, #9c27b0, #e91e63);
+    background: linear-gradient(45deg, #9C27B0, #BA68C8);
+}
+
+.bg-red-gradient {
+    background: linear-gradient(45deg, #F44336, #EF5350);
+}
+
+.bg-teal-gradient {
+    background: linear-gradient(45deg, #009688, #4DB6AC);
+}
+
+.bg-pink-gradient {
+    background: linear-gradient(45deg, #E91E63, #F06292);
+}
+
+.bg-indigo-gradient {
+    background: linear-gradient(45deg, #3F51B5, #7986CB);
+}
+
+.bg-yellow-gradient {
+    background: linear-gradient(45deg, #FFC107, #FFD54F);
 }
 
 /* ColorUI 图标字体 */
@@ -158,13 +178,13 @@
     }
 }
 
-/* 四个功能入口样式 */
+/* 九个功能入口样式 */
 .function-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 30rpx;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 20rpx;
     padding: 0 15rpx;
-    margin-bottom: 40rpx;
+    margin-bottom: 10rpx;
     animation: fadeInUp 0.8s ease-out 0.8s both;
 }
 
@@ -173,11 +193,11 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    border-radius: 30rpx;
-    padding: 60rpx 20rpx;
+    border-radius: 20rpx;
+    padding: 40rpx 15rpx;
     box-shadow: 0 12rpx 35rpx rgba(255, 152, 0, 0.15);
     transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    min-height: 220rpx;
+    min-height: 160rpx;
     position: relative;
     overflow: hidden;
     background-size: 200% 200%;
@@ -269,118 +289,12 @@
     letter-spacing: 1rpx;
 }
 
-/* 健康指导弹窗样式 */
-.health-popup {
-    padding: 50rpx 40rpx;
-    background: linear-gradient(135deg, #FFFFFF 0%, #FFF8F0 100%);
-    border-radius: 25rpx;
-    position: relative;
-    overflow: hidden;
-}
-
-.health-popup::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 8rpx;
-    background: linear-gradient(90deg, #FF9800 0%, #FFB74D 50%, #FF9800 100%);
-    background-size: 200% 100%;
-    animation: gradient-shift 3s ease-in-out infinite;
-}
-
-.popup-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 35rpx;
-    padding-bottom: 25rpx;
-    border-bottom: 2rpx solid #FFE0B2;
-    position: relative;
-    z-index: 2;
-}
-
-.popup-title {
-    font-size: 38rpx;
-    color: #FF9800;
-    font-weight: bold;
-    display: flex;
-    align-items: center;
-}
-
-.popup-title::before {
-    content: '🏥';
-    margin-right: 15rpx;
-    font-size: 40rpx;
-}
-
-.close-icon {
-    font-size: 45rpx;
-    color: #FF9800;
-    transition: all 0.3s ease;
-    padding: 10rpx;
-    border-radius: 50%;
-    background: rgba(255, 152, 0, 0.1);
-}
-
-.close-icon:active {
-    transform: scale(0.9);
-    background: rgba(255, 152, 0, 0.2);
-}
-
-.popup-content {
-    max-height: 650rpx;
-    overflow-y: auto;
-    position: relative;
-    z-index: 2;
-}
-
-.health-section {
-    margin-bottom: 35rpx;
-    background: rgba(255, 152, 0, 0.05);
-    padding: 25rpx;
-    border-radius: 20rpx;
-    border-left: 6rpx solid #FF9800;
-    transition: all 0.3s ease;
-}
-
-.health-section:hover {
-    background: rgba(255, 152, 0, 0.08);
-    transform: translateX(5rpx);
-}
-
-.section-title {
-    display: block;
-    font-size: 34rpx;
-    color: #FF9800;
-    font-weight: bold;
-    margin-bottom: 18rpx;
-    display: flex;
-    align-items: center;
-}
-
-.section-title::before {
-    content: '✨';
-    margin-right: 10rpx;
-    font-size: 32rpx;
-}
-
-.section-content {
-    display: block;
-    font-size: 30rpx;
-    color: #555;
-    line-height: 1.7;
-    white-space: pre-line;
-    margin-left: 5rpx;
-}
-
 /* 装饰分割线样式 */
 .decoration-divider {
     display: flex;
     align-items: center;
     justify-content: center;
-    margin: 40rpx 15rpx 20rpx 15rpx;
+    margin: 0rpx 15rpx 20rpx 15rpx;
     opacity: 0.7;
     animation: fadeInUp 0.8s ease-out 1.2s both;
 }
@@ -404,28 +318,6 @@
     50% { transform: scale(1.2); opacity: 1; }
 }
 
-/* 底部logo样式 */
-.bottom-logo {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 40rpx 15rpx 20rpx 15rpx;
-    margin-top: 20rpx;
-    position: relative;
-    animation: fadeInUp 0.8s ease-out 1.4s both;
-}
-
-.bottom-logo::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 200rpx;
-    height: 2rpx;
-    background: linear-gradient(90deg, transparent 0%, #FF9800 50%, transparent 100%);
-    border-radius: 1rpx;
-}
 
 .logo-image {
     max-width: 400rpx;

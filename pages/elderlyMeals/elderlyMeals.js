@@ -1,14 +1,15 @@
 // pages/elderlyMeals/elderlyMeals.js
+const app = getApp();
 
 Page({
     data: {
         selectedCommunity: 0,
         communityOptions: [
-            { text: '智汇花园社区', value: 0 },
-            { text: '阳光家园社区', value: 1 },
-            { text: '和谐邻里社区', value: 2 },
-            { text: '温馨家园社区', value: 3 },
-            { text: '幸福生活社区', value: 4 }
+            { text: '上地西里社区', value: 0 },
+            { text: '东馨园社区', value: 1 },
+            { text: '上地八一社区', value: 2 },
+            { text: '博雅西园社区', value: 3 },
+            { text: '上地科技园社区', value: 4 }
         ],
         currentDate: '',
         mealTypes: [
@@ -21,79 +22,87 @@ Page({
         menusData: {
             0: { // 智汇花园社区
                 breakfast: [
-                    { id: 1, name: '小笼包', price: '8', image: '/static/img/lunbo.jpg' },
-                    { id: 2, name: '豆浆', price: '3', image: '/static/img/lunbo.jpg' },
-                    { id: 3, name: '咸菜', price: '2', image: '/static/img/lunbo.jpg' }
+                    { id: 1, name: '小笼包', price: '8', image: app.getMediaUrl('shipu5.webp') },
+                    { id: 2, name: '豆浆', price: '3', image: app.getMediaUrl('shipu1.webp') },
+                    { id: 3, name: '咸菜', price: '2', image: app.getMediaUrl('shipu3.webp') }
                 ],
                 lunch: [
-                    { id: 4, name: '红烧肉', price: '15', image: '/static/img/lunbo.jpg' },
-                    { id: 5, name: '青菜豆腐', price: '8', image: '/static/img/lunbo.jpg' },
-                    { id: 6, name: '米饭', price: '2', image: '/static/img/lunbo.jpg' }
+                    { id: 4, name: '红烧肉', price: '15', image: app.getMediaUrl('shipu8.webp') },
+                    { id: 5, name: '青菜豆腐', price: '8', image: app.getMediaUrl('shipu6.webp') },
+                    { id: 6, name: '米饭', price: '2', image: app.getMediaUrl('shipu4.webp') }
                 ],
                 dinner: [
-                    { id: 7, name: '蒸蛋羹', price: '6', image: '/static/img/lunbo.jpg' },
-                    { id: 8, name: '清炒时蔬', price: '10', image: '/static/img/lunbo.jpg' },
-                    { id: 9, name: '小米粥', price: '4', image: '/static/img/lunbo.jpg' }
+                    { id: 7, name: '蒸蛋羹', price: '6', image: app.getMediaUrl('shipu2.webp') },
+                    { id: 8, name: '清炒时蔬', price: '10', image: app.getMediaUrl('shipu7.webp') },
+                    { id: 9, name: '小米粥', price: '4', image: app.getMediaUrl('shipu9.webp') }
                 ]
             },
-            1: { // 阳光家园社区
+            1: { // 智汇花园社区
                 breakfast: [
-                    { id: 10, name: '煎饺', price: '10', image: '/static/img/lunbo.jpg' },
-                    { id: 11, name: '牛奶', price: '5', image: '/static/img/lunbo.jpg' },
-                    { id: 12, name: '咸鸭蛋', price: '3', image: '/static/img/lunbo.jpg' }
+                    { id: 1, name: '小笼包', price: '8', image: app.getMediaUrl('shipu5.webp') },
+                    { id: 2, name: '豆浆', price: '3', image: app.getMediaUrl('shipu1.webp') },
+                    { id: 3, name: '咸菜', price: '2', image: app.getMediaUrl('shipu3.webp') }
                 ],
                 lunch: [
-                    { id: 13, name: '糖醋里脊', price: '18', image: '/static/img/lunbo.jpg' },
-                    { id: 14, name: '冬瓜汤', price: '6', image: '/static/img/lunbo.jpg' },
-                    { id: 15, name: '米饭', price: '2', image: '/static/img/lunbo.jpg' }
+                    { id: 4, name: '红烧肉', price: '15', image: app.getMediaUrl('shipu8.webp') },
+                    { id: 5, name: '青菜豆腐', price: '8', image: app.getMediaUrl('shipu6.webp') },
+                    { id: 6, name: '米饭', price: '2', image: app.getMediaUrl('shipu4.webp') }
                 ],
                 dinner: [
-                    { id: 16, name: '蒸蛋', price: '8', image: '/static/img/lunbo.jpg' },
-                    { id: 17, name: '凉拌黄瓜', price: '5', image: '/static/img/lunbo.jpg' },
-                    { id: 18, name: '绿豆粥', price: '4', image: '/static/img/lunbo.jpg' }
+                    { id: 7, name: '蒸蛋羹', price: '6', image: app.getMediaUrl('shipu2.webp') },
+                    { id: 8, name: '清炒时蔬', price: '10', image: app.getMediaUrl('shipu7.webp') },
+                    { id: 9, name: '小米粥', price: '4', image: app.getMediaUrl('shipu9.webp') }
                 ]
             },
-            // 其他社区可以类似添加
-            2: { // 和谐邻里社区
+            2: { // 智汇花园社区
                 breakfast: [
-                    { id: 19, name: '包子', price: '6', image: '/static/img/lunbo.jpg' },
-                    { id: 20, name: '八宝粥', price: '4', image: '/static/img/lunbo.jpg' }
+                    { id: 1, name: '小笼包', price: '8', image: app.getMediaUrl('shipu5.webp') },
+                    { id: 2, name: '豆浆', price: '3', image: app.getMediaUrl('shipu1.webp') },
+                    { id: 3, name: '咸菜', price: '2', image: app.getMediaUrl('shipu3.webp') }
                 ],
                 lunch: [
-                    { id: 21, name: '宫保鸡丁', price: '16', image: '/static/img/lunbo.jpg' },
-                    { id: 22, name: '蛋花汤', price: '5', image: '/static/img/lunbo.jpg' }
+                    { id: 4, name: '红烧肉', price: '15', image: app.getMediaUrl('shipu8.webp') },
+                    { id: 5, name: '青菜豆腐', price: '8', image: app.getMediaUrl('shipu6.webp') },
+                    { id: 6, name: '米饭', price: '2', image: app.getMediaUrl('shipu4.webp') }
                 ],
                 dinner: [
-                    { id: 23, name: '清蒸鱼', price: '20', image: '/static/img/lunbo.jpg' },
-                    { id: 24, name: '银耳汤', price: '6', image: '/static/img/lunbo.jpg' }
+                    { id: 7, name: '蒸蛋羹', price: '6', image: app.getMediaUrl('shipu2.webp') },
+                    { id: 8, name: '清炒时蔬', price: '10', image: app.getMediaUrl('shipu7.webp') },
+                    { id: 9, name: '小米粥', price: '4', image: app.getMediaUrl('shipu9.webp') }
                 ]
             },
-            3: { // 温馨家园社区
+            3: { // 智汇花园社区
                 breakfast: [
-                    { id: 25, name: '油条', price: '3', image: '/static/img/lunbo.jpg' },
-                    { id: 26, name: '胡辣汤', price: '5', image: '/static/img/lunbo.jpg' }
+                    { id: 1, name: '小笼包', price: '8', image: app.getMediaUrl('shipu5.webp') },
+                    { id: 2, name: '豆浆', price: '3', image: app.getMediaUrl('shipu1.webp') },
+                    { id: 3, name: '咸菜', price: '2', image: app.getMediaUrl('shipu3.webp') }
                 ],
                 lunch: [
-                    { id: 27, name: '回锅肉', price: '14', image: '/static/img/lunbo.jpg' },
-                    { id: 28, name: '紫菜蛋花汤', price: '6', image: '/static/img/lunbo.jpg' }
+                    { id: 4, name: '红烧肉', price: '15', image: app.getMediaUrl('shipu8.webp') },
+                    { id: 5, name: '青菜豆腐', price: '8', image: app.getMediaUrl('shipu6.webp') },
+                    { id: 6, name: '米饭', price: '2', image: app.getMediaUrl('shipu4.webp') }
                 ],
                 dinner: [
-                    { id: 29, name: '白切鸡', price: '18', image: '/static/img/lunbo.jpg' },
-                    { id: 30, name: '南瓜粥', price: '4', image: '/static/img/lunbo.jpg' }
+                    { id: 7, name: '蒸蛋羹', price: '6', image: app.getMediaUrl('shipu2.webp') },
+                    { id: 8, name: '清炒时蔬', price: '10', image: app.getMediaUrl('shipu7.webp') },
+                    { id: 9, name: '小米粥', price: '4', image: app.getMediaUrl('shipu9.webp') }
                 ]
             },
-            4: { // 幸福生活社区
+            4: { // 智汇花园社区
                 breakfast: [
-                    { id: 31, name: '烧饼', price: '4', image: '/static/img/lunbo.jpg' },
-                    { id: 32, name: '黑豆浆', price: '4', image: '/static/img/lunbo.jpg' }
+                    { id: 1, name: '小笼包', price: '8', image: app.getMediaUrl('shipu5.webp') },
+                    { id: 2, name: '豆浆', price: '3', image: app.getMediaUrl('shipu1.webp') },
+                    { id: 3, name: '咸菜', price: '2', image: app.getMediaUrl('shipu3.webp') }
                 ],
                 lunch: [
-                    { id: 33, name: '红烧排骨', price: '22', image: '/static/img/lunbo.jpg' },
-                    { id: 34, name: '西红柿鸡蛋', price: '8', image: '/static/img/lunbo.jpg' }
+                    { id: 4, name: '红烧肉', price: '15', image: app.getMediaUrl('shipu8.webp') },
+                    { id: 5, name: '青菜豆腐', price: '8', image: app.getMediaUrl('shipu6.webp') },
+                    { id: 6, name: '米饭', price: '2', image: app.getMediaUrl('shipu4.webp') }
                 ],
                 dinner: [
-                    { id: 35, name: '清炒虾仁', price: '25', image: '/static/img/lunbo.jpg' },
-                    { id: 36, name: '莲子汤', price: '6', image: '/static/img/lunbo.jpg' }
+                    { id: 7, name: '蒸蛋羹', price: '6', image: app.getMediaUrl('shipu2.webp') },
+                    { id: 8, name: '清炒时蔬', price: '10', image: app.getMediaUrl('shipu7.webp') },
+                    { id: 9, name: '小米粥', price: '4', image: app.getMediaUrl('shipu9.webp') }
                 ]
             }
         }

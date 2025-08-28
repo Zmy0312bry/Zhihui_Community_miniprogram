@@ -1,0 +1,117 @@
+<view class="container">
+    <!-- 页面头部 -->
+    <view class="header">
+        <view class="header-bg">
+            <view class="header-decoration">
+                <view class="decoration-circle circle-1"></view>
+                <view class="decoration-circle circle-2"></view>
+                <view class="decoration-circle circle-3"></view>
+            </view>
+        </view>
+        <view class="header-content">
+            <text class="title">政策法规</text>
+            <text class="subtitle">查看相关政策文件</text>
+        </view>
+    </view>
+
+    <!-- 政策分类列表 -->
+    <view class="policy-categories">
+        <!-- 养老照护床位政策 -->
+        <view class="category-section">
+            <view class="category-header" bindtap="toggleCategory" data-category="care">
+                <view class="category-icon">
+                    <van-icon name="hotel-o" size="40rpx" color="#ffffffff"/>
+                </view>
+                <view class="category-info">
+                    <text class="category-title">养老照护床位政策</text>
+                    <text class="category-desc">家庭照护床位相关政策文件</text>
+                </view>
+                <view class="expand-icon" wx:if="{{!expandedCategories.care}}">
+                    <van-icon name="arrow" size="28rpx" color="#FF6B35"/>
+                </view>
+                <view class="expand-icon" wx:else>
+                    <van-icon name="arrow-down" size="28rpx" color="#FF6B35"/>
+                </view>
+            </view>
+
+            <view class="category-content" wx:if="{{expandedCategories.care}}">
+                <view class="policy-item" wx:for="{{carePolicies}}" wx:key="id" bindtap="viewPdf" data-file="{{item.file}}" data-title="{{item.title}}">
+                    <view class="item-icon">
+                        <van-icon name="description" size="24rpx" color="#FF8C42"/>
+                    </view>
+                    <view class="item-content">
+                        <text class="item-title">{{item.title}}</text>
+                        <text class="item-desc">{{item.desc}}</text>
+                    </view>
+                    <view class="item-arrow">
+                        <van-icon name="arrow" size="20rpx" color="#999"/>
+                    </view>
+                </view>
+            </view>
+        </view>
+
+        <!-- 老年人能力评估政策 -->
+        <view class="category-section">
+            <view class="category-header" bindtap="toggleCategory" data-category="assessment">
+                <view class="category-icon">
+                    <van-icon name="orders-o" size="40rpx" color="#ffffffff"/>
+                </view>
+                <view class="category-info">
+                    <text class="category-title">老年人能力评估政策</text>
+                    <text class="category-desc">老年人能力评估相关政策文件</text>
+                </view>
+                <view class="expand-icon" wx:if="{{!expandedCategories.assessment}}">
+                    <van-icon name="arrow" size="28rpx" color="#FF6B35"/>
+                </view>
+                <view class="expand-icon" wx:else>
+                    <van-icon name="arrow-down" size="28rpx" color="#FF6B35"/>
+                </view>
+            </view>
+
+            <view class="category-content" wx:if="{{expandedCategories.assessment}}">
+                <view class="policy-item" wx:for="{{assessmentPolicies}}" wx:key="id" bindtap="viewPdf" data-file="{{item.file}}" data-title="{{item.title}}">
+                    <view class="item-icon">
+                        <van-icon name="description" size="24rpx" color="#FF8C42"/>
+                    </view>
+                    <view class="item-content">
+                        <text class="item-title">{{item.title}}</text>
+                        <text class="item-desc">{{item.desc}}</text>
+                    </view>
+                    <view class="item-arrow">
+                        <van-icon name="arrow" size="20rpx" color="#999"/>
+                    </view>
+                </view>
+            </view>
+        </view>
+    </view>
+
+    <!-- PDF预览区域 -->
+    <view class="pdf-viewer" wx:if="{{showPdfViewer}}" bindtap="closePdfViewer">
+        <view class="viewer-header">
+            <view class="viewer-title-section">
+                <text class="viewer-title">{{currentPdfTitle}}</text>
+            </view>
+            <view class="close-btn" bindtap="closePdfViewer" catch:tap="">
+                <van-icon name="cross" size="28rpx" color="#FF6B35"/>
+            </view>
+        </view>
+
+        <view class="viewer-content" bindtap="closePdfViewer" catch:tap="">
+            <web-view src="{{pdfUrl}}" class="pdf-webview" bindtap="preventClose"></web-view>
+        </view>
+
+        <!-- 底部操作栏 -->
+        <view class="viewer-footer" bindtap="closePdfViewer" catch:tap="">
+            <view class="footer-btn" bindtap="closePdfViewer" catch:tap="">
+                <van-icon name="arrow-left" size="24rpx" color="white"/>
+                <text class="footer-btn-text">返回上一页</text>
+            </view>
+        </view>
+    </view>
+
+    <!-- 底部提示 -->
+    <view class="footer-tip" wx:if="{{!showPdfViewer}}">
+        <van-icon name="info-o" size="28rpx" color="#FF8C42"/>
+        <text class="tip-text">点击分类可展开查看相关政策文件</text>
+    </view>
+</view>

@@ -9,6 +9,10 @@
     "pages/contactCommunity/contactCommunity",
     "pages/elderlyMeals/elderlyMeals",
     "pages/feedback/feedback",
+    "pages/policies/policies",
+    "pages/serviceMap/serviceMap",
+    "pages/healthCenter/healthCenter",
+    "pages/healthGuidance/healthGuidance",
     "custom-tab-bar/index"
   ],
   "window": {

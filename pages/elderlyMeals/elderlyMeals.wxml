@@ -4,6 +4,14 @@
         <van-nav-bar title="养老用餐" left-text="返回" left-arrow bind:click-left="goBack" />
     </view>
 
+    <!-- 温馨提示 -->
+    <view class="notice-banner">
+        <view class="notice-content">
+            <van-icon name="info-o" size="28rpx" color="#FF6B35"/>
+            <text class="notice-text">此页面仅为示例展示，即将投入使用</text>
+        </view>
+    </view>
+
     <!-- 社区选择器 -->
     <view class="community-selector">
         <van-dropdown-menu>

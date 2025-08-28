@@ -1,0 +1,72 @@
+<view class="container">
+    <!-- 页面头部 -->
+    <view class="header">
+        <view class="header-bg">
+            <view class="header-decoration">
+                <view class="decoration-circle circle-1"></view>
+                <view class="decoration-circle circle-2"></view>
+                <view class="decoration-circle circle-3"></view>
+            </view>
+        </view>
+        <view class="header-content">
+            <text class="title">卫生服务中心</text>
+            <text class="subtitle">为您提供便捷的医疗服务</text>
+        </view>
+    </view>
+
+    <!-- 服务站列表 -->
+    <view class="service-list">
+        <view class="list-container">
+            <view wx:for="{{healthCenters}}" wx:key="index" class="service-card" bindtap="callPhone" data-phone="{{item.phone}}">
+                <view class="card-header">
+                    <view class="card-icon">
+                        <van-icon name="shop-o" size="40rpx" color="#ffffffff"/>
+                    </view>
+                    <view class="card-title-section">
+                        <text class="card-title">{{item.name}}</text>
+                        <text class="card-address">{{item.address}}</text>
+                    </view>
+                </view>
+
+                <view class="card-content">
+                    <view class="service-info">
+                        <view class="info-item">
+                            <van-icon name="info-o" size="28rpx" color="#FF8C42"/>
+                            <text class="info-label">服务内容：</text>
+                            <text class="info-text">{{item.services}}</text>
+                        </view>
+
+                        <view class="info-item">
+                            <van-icon name="phone-o" size="28rpx" color="#FF8C42"/>
+                            <text class="info-label">联系电话：</text>
+                            <text class="info-text phone-text">{{item.phone}}</text>
+                        </view>
+
+                        <view class="info-item">
+                            <van-icon name="clock-o" size="28rpx" color="#FF8C42"/>
+                            <text class="info-label">服务时间：</text>
+                            <text class="info-text">{{item.hours}}</text>
+                        </view>
+                    </view>
+                </view>
+
+                <view class="card-footer">
+                    <view class="action-btn" bindtap="callPhone" data-phone="{{item.phone}}">
+                        <van-icon name="phone" size="24rpx" color="white"/>
+                        <text class="btn-text">立即拨打</text>
+                    </view>
+                    <view class="action-btn secondary" bindtap="showLocation" data-address="{{item.address}}">
+                        <van-icon name="location-o" size="24rpx" color="#FF6B35"/>
+                        <text class="btn-text">查看位置</text>
+                    </view>
+                </view>
+            </view>
+        </view>
+    </view>
+
+    <!-- 底部提示 -->
+    <view class="footer-tip">
+        <van-icon name="info-o" size="28rpx" color="#FF8C42"/>
+        <text class="tip-text">点击卡片可直接拨打电话，获取更多服务信息</text>
+    </view>
+</view>

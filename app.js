@@ -35,6 +35,7 @@ App({
         config: {},
         baseApiUrl: 'https://shangdi.bjseeyoung.com/', // API基础URL，所有API请求都在此基础上拼接
         mediaBaseUrl: 'https://shangdi.bjseeyoung.com/media/picture/', // 媒体文件URL前缀
+        fileBaseUrl: 'https://shangdi.bjseeyoung.com/media/file/', // 文件下载URL前缀
         theme: 'yellow',
         backgroundColor: '#FFF8E1', // 柔和的浅黄色背景
         gradientColors: {
@@ -152,4 +153,13 @@ App({
             filename = filename.substring(1);
         }
         return this.globalData.mediaBaseUrl + filename;
-    }})
+    },
+
+    getFileUrl: function(filename) {
+        // 确保filename不以/开头
+        if (filename && filename.startsWith('/')) {
+            filename = filename.substring(1);
+        }
+        return this.globalData.fileBaseUrl + filename;
+    }
+})

@@ -15,21 +15,19 @@ Page({
       app.getMediaUrl("lunbo3.jpg"),
       app.getMediaUrl("lunbo4.jpg"),
     ],
-    // 健康指导弹窗显示状态
-    showHealthPopup: false,
-    // 健康指导内容
-    healthTips: {
-      warmTips:
-        "今日天气晴朗，适合户外活动。请注意防晒，多喝水，保持良好的心情。建议老年朋友们可以到社区花园散步，与邻里朋友聊天交流。",
-      healthAdvice:
-        "1. 早晨起床后喝一杯温开水，有助于肠胃蠕动\n2. 适量运动，建议每天步行30分钟\n3. 饮食均衡，多吃蔬菜水果\n4. 保持充足睡眠，晚上10点前入睡\n5. 定期测量血压血糖，关注身体变化",
-    },
   },
 
   // 跳转到AI聊天
   goAiChat: function () {
     wx.switchTab({
       url: "/pages/aiChat/aiChat",
+    });
+  },
+
+  // 跳转到政策法规
+  goPolicies: function () {
+    wx.navigateTo({
+      url: "/pages/policies/policies",
     });
   },
 
@@ -40,6 +38,13 @@ Page({
     });
   },
 
+  // 跳转到服务地图
+  goServiceMap: function () {
+    wx.navigateTo({
+      url: "/pages/serviceMap/serviceMap",
+    });
+  },
+
   // 跳转到养老用餐
   goElderlyMeals: function () {
     wx.navigateTo({
@@ -47,17 +52,33 @@ Page({
     });
   },
 
-  // 显示健康指导弹窗
-  showHealthTips: function () {
-    this.setData({
-      showHealthPopup: true,
+  // 跳转到健康指导
+  goHealthGuidance: function () {
+    wx.navigateTo({
+      url: "/pages/healthGuidance/healthGuidance",
     });
   },
 
-  // 隐藏健康指导弹窗
-  hideHealthTips: function () {
-    this.setData({
-      showHealthPopup: false,
+  // 跳转到卫生服务中心
+  goHealthCenter: function () {
+    wx.navigateTo({
+      url: "/pages/healthCenter/healthCenter",
+    });
+  },
+
+  // 跳转到意见反馈
+  goFeedback: function () {
+    wx.navigateTo({
+      url: "/pages/feedback/feedback",
+    });
+  },
+
+  // 显示更多弹窗
+  showMore: function () {
+    wx.showToast({
+      title: '敬请期待',
+      icon: 'none',
+      duration: 2000
     });
   },
 

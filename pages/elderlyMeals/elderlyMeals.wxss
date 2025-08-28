@@ -8,6 +8,35 @@
     box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.1);
 }
 
+/* 温馨提示样式 */
+.notice-banner {
+    background: linear-gradient(135deg, #FFF5F0 0%, #FFF8F5 100%);
+    margin: 0 20rpx 20rpx 20rpx;
+    border-radius: 15rpx;
+    border: 2rpx solid rgba(255, 107, 53, 0.2);
+    box-shadow: 0 4rpx 15rpx rgba(255, 107, 53, 0.1);
+}
+
+.notice-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 25rpx 30rpx;
+}
+
+.notice-content .van-icon {
+    margin-right: 12rpx;
+    flex-shrink: 0;
+}
+
+.notice-text {
+    font-size: 28rpx;
+    color: #FF6B35;
+    font-weight: 600;
+    text-align: center;
+    line-height: 1.4;
+}
+
 .community-selector {
     background-color: white;
     margin-bottom: 20rpx;

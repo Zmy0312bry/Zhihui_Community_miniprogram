@@ -13,23 +13,43 @@
         <text class="scroll-text">欢迎使用上地小e养老ai助手</text>
     </view>
 
-    <!-- 四个功能入口 -->
+    <!-- 九个功能入口 -->
     <view class="function-grid">
         <view class="function-item bg-blue-gradient" bindtap="goAiChat">
             <van-icon name="comment" size="80rpx" color="white" class="function-icon"></van-icon>
             <text class="function-text">AI聊天</text>
         </view>
-        <view class="function-item bg-green-gradient" bindtap="goContactCommunity">
+        <view class="function-item bg-green-gradient" bindtap="goPolicies">
+            <van-icon name="description" size="80rpx" color="white" class="function-icon"></van-icon>
+            <text class="function-text">政策法规</text>
+        </view>
+        <view class="function-item bg-orange-gradient" bindtap="goContactCommunity">
             <van-icon name="phone" size="80rpx" color="white" class="function-icon"></van-icon>
             <text class="function-text">联系社区</text>
         </view>
-        <view class="function-item bg-orange-gradient" bindtap="goElderlyMeals">
+        <view class="function-item bg-purple-gradient" bindtap="goServiceMap">
+            <van-icon name="map-marked" size="80rpx" color="white" class="function-icon"></van-icon>
+            <text class="function-text">服务地图</text>
+        </view>
+        <view class="function-item bg-red-gradient" bindtap="goElderlyMeals">
             <van-icon name="shop-collect" size="80rpx" color="white" class="function-icon"></van-icon>
             <text class="function-text">养老用餐</text>
         </view>
-        <view class="function-item bg-purple-gradient" bindtap="showHealthTips">
+        <view class="function-item bg-teal-gradient" bindtap="goHealthGuidance">
             <van-icon name="medal" size="80rpx" color="white" class="function-icon"></van-icon>
             <text class="function-text">健康指导</text>
+        </view>
+        <view class="function-item bg-pink-gradient" bindtap="goHealthCenter">
+            <van-icon name="like" size="80rpx" color="white" class="function-icon"></van-icon>
+            <text class="function-text">卫生服务中心</text>
+        </view>
+        <view class="function-item bg-indigo-gradient" bindtap="goFeedback">
+            <van-icon name="records" size="80rpx" color="white" class="function-icon"></van-icon>
+            <text class="function-text">意见反馈</text>
+        </view>
+        <view class="function-item bg-yellow-gradient" bindtap="showMore">
+            <van-icon name="ellipsis" size="80rpx" color="white" class="function-icon"></van-icon>
+            <text class="function-text">更多</text>
         </view>
     </view>
 
@@ -40,28 +60,4 @@
         <view class="divider-line"></view>
     </view>
 
-    <!-- 底部logo -->
-    <view class="bottom-logo">
-        <image src="{{app.getMediaUrl('logo_bottom.png')}}" class="logo-image" mode="aspectFit"></image>
-    </view>
-
-    <!-- 健康指导弹窗 -->
-    <van-popup show="{{showHealthPopup}}" bind:close="hideHealthTips" position="center" round custom-style="width: 80%; max-height: 70%;">
-        <view class="health-popup">
-            <view class="popup-header">
-                <text class="popup-title">今日健康指导</text>
-                <van-icon name="cross" bindtap="hideHealthTips" class="close-icon"></van-icon>
-            </view>
-            <view class="popup-content">
-                <view class="health-section">
-                    <text class="section-title">温馨提示</text>
-                    <text class="section-content">{{healthTips.warmTips}}</text>
-                </view>
-                <view class="health-section">
-                    <text class="section-title">健康建议</text>
-                    <text class="section-content">{{healthTips.healthAdvice}}</text>
-                </view>
-            </view>
-        </view>
-    </van-popup>
 </view>

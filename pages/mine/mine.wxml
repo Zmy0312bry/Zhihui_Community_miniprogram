@@ -84,15 +84,6 @@
                 <van-icon name="arrow" color="#999" size="16"/>
             </view>
         </button>
-        <button class="row" style="width: 100%;" bindtap="goToFeedback">
-            <view class="left">
-                <van-icon name="comment-o" color="#FF9800" size="24"/>
-                <text class="text">填写反馈 </text>
-            </view>
-            <view class="right">
-                <van-icon name="arrow" color="#999" size="16"/>
-            </view>
-        </button>
         <van-dialog
             id="van-dialog"
             use-slot
