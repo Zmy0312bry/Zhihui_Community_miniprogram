@@ -19,20 +19,60 @@
         </van-dropdown-menu>
     </view>
 
-    <!-- 菜谱列表 -->
+    <!-- 食谱列表 -->
     <view class="menu-list">
-        <view class="menu-date">{{currentDate}} 菜谱</view>
-        <view class="meal-section" wx:for="{{mealTypes}}" wx:key="type">
-            <view class="meal-title">{{item.name}}</view>
-            <view class="dish-grid">
-                <view class="dish-item" wx:for="{{currentMenus[item.type]}}" wx:key="id" wx:for-item="dish">
-                    <image src="{{dish.image}}" class="dish-image" mode="aspectFill"></image>
-                    <view class="dish-info">
-                        <text class="dish-name">{{dish.name}}</text>
-                        <text class="dish-price">￥{{dish.price}}</text>
-                    </view>
-                </view>
+        <view class="menu-date">{{currentDate}} 食谱</view>
+
+        <!-- 早餐分类 -->
+        <view class="category">
+            <view class="category-header" bindtap="toggleCategory" data-category="breakfast">
+                <text class="category-title">{{menus.breakfast.name}}</text>
+                <van-icon name="{{expandedCategories.breakfast ? 'arrow-up' : 'arrow-down'}}" />
             </view>
+            <view class="category-content" wx:if="{{expandedCategories.breakfast}}">
+                <image src="{{menus.breakfast.image}}" class="menu-image" mode="aspectFill" bindtap="viewImage" data-image="{{menus.breakfast.image}}" data-title="{{menus.breakfast.name}}" />
+            </view>
+        </view>
+
+        <!-- 午餐分类 -->
+        <view class="category">
+            <view class="category-header" bindtap="toggleCategory" data-category="lunch">
+                <text class="category-title">{{menus.lunch.name}}</text>
+                <van-icon name="{{expandedCategories.lunch ? 'arrow-up' : 'arrow-down'}}" />
+            </view>
+            <view class="category-content" wx:if="{{expandedCategories.lunch}}">
+                <image src="{{menus.lunch.image}}" class="menu-image" mode="aspectFill" bindtap="viewImage" data-image="{{menus.lunch.image}}" data-title="{{menus.lunch.name}}" />
+            </view>
+        </view>
+
+        <!-- 晚餐分类 -->
+        <view class="category">
+            <view class="category-header" bindtap="toggleCategory" data-category="dinner">
+                <text class="category-title">{{menus.dinner.name}}</text>
+                <van-icon name="{{expandedCategories.dinner ? 'arrow-up' : 'arrow-down'}}" />
+            </view>
+            <view class="category-content" wx:if="{{expandedCategories.dinner}}">
+                <image src="{{menus.dinner.image}}" class="menu-image" mode="aspectFill" bindtap="viewImage" data-image="{{menus.dinner.image}}" data-title="{{menus.dinner.name}}" />
+            </view>
+        </view>
+    </view>
+
+    <!-- 图片预览 -->
+    <view class="image-viewer" wx:if="{{showImageViewer}}" bindtap="closeImageViewer">
+        <image 
+            src="{{currentImage}}" 
+            class="viewer-image" 
+            style="transform: scale({{scale}}) translate({{translateX}}px, {{translateY}}px);" 
+            catchtap="preventClose"
+            bindtouchstart="onTouchStart"
+            bindtouchmove="onTouchMove"
+            bindtouchend="onTouchEnd"
+        />
+        <view class="viewer-title">{{currentImageTitle}}</view>
+        <view class="zoom-controls" catchtap="preventClose">
+            <button class="zoom-btn zoom-out" catchtap="zoomOut">-</button>
+            <text class="zoom-text">{{zoomPercent}}%</text>
+            <button class="zoom-btn zoom-in" catchtap="zoomIn">+</button>
         </view>
     </view>
 </view>

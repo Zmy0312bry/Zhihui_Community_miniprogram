@@ -58,58 +58,109 @@
     box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.1);
 }
 
-.meal-section {
-    margin-bottom: 40rpx;
-}
-
-.meal-title {
-    font-size: 30rpx;
-    color: #2979ff;
-    font-weight: bold;
-    margin-bottom: 20rpx;
-    padding-left: 20rpx;
-    border-left: 6rpx solid #2979ff;
-}
-
-.dish-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 20rpx;
-}
-
-.dish-item {
+/* 分类样式 */
+.category {
     background-color: white;
+    margin-bottom: 20rpx;
     border-radius: 20rpx;
-    overflow: hidden;
     box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.1);
-    transition: all 0.3s ease;
+    overflow: hidden;
 }
 
-.dish-item:active {
-    transform: scale(0.98);
-}
-
-.dish-image {
-    width: 100%;
-    height: 200rpx;
-    object-fit: cover;
-}
-
-.dish-info {
-    padding: 20rpx;
+.category-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    padding: 30rpx;
+    border-bottom: 1rpx solid #f0f0f0;
 }
 
-.dish-name {
-    font-size: 28rpx;
+.category-title {
+    font-size: 32rpx;
     color: #333;
-    font-weight: 500;
+    font-weight: bold;
 }
 
-.dish-price {
-    font-size: 26rpx;
-    color: #ff6b35;
+.category-content {
+    padding: 30rpx;
+}
+
+.menu-image {
+    width: 100%;
+    height: 400rpx; /* 2:1 比例 */
+    border-radius: 20rpx;
+    object-fit: cover;
+    transition: all 0.3s ease;
+}
+
+.menu-image:active {
+    transform: scale(0.98);
+}
+
+/* 图片预览样式 */
+.image-viewer {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.8);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+.viewer-image {
+    max-width: 90vw;
+    max-height: 80vh;
+    object-fit: contain;
+    border-radius: 20rpx;
+    transition: transform 0.3s ease;
+}
+
+.viewer-title {
+    margin-top: 20rpx;
+    color: white;
+    font-size: 32rpx;
+    text-align: center;
     font-weight: bold;
+}
+
+/* 缩放控制 */
+.zoom-controls {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 30rpx;
+    gap: 20rpx;
+}
+
+.zoom-btn {
+    width: 80rpx;
+    height: 80rpx;
+    border-radius: 50%;
+    background-color: rgba(255, 107, 53, 0.8);
+    color: #fff;
+    font-size: 36rpx;
+    font-weight: bold;
+    border: 2rpx solid rgba(255, 107, 53, 1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.zoom-btn:active {
+    background-color: rgba(255, 107, 53, 1);
+    transform: scale(0.95);
+}
+
+.zoom-text {
+    color: #FF6B35;
+    font-size: 28rpx;
+    font-weight: bold;
+    min-width: 100rpx;
+    text-align: center;
 }

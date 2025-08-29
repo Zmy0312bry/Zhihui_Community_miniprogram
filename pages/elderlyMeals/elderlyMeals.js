@@ -5,107 +5,40 @@ Page({
     data: {
         selectedCommunity: 0,
         communityOptions: [
-            { text: '上地西里社区', value: 0 },
+            { text: '上地街道养老服务中心', value: 0 },
             { text: '东馨园社区', value: 1 },
             { text: '上地八一社区', value: 2 },
             { text: '博雅西园社区', value: 3 },
             { text: '上地科技园社区', value: 4 }
         ],
         currentDate: '',
-        mealTypes: [
-            { type: 'breakfast', name: '早餐' },
-            { type: 'lunch', name: '午餐' },
-            { type: 'dinner', name: '晚餐' }
-        ],
-        currentMenus: {},
-        // 各社区菜谱数据常量，方便后续修改
-        menusData: {
-            0: { // 智汇花园社区
-                breakfast: [
-                    { id: 1, name: '小笼包', price: '8', image: app.getMediaUrl('shipu5.webp') },
-                    { id: 2, name: '豆浆', price: '3', image: app.getMediaUrl('shipu1.webp') },
-                    { id: 3, name: '咸菜', price: '2', image: app.getMediaUrl('shipu3.webp') }
-                ],
-                lunch: [
-                    { id: 4, name: '红烧肉', price: '15', image: app.getMediaUrl('shipu8.webp') },
-                    { id: 5, name: '青菜豆腐', price: '8', image: app.getMediaUrl('shipu6.webp') },
-                    { id: 6, name: '米饭', price: '2', image: app.getMediaUrl('shipu4.webp') }
-                ],
-                dinner: [
-                    { id: 7, name: '蒸蛋羹', price: '6', image: app.getMediaUrl('shipu2.webp') },
-                    { id: 8, name: '清炒时蔬', price: '10', image: app.getMediaUrl('shipu7.webp') },
-                    { id: 9, name: '小米粥', price: '4', image: app.getMediaUrl('shipu9.webp') }
-                ]
-            },
-            1: { // 智汇花园社区
-                breakfast: [
-                    { id: 1, name: '小笼包', price: '8', image: app.getMediaUrl('shipu5.webp') },
-                    { id: 2, name: '豆浆', price: '3', image: app.getMediaUrl('shipu1.webp') },
-                    { id: 3, name: '咸菜', price: '2', image: app.getMediaUrl('shipu3.webp') }
-                ],
-                lunch: [
-                    { id: 4, name: '红烧肉', price: '15', image: app.getMediaUrl('shipu8.webp') },
-                    { id: 5, name: '青菜豆腐', price: '8', image: app.getMediaUrl('shipu6.webp') },
-                    { id: 6, name: '米饭', price: '2', image: app.getMediaUrl('shipu4.webp') }
-                ],
-                dinner: [
-                    { id: 7, name: '蒸蛋羹', price: '6', image: app.getMediaUrl('shipu2.webp') },
-                    { id: 8, name: '清炒时蔬', price: '10', image: app.getMediaUrl('shipu7.webp') },
-                    { id: 9, name: '小米粥', price: '4', image: app.getMediaUrl('shipu9.webp') }
-                ]
-            },
-            2: { // 智汇花园社区
-                breakfast: [
-                    { id: 1, name: '小笼包', price: '8', image: app.getMediaUrl('shipu5.webp') },
-                    { id: 2, name: '豆浆', price: '3', image: app.getMediaUrl('shipu1.webp') },
-                    { id: 3, name: '咸菜', price: '2', image: app.getMediaUrl('shipu3.webp') }
-                ],
-                lunch: [
-                    { id: 4, name: '红烧肉', price: '15', image: app.getMediaUrl('shipu8.webp') },
-                    { id: 5, name: '青菜豆腐', price: '8', image: app.getMediaUrl('shipu6.webp') },
-                    { id: 6, name: '米饭', price: '2', image: app.getMediaUrl('shipu4.webp') }
-                ],
-                dinner: [
-                    { id: 7, name: '蒸蛋羹', price: '6', image: app.getMediaUrl('shipu2.webp') },
-                    { id: 8, name: '清炒时蔬', price: '10', image: app.getMediaUrl('shipu7.webp') },
-                    { id: 9, name: '小米粥', price: '4', image: app.getMediaUrl('shipu9.webp') }
-                ]
-            },
-            3: { // 智汇花园社区
-                breakfast: [
-                    { id: 1, name: '小笼包', price: '8', image: app.getMediaUrl('shipu5.webp') },
-                    { id: 2, name: '豆浆', price: '3', image: app.getMediaUrl('shipu1.webp') },
-                    { id: 3, name: '咸菜', price: '2', image: app.getMediaUrl('shipu3.webp') }
-                ],
-                lunch: [
-                    { id: 4, name: '红烧肉', price: '15', image: app.getMediaUrl('shipu8.webp') },
-                    { id: 5, name: '青菜豆腐', price: '8', image: app.getMediaUrl('shipu6.webp') },
-                    { id: 6, name: '米饭', price: '2', image: app.getMediaUrl('shipu4.webp') }
-                ],
-                dinner: [
-                    { id: 7, name: '蒸蛋羹', price: '6', image: app.getMediaUrl('shipu2.webp') },
-                    { id: 8, name: '清炒时蔬', price: '10', image: app.getMediaUrl('shipu7.webp') },
-                    { id: 9, name: '小米粥', price: '4', image: app.getMediaUrl('shipu9.webp') }
-                ]
-            },
-            4: { // 智汇花园社区
-                breakfast: [
-                    { id: 1, name: '小笼包', price: '8', image: app.getMediaUrl('shipu5.webp') },
-                    { id: 2, name: '豆浆', price: '3', image: app.getMediaUrl('shipu1.webp') },
-                    { id: 3, name: '咸菜', price: '2', image: app.getMediaUrl('shipu3.webp') }
-                ],
-                lunch: [
-                    { id: 4, name: '红烧肉', price: '15', image: app.getMediaUrl('shipu8.webp') },
-                    { id: 5, name: '青菜豆腐', price: '8', image: app.getMediaUrl('shipu6.webp') },
-                    { id: 6, name: '米饭', price: '2', image: app.getMediaUrl('shipu4.webp') }
-                ],
-                dinner: [
-                    { id: 7, name: '蒸蛋羹', price: '6', image: app.getMediaUrl('shipu2.webp') },
-                    { id: 8, name: '清炒时蔬', price: '10', image: app.getMediaUrl('shipu7.webp') },
-                    { id: 9, name: '小米粥', price: '4', image: app.getMediaUrl('shipu9.webp') }
-                ]
-            }
-        }
+
+        // 展开状态
+        expandedCategories: {
+            breakfast: false,
+            lunch: false,
+            dinner: false
+        },
+
+        // 食谱图片数据
+        menus: {
+            breakfast: { image: app.getMediaUrl('zaocan.jpg'), name: '早餐' },
+            lunch: { image: app.getMediaUrl('wucan.jpg'), name: '午餐' },
+            dinner: { image: app.getMediaUrl('wancan.jpg'), name: '晚餐' }
+        },
+
+        // 图片预览相关
+        showImageViewer: false,
+        currentImage: '',
+        currentImageTitle: '',
+        scale: 1,
+        zoomPercent: 100, // 缩放百分比
+        // 拖拽相关
+        isDragging: false,
+        dragStartX: 0,
+        dragStartY: 0,
+        translateX: 0,
+        translateY: 0
     },
 
     // 返回上一页
@@ -117,8 +50,7 @@ Page({
     onCommunityChange: function(event) {
         const communityIndex = event.detail;
         this.setData({
-            selectedCommunity: communityIndex,
-            currentMenus: this.data.menusData[communityIndex] || {}
+            selectedCommunity: communityIndex
         });
     },
 
@@ -131,11 +63,114 @@ Page({
         return `${year}年${month}月${day}日`;
     },
 
+    // 切换分类展开状态
+    toggleCategory: function (e) {
+        const category = e.currentTarget.dataset.category;
+        const expandedCategories = this.data.expandedCategories;
+
+        this.setData({
+            [`expandedCategories.${category}`]: !expandedCategories[category]
+        });
+    },
+
+    // 查看图片
+    viewImage: function (e) {
+        const image = e.currentTarget.dataset.image;
+        const title = e.currentTarget.dataset.title;
+
+        this.setData({
+            showImageViewer: true,
+            currentImage: image,
+            currentImageTitle: title,
+            scale: 1,
+            zoomPercent: 100,
+            translateX: 0,
+            translateY: 0,
+            isDragging: false
+        });
+    },
+
+    // 关闭图片预览
+    closeImageViewer: function () {
+        this.setData({
+            showImageViewer: false,
+            currentImage: '',
+            currentImageTitle: '',
+            scale: 1,
+            zoomPercent: 100,
+            translateX: 0,
+            translateY: 0,
+            isDragging: false
+        });
+    },
+
+    // 阻止图片区域的点击事件冒泡
+    preventClose: function (e) {
+        e.stopPropagation();
+    },
+
+    // 放大图片
+    zoomIn: function () {
+        let newScale = this.data.scale + 0.2;
+        if (newScale > 3.0) newScale = 3.0;
+        this.setData({
+            scale: newScale,
+            zoomPercent: Math.round(newScale * 100)
+        });
+    },
+
+    // 缩小图片
+    zoomOut: function () {
+        let newScale = this.data.scale - 0.2;
+        if (newScale < 0.5) newScale = 0.5;
+        this.setData({
+            scale: newScale,
+            zoomPercent: Math.round(newScale * 100)
+        });
+    },
+
+    // 触摸开始
+    onTouchStart: function (e) {
+        if (this.data.scale <= 1) return; // 只有放大时才允许拖拽
+        
+        const touch = e.touches[0];
+        this.setData({
+            isDragging: true,
+            dragStartX: touch.clientX - this.data.translateX,
+            dragStartY: touch.clientY - this.data.translateY
+        });
+    },
+
+    // 触摸移动
+    onTouchMove: function (e) {
+        if (!this.data.isDragging || this.data.scale <= 1) return;
+        
+        const touch = e.touches[0];
+        const newTranslateX = touch.clientX - this.data.dragStartX;
+        const newTranslateY = touch.clientY - this.data.dragStartY;
+        
+        // 限制拖拽范围
+        const maxTranslate = (this.data.scale - 1) * 100; // 根据缩放比例计算最大拖拽距离
+        const limitedX = Math.max(-maxTranslate, Math.min(maxTranslate, newTranslateX));
+        const limitedY = Math.max(-maxTranslate, Math.min(maxTranslate, newTranslateY));
+        
+        this.setData({
+            translateX: limitedX,
+            translateY: limitedY
+        });
+    },
+
+    // 触摸结束
+    onTouchEnd: function (e) {
+        this.setData({
+            isDragging: false
+        });
+    },
+
     onLoad: function(options) {
         // 设置当前日期
         this.setData({
-            currentDate: this.getCurrentDate(),
-            currentMenus: this.data.menusData[0] // 默认显示第一个社区的菜谱
+            currentDate: this.getCurrentDate()
         });
     }
 });
