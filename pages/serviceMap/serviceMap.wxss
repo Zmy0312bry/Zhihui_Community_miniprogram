@@ -1,3 +1,4 @@
+/* 页面容器 */
 .container {
   display: flex;
   flex-direction: column;
@@ -5,28 +6,300 @@
   background: linear-gradient(135deg, #FFF8F0 0%, #FFFFFF 100%);
 }
 
+/* 页面头部 */
 .header {
-  padding: 40rpx;
+  position: relative;
+  padding: 40rpx 30rpx;
+  background: linear-gradient(135deg, #FF6B35, #FF8C42);
+  overflow: hidden;
+}
+
+.header-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(45deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.05));
+}
+
+.header-decoration {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 200rpx;
+  height: 200rpx;
+}
+
+.decoration-circle {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.circle-1 {
+  width: 120rpx;
+  height: 120rpx;
+  top: 20rpx;
+  right: 20rpx;
+}
+
+.circle-2 {
+  width: 80rpx;
+  height: 80rpx;
+  top: 60rpx;
+  right: 60rpx;
+}
+
+.circle-3 {
+  width: 40rpx;
+  height: 40rpx;
+  top: 100rpx;
+  right: 100rpx;
+}
+
+.header-content {
+  position: relative;
+  z-index: 1;
   text-align: center;
-  background: linear-gradient(45deg, #4CAF50, #81C784);
   color: white;
 }
 
 .title {
-  font-size: 36rpx;
+  display: block;
+  font-size: 40rpx;
   font-weight: bold;
+  margin-bottom: 8rpx;
+  text-shadow: 0 2rpx 4rpx rgba(0, 0, 0, 0.3);
 }
 
-.content {
+.subtitle {
+  display: block;
+  font-size: 28rpx;
+  opacity: 0.9;
+  text-shadow: 0 1rpx 2rpx rgba(0, 0, 0, 0.2);
+}
+
+/* 地图容器 */
+.map-container {
   flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 30rpx;
+}
+
+/* 地图头部 */
+.map-header {
+  margin-bottom: 30rpx;
+}
+
+.map-title-section {
   display: flex;
   align-items: center;
   justify-content: center;
+  margin-bottom: 12rpx;
+}
+
+.map-title {
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #333;
+  margin-left: 12rpx;
+}
+
+.map-info {
+  text-align: center;
+}
+
+.map-desc {
+  font-size: 26rpx;
+  color: #666;
+}
+
+/* 地图内容区域 */
+.map-content {
+  position: relative;
+  flex: 1;
+  background: white;
+  border-radius: 20rpx;
+  box-shadow: 0 8rpx 32rpx rgba(255, 107, 53, 0.1);
+  overflow: hidden;
+  margin-bottom: 30rpx; /* 为下面的按钮留空间 */
+}
+
+/* 地图滚动区域 */
+.map-scroll {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.map-wrapper {
+  position: relative;
+  min-width: 100%;
+  min-height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10rpx; /* 减少内边距，让地图更大 */
+}
+
+/* 服务地图图片 */
+.service-map {
+  width: 100%;
+  max-width: 1200rpx; /* 限制最大宽度 */
+  border-radius: 12rpx;
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.1);
+}
+
+/* 横向缩放控制按钮 */
+.zoom-controls-horizontal {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 40rpx;
+  padding: 20rpx 0;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 16rpx;
+  margin: 0 30rpx;
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.1);
+}
+
+.zoom-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-width: 120rpx;
+  padding: 20rpx 16rpx;
+  background: white;
+  border-radius: 12rpx;
+  box-shadow: 0 4rpx 16rpx rgba(255, 107, 53, 0.15);
+  transition: all 0.3s ease;
+  border: 2rpx solid transparent;
+}
+
+.zoom-btn:active {
+  transform: scale(0.95);
+  box-shadow: 0 2rpx 8rpx rgba(255, 107, 53, 0.3);
+}
+
+.zoom-text {
+  font-size: 24rpx;
+  margin-top: 8rpx;
+  font-weight: 500;
+}
+
+.zoom-in {
+  background: linear-gradient(135deg, #FF6B35, #FF8C42);
+  color: white;
+}
+
+.zoom-in .zoom-text {
+  color: white;
+}
+
+.zoom-reset {
+  background: linear-gradient(135deg, #4CAF50, #81C784);
+  color: white;
+}
+
+.zoom-reset .zoom-text {
+  color: white;
+}
+
+.zoom-out {
+  background: linear-gradient(135deg, #FF9800, #FFB74D);
+  color: white;
+}
+
+.zoom-out .zoom-text {
+  color: white;
+}
+
+/* 底部提示 */
+.footer-tip {
+  padding: 30rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12rpx;
+}
+
+.tip-text {
+  font-size: 24rpx;
+  color: #666;
+}
+
+/* 响应式设计 */
+@media (max-width: 750rpx) {
+  .header {
+    padding: 30rpx 20rpx;
+  }
+
+  .title {
+    font-size: 36rpx;
+  }
+
+  .subtitle {
+    font-size: 24rpx;
+  }
+
+  .map-container {
+    padding: 20rpx;
+  }
+
+  .map-title {
+    font-size: 28rpx;
+  }
+
+  .map-desc {
+    font-size: 24rpx;
+  }
+
+  .zoom-controls-horizontal {
+    gap: 20rpx;
+    margin: 0 20rpx;
+  }
+
+  .zoom-btn {
+    min-width: 100rpx;
+    padding: 16rpx 12rpx;
+  }
+
+  .zoom-text {
+    font-size: 22rpx;
+  }
+
+  .service-map {
+    max-width: 100%;
+    max-height: 100%;
+  }
+}
+
+/* 加载状态 */
+.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 400rpx;
+  color: #FF6B35;
+  font-size: 28rpx;
+}
+
+/* 错误状态 */
+.error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 400rpx;
+  color: #ff4444;
+  text-align: center;
   padding: 40rpx;
 }
 
-.placeholder {
-  font-size: 32rpx;
-  color: #666;
-  text-align: center;
+.error-icon {
+  font-size: 80rpx;
+  margin-bottom: 20rpx;
 }
