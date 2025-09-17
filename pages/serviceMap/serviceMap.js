@@ -5,7 +5,7 @@ Page({
     // 地图缩放相关
     scale: 1.0,
     minScale: 0.5,
-    maxScale: 3.0,
+    maxScale: 6.0,  // 提高到600%的最大缩放比例
     scaleStep: 0.25,
 
     // 地图状态
@@ -23,6 +23,11 @@ Page({
 
   onLoad: function (options) {
     console.log('服务地图页面加载');
+    
+    // 初始化触摸相关变量
+    this.touchStartDistance = 0;
+    this.startScale = 1;
+    this.isZooming = false;
 
     // 设置地图图片URL
     const mapImageUrl = app.getMediaUrl('map.jpg');
@@ -91,23 +96,18 @@ Page({
   // 点击地图
   onMapTap: function(e) {
     console.log('点击地图位置', e);
-
-    // 这里可以添加点击地图不同区域的交互逻辑
-    wx.showModal({
-      title: '地图交互',
-      content: '点击了地图上的位置，可以在这里添加具体的服务点信息或导航功能',
-      showCancel: false,
-      confirmText: '知道了'
-    });
+    // 不再显示提示框，用户可以直接操作地图
+    // 如需添加后续功能，可以在这里实现
   },
 
   // 放大地图
+  /* 放大缩小功能通过双指实现，此函数保留但不使用 */
   zoomIn: function() {
     const newScale = Math.min(this.data.scale + this.data.scaleStep, this.data.maxScale);
     this.setScale(newScale);
   },
-
-  // 缩小地图
+  
+  /* 缩小功能通过双指实现，此函数保留但不使用 */
   zoomOut: function() {
     const newScale = Math.max(this.data.scale - this.data.scaleStep, this.data.minScale);
     this.setScale(newScale);
@@ -116,6 +116,79 @@ Page({
   // 重置缩放
   resetZoom: function() {
     this.setScale(1.0);
+    
+    wx.showToast({
+      title: '已重置缩放',
+      icon: 'none',
+      duration: 1000
+    });
+  },
+  
+  // 处理双指缩放开始
+  handleTouchStart: function(e) {
+    try {
+      if (e.touches.length === 2) {
+        // 记录初始两指距离
+        const touch1 = e.touches[0];
+        const touch2 = e.touches[1];
+        
+        if (!touch1 || !touch2) return;
+        
+        this.touchStartDistance = Math.sqrt(
+          Math.pow(touch2.clientX - touch1.clientX, 2) + 
+          Math.pow(touch2.clientY - touch1.clientY, 2)
+        );
+        this.startScale = this.data.scale;
+        this.isZooming = true;
+        
+        console.log('双指缩放开始');
+      }
+    } catch (err) {
+      console.error('触摸开始处理错误:', err);
+    }
+  },
+
+  // 处理双指缩放过程
+  handleTouchMove: function(e) {
+    try {
+      if (e.touches.length === 2 && this.isZooming) {
+        // 计算当前两指距离
+        const touch1 = e.touches[0];
+        const touch2 = e.touches[1];
+        
+        if (!touch1 || !touch2) return;
+        
+        const currentDistance = Math.sqrt(
+          Math.pow(touch2.clientX - touch1.clientX, 2) + 
+          Math.pow(touch2.clientY - touch1.clientY, 2)
+        );
+        
+        // 计算缩放比例
+        let newScale = this.startScale * (currentDistance / this.touchStartDistance);
+        
+        // 限制缩放范围
+        newScale = Math.min(Math.max(newScale, this.data.minScale), this.data.maxScale);
+        
+        this.setData({
+          scale: newScale
+        });
+      }
+    } catch (err) {
+      console.error('触摸移动处理错误:', err);
+    }
+  },
+  
+  // 处理缩放结束
+  handleTouchEnd: function() {
+    try {
+      if (this.isZooming) {
+        console.log('双指缩放结束');
+        this.isZooming = false;
+      }
+    } catch (err) {
+      console.error('触摸结束处理错误:', err);
+      this.isZooming = false;
+    }
   },
 
   // 设置缩放比例

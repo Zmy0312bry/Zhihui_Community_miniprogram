@@ -35,13 +35,13 @@
             </view>
 
             <view class="category-content" wx:if="{{expandedCategories.care}}">
-                <view class="policy-item" wx:for="{{carePolicies}}" wx:key="id" bindtap="viewPdf" data-file="{{item.file}}" data-title="{{item.title}}">
+                <view class="policy-item" wx:for="{{carePolicies}}" wx:key="id" bindtap="viewPdfImages" data-file="{{item.file}}" data-title="{{item.title}}" data-pages="{{item.totalPages}}">
                     <view class="item-icon">
                         <van-icon name="description" size="24rpx" color="#FF8C42"/>
                     </view>
                     <view class="item-content">
                         <text class="item-title">{{item.title}}</text>
-                        <text class="item-desc">{{item.desc}}</text>
+                        <text class="item-desc">{{item.desc}} ({{item.totalPages}}页)</text>
                     </view>
                     <view class="item-arrow">
                         <van-icon name="arrow" size="20rpx" color="#999"/>
@@ -69,13 +69,13 @@
             </view>
 
             <view class="category-content" wx:if="{{expandedCategories.assessment}}">
-                <view class="policy-item" wx:for="{{assessmentPolicies}}" wx:key="id" bindtap="viewPdf" data-file="{{item.file}}" data-title="{{item.title}}">
+                <view class="policy-item" wx:for="{{assessmentPolicies}}" wx:key="id" bindtap="viewPdfImages" data-file="{{item.file}}" data-title="{{item.title}}" data-pages="{{item.totalPages}}">
                     <view class="item-icon">
                         <van-icon name="description" size="24rpx" color="#FF8C42"/>
                     </view>
                     <view class="item-content">
                         <text class="item-title">{{item.title}}</text>
-                        <text class="item-desc">{{item.desc}}</text>
+                        <text class="item-desc">{{item.desc}} ({{item.totalPages}}页)</text>
                     </view>
                     <view class="item-arrow">
                         <van-icon name="arrow" size="20rpx" color="#999"/>
@@ -86,25 +86,74 @@
     </view>
 
     <!-- PDF预览区域 -->
-    <view class="pdf-viewer-overlay" wx:if="{{showPdfViewer}}" bindtap="closePdfViewer">
-        <view class="pdf-viewer" bindtap="preventClose">
+    <view class="image-viewer-overlay" wx:if="{{showImageViewer}}">
+        <view class="image-viewer">
             <view class="viewer-header">
+                <view class="back-btn" bindtap="closeImageViewer" hover-class="back-btn-hover">
+                    <van-icon name="arrow-left" size="36rpx" color="#FFFFFF"/>
+                    <text class="back-text">返回目录</text>
+                </view>
                 <view class="viewer-title-section">
                     <text class="viewer-title">{{currentPdfTitle}}</text>
-                </view>
-                <view class="close-btn" bindtap="closePdfViewer" catch:tap="">
-                    <van-icon name="cross" size="28rpx" color="#FF6B35"/>
+                    <text class="viewer-page-info">{{loadedPages}}/{{currentPdfTotalPages}}页</text>
                 </view>
             </view>
 
-            <view class="viewer-content">
-                <web-view src="{{pdfUrl}}" class="pdf-webview"></web-view>
+            <scroll-view
+                class="viewer-content"
+                scroll-y="{{isScrollEnabled}}"
+                enhanced="{{true}}"
+                fast-deceleration="{{true}}"
+                show-scrollbar="{{true}}"
+                scroll-with-animation="{{true}}"
+                bindscrolltolower="handleScrollToLower"
+                bind:touchstart="handleScrollTouchStart"
+                bind:touchmove="handleScrollTouchMove"
+                bind:touchend="handleScrollTouchEnd"
+                bind:touchcancel="handleScrollTouchCancel">
+                <view class="image-container">
+                    <block wx:for="{{currentImageList}}" wx:key="page">
+                        <view class="image-wrapper pdf-page">
+                            <view class="page-number">第{{item.page}}页/共{{currentPdfTotalPages}}页</view>
+                            <view class="image-zoom-container"
+                                bind:touchstart="handleImageTouchStart"
+                                bind:touchmove="handleImageTouchMove"
+                                bind:touchend="handleImageTouchEnd"
+                                bind:touchcancel="handleImageTouchCancel">
+                                <image 
+                                    class="pdf-image" 
+                                    src="{{item.url}}" 
+                                    data-index="{{index}}" 
+                                    mode="widthFix" 
+                                    style="transform: scale({{scale}});"
+                                    binderror="handleImageError"
+                                    catch:longpress="">
+                                </image>
+                            </view>
+                        </view>
+                    </block>
+                    
+                    <view class="loading-more" wx:if="{{loadedPages < currentPdfTotalPages}}">
+                        <van-loading color="#FF6B35" size="24px">加载更多PDF页面...</van-loading>
+                    </view>
+                    
+                    <view class="end-of-document" wx:if="{{loadedPages >= currentPdfTotalPages}}">
+                        <text>— PDF文档结束 —</text>
+                    </view>
+                </view>
+            </scroll-view>
+            
+            <view class="image-controls">
+                <view class="scale-info">缩放: {{scaleDisplay}}%</view>
+                <view class="zoom-tips">提示: 用两指手势可缩放PDF文档</view>
             </view>
+            
+            <!-- 移除右下角悬浮返回按钮 -->
         </view>
     </view>
 
     <!-- 底部提示 -->
-    <view class="footer-tip" wx:if="{{!showPdfViewer}}">
+    <view class="footer-tip" wx:if="{{!showImageViewer}}">
         <van-icon name="info-o" size="28rpx" color="#FF8C42"/>
         <text class="tip-text">点击分类可展开查看相关政策文件</text>
     </view>

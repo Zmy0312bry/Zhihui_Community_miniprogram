@@ -206,25 +206,25 @@
 }
 
 /* PDF预览区域 */
-.pdf-viewer-overlay {
+.image-viewer-overlay {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.7);
   z-index: 1000;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 40rpx;
+  padding: 0;
 }
 
-.pdf-viewer {
+.image-viewer {
   width: 100%;
   height: 100%;
-  background: white;
-  border-radius: 20rpx;
+  background: #f0f0f0; /* 更改为浅灰色，更接近PDF阅读器背景 */
+  border-radius: 0;
   overflow: hidden;
   box-shadow: 0 10rpx 40rpx rgba(0, 0, 0, 0.3);
   display: flex;
@@ -234,7 +234,7 @@
 .viewer-header {
   display: flex;
   align-items: center;
-  padding: 20rpx 25rpx;
+  padding: 24rpx 25rpx;
   background: linear-gradient(135deg, #FF6B35, #FF8C42);
   box-shadow: 0 4rpx 15rpx rgba(255, 107, 53, 0.3);
   position: relative;
@@ -243,10 +243,13 @@
 
 .viewer-title-section {
   flex: 1;
+  display: flex;
+  flex-direction: column;
+  margin-left: 20rpx;
 }
 
 .viewer-title {
-  font-size: 32rpx;
+  font-size: 30rpx;
   font-weight: bold;
   color: white;
   text-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.3);
@@ -255,33 +258,180 @@
   white-space: nowrap;
 }
 
-.close-btn {
-  width: 60rpx;
-  height: 60rpx;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.2);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.3s ease;
-  margin-left: 20rpx;
+.viewer-page-info {
+  font-size: 22rpx;
+  color: rgba(255, 255, 255, 0.8);
+  margin-top: 4rpx;
 }
 
-.close-btn:active {
-  background: rgba(255, 255, 255, 0.3);
-  transform: scale(0.9);
+.back-btn {
+  display: flex;
+  align-items: center;
+  padding: 12rpx 24rpx;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 30rpx;
+  transition: all 0.2s ease;
+  margin-right: 20rpx;
+  border: 1rpx solid rgba(255, 255, 255, 0.3);
+}
+
+.back-btn-hover,
+.back-btn:active {
+  background: rgba(0, 0, 0, 0.3);
+  transform: scale(0.95);
+}
+
+.back-text {
+  color: white;
+  font-size: 26rpx;
+  margin-left: 8rpx;
+  font-weight: bold;
 }
 
 .viewer-content {
   flex: 1;
   position: relative;
   background: #f5f5f5;
+  overflow-y: scroll;
+  -webkit-overflow-scrolling: touch;
+  width: 100%;
+  height: calc(100% - 88rpx);
+  box-sizing: border-box;
+  touch-action: pan-y; /* 只允许垂直滚动 */
+  /* 确保触摸事件能够传递 */
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }
 
-.pdf-webview {
+.image-container {
+  padding: 0;
+  min-height: 100%;
+  /* 确保容器能够接收滚动事件 */
+  touch-action: inherit;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   width: 100%;
-  height: 100%;
 }
+
+.image-wrapper {
+  width: 100%;
+  margin-bottom: 12rpx;
+  background: white;
+  overflow: hidden;
+  position: relative;
+  transform-origin: center center;
+}
+
+.pdf-page {
+  height: 100vh; /* 使每一页正好填满一屏 */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #f0f0f0;
+  border-bottom: 1rpx solid rgba(0, 0, 0, 0.1);
+  padding: 24rpx 0;
+  box-sizing: border-box;
+  position: relative;
+}
+
+.page-number {
+  position: absolute;
+  top: 20rpx;
+  right: 20rpx;
+  background: rgba(255, 107, 53, 0.8);
+  color: white;
+  font-size: 22rpx;
+  padding: 6rpx 16rpx;
+  border-radius: 30rpx;
+  z-index: 2;
+  box-shadow: 0 2rpx 6rpx rgba(0,0,0,0.2);
+  opacity: 0.9;
+}
+
+.image-zoom-container {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  position: relative;
+  z-index: 20;
+  /* 允许所有触摸操作，包括单指滑动和双指缩放 */
+  touch-action: manipulation;
+  /* 确保触摸事件能够传递到子元素 */
+  pointer-events: auto;
+}
+
+.pdf-image {
+  width: 94%; /* 留一些边距，使其看起来像PDF */
+  max-height: 92vh;
+  transition: transform 0.1s ease-out; /* 稍微加快过渡，减少滞后感 */
+  transform-origin: center;
+  display: block;
+  will-change: transform;
+  background-color: white;
+  box-shadow: 0 4rpx 30rpx rgba(0,0,0,0.25);
+  /* 防止拖拽图片时出现原生拖拽效果 */
+  -webkit-user-drag: none;
+  -khtml-user-drag: none;
+  -moz-user-drag: none;
+  -o-user-drag: none;
+  user-drag: none;
+  border-radius: 4rpx;
+  /* 允许触摸事件传递 */
+  pointer-events: auto;
+  touch-action: inherit; /* 继承父容器的触摸行为 */
+}
+
+.loading-more {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 120rpx;
+  width: 100%;
+  background: white;
+}
+
+.end-of-document {
+  text-align: center;
+  color: #999;
+  padding: 40rpx 0;
+  width: 100%;
+  font-size: 24rpx;
+  background: white;
+}
+
+.image-controls {
+  padding: 16rpx;
+  background: rgba(255, 255, 255, 0.9);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border-top: 1px solid #e0e0e0;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 1002;
+  box-shadow: 0 -2rpx 10rpx rgba(0, 0, 0, 0.1);
+}
+
+.scale-info {
+  font-size: 24rpx;
+  color: #666;
+  margin-bottom: 4rpx;
+}
+
+.zoom-tips {
+  font-size: 22rpx;
+  color: #999;
+}
+
+/* 已移除悬浮返回按钮样式 */
 
 /* 响应式设计 */
 @media (max-width: 750rpx) {

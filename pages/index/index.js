@@ -17,10 +17,10 @@ Page({
     ],
   },
 
-  // 跳转到AI聊天
-  goAiChat: function () {
-    wx.switchTab({
-      url: "/pages/aiChat/aiChat",
+  // 跳转到资源地图
+  goResourceMap: function () {
+    wx.navigateTo({
+      url: "/pages/resourceMap/resourceMap",
     });
   },
 

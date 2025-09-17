@@ -1,0 +1,7 @@
+<view class="container">
+  <view class="title">资源地图</view>
+  <view class="content">
+    <!-- 此处为留白区域，后续可添加内容 -->
+    <view class="placeholder-text">功能开发中，敬请期待...</view>
+  </view>
+</view>

@@ -140,6 +140,10 @@
   min-height: 100%;
   display: flex;
   align-items: center;
+  /* 允许所有触摸操作 */
+  touch-action: manipulation;
+  /* 确保触摸事件能够正常响应 */
+  pointer-events: auto;
   justify-content: center;
   padding: 10rpx; /* 减少内边距，让地图更大 */
 }
@@ -150,6 +154,12 @@
   max-width: 1200rpx; /* 限制最大宽度 */
   border-radius: 12rpx;
   box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.1);
+  /* 防止拖拽图片时出现原生拖拽效果 */
+  -webkit-user-drag: none;
+  -khtml-user-drag: none;
+  -moz-user-drag: none;
+  -o-user-drag: none;
+  user-drag: none;
 }
 
 /* 横向缩放控制按钮 */

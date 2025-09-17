@@ -28,7 +28,11 @@
 
         <view class="map-content">
             <scroll-view scroll-x="{{true}}" scroll-y="{{true}}" class="map-scroll">
-                <view class="map-wrapper">
+                <view class="map-wrapper"
+                      bindtouchstart="handleTouchStart"
+                      bindtouchmove="handleTouchMove"
+                      bindtouchend="handleTouchEnd"
+                      bindtouchcancel="handleTouchEnd">
                     <image
                         src="{{mapImageUrl}}"
                         class="service-map"
@@ -42,19 +46,11 @@
             </scroll-view>
         </view>
 
-        <!-- 缩放控制按钮 - 横向排列在地图下面 -->
+        <!-- 缩放功能：双指缩放 + 重置按钮 -->
         <view class="zoom-controls-horizontal">
-            <view class="zoom-btn zoom-in" bindtap="zoomIn">
-                <van-icon name="plus" size="24rpx" color="#FF6B35"/>
-                <text class="zoom-text">放大</text>
-            </view>
             <view class="zoom-btn zoom-reset" bindtap="resetZoom">
                 <van-icon name="replay" size="24rpx" color="#4CAF50"/>
                 <text class="zoom-text">重置</text>
-            </view>
-            <view class="zoom-btn zoom-out" bindtap="zoomOut">
-                <van-icon name="minus" size="24rpx" color="#FF9800"/>
-                <text class="zoom-text">缩小</text>
             </view>
         </view>
     </view>
@@ -62,6 +58,6 @@
     <!-- 底部提示 -->
     <view class="footer-tip">
         <van-icon name="info-o" size="28rpx" color="#FF6B35"/>
-        <text class="tip-text">使用下方按钮缩放地图，点击地图查看详细信息</text>
+        <text class="tip-text">使用双指进行地图缩放，点击重置按钮恢复默认大小</text>
     </view>
 </view>
