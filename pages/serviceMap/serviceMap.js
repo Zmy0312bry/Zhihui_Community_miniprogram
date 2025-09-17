@@ -5,7 +5,7 @@ Page({
     // 地图缩放相关
     scale: 1.0,
     minScale: 0.5,
-    maxScale: 6.0,  // 提高到600%的最大缩放比例
+    maxScale: 10.0,  // 提高到600%的最大缩放比例
     scaleStep: 0.25,
 
     // 地图状态
@@ -30,7 +30,7 @@ Page({
     this.isZooming = false;
 
     // 设置地图图片URL
-    const mapImageUrl = app.getMediaUrl('map.jpg');
+    const mapImageUrl = app.getMediaUrl('map.webp');
     console.log('地图图片URL:', mapImageUrl);
 
     this.setData({
@@ -212,7 +212,7 @@ Page({
     return {
       title: '上地街道服务地图',
       path: '/pages/serviceMap/serviceMap',
-      imageUrl: app.getMediaUrl('map.jpg')
+      imageUrl: app.getMediaUrl('map.webp')
     };
   },
 
@@ -220,7 +220,7 @@ Page({
   onShareTimeline: function() {
     return {
       title: '上地街道服务地图',
-      imageUrl: app.getMediaUrl('map.jpg')
+      imageUrl: app.getMediaUrl('map.webp')
     };
   },
 
