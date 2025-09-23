@@ -6,12 +6,9 @@ Page({
         selectedCommunity: 0,
         communityOptions: [
             { text: '上地街道养老服务中心', value: 0 },
-            { text: '东馨园社区', value: 1 },
-            { text: '上地八一社区', value: 2 },
-            { text: '博雅西园社区', value: 3 },
-            { text: '上地科技园社区', value: 4 }
+            { text: '通用芳华上地街道养老照料中心', value: 1 }
         ],
-        currentDate: '',
+        currentDate: '2025年9月1号—9月7号',
 
         // 展开状态
         expandedCategories: {
@@ -23,8 +20,8 @@ Page({
         // 食谱图片数据
         menus: {
             breakfast: { image: app.getMediaUrl('zaocan.jpg'), name: '早餐' },
-            lunch: { image: app.getMediaUrl('wucan.jpg'), name: '午餐' },
-            dinner: { image: app.getMediaUrl('wancan.jpg'), name: '晚餐' }
+            lunch: { image: app.getMediaUrl('wucan11.png'), name: '午餐' },
+            dinner: { image: app.getMediaUrl('wancan11.png'), name: '晚餐' }
         },
 
         // 图片预览相关

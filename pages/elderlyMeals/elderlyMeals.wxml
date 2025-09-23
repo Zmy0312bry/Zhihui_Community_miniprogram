@@ -24,7 +24,7 @@
         <view class="menu-date">{{currentDate}} 食谱</view>
 
         <!-- 早餐分类 -->
-        <view class="category">
+        <view class="category" wx:if="{{selectedCommunity != 1}}">
             <view class="category-header" bindtap="toggleCategory" data-category="breakfast">
                 <text class="category-title">{{menus.breakfast.name}}</text>
                 <van-icon name="{{expandedCategories.breakfast ? 'arrow-up' : 'arrow-down'}}" />
@@ -53,6 +53,49 @@
             </view>
             <view class="category-content" wx:if="{{expandedCategories.dinner}}">
                 <image src="{{menus.dinner.image}}" class="menu-image" mode="aspectFill" bindtap="viewImage" data-image="{{menus.dinner.image}}" data-title="{{menus.dinner.name}}" />
+            </view>
+        </view>
+    </view>
+
+    <!-- 就餐信息 - 仅在选择通用芳华上地街道养老照料中心时显示 -->
+    <view class="info-section" wx:if="{{selectedCommunity == 1}}">
+        <view class="info-card">
+            <view class="info-header">
+                <van-icon name="cash-on-deliver-o" size="32rpx" color="#FF6B35"/>
+                <text class="info-title">优惠信息</text>
+            </view>
+            <view class="info-content">
+                <text class="info-text">长者优惠：28元优惠套餐：15元区荤菜1份+9元区半荤菜1份+7元区素菜1份+主食+汤，60周岁及以上老年人注册政府平台信息后，支付满15元以上减1元，支付满20元以上减2元，支付满30元减3元，支付满50元减5元。建议自带餐盒，外带餐盒：套餐餐盒1元/个，汤碗0.5元/个。</text>
+            </view>
+        </view>
+
+        <view class="info-card">
+            <view class="info-header">
+                <van-icon name="clock-o" size="32rpx" color="#FF6B35"/>
+                <text class="info-title">就餐时间</text>
+            </view>
+            <view class="info-content">
+                <text class="info-text">周一至周五就餐时间:中餐：11：10-12:10，晚餐：17:00-17:30</text>
+            </view>
+        </view>
+
+        <view class="info-card">
+            <view class="info-header">
+                <van-icon name="orders-o" size="32rpx" color="#FF6B35"/>
+                <text class="info-title">就餐方式</text>
+            </view>
+            <view class="info-content">
+                <text class="info-text">线下：可堂食、可由机构人员送餐到家；线上：饿了么搜索"社区餐厅（上地店）"即可送餐到家，菜谱每周更新</text>
+            </view>
+        </view>
+
+        <view class="info-card">
+            <view class="info-header">
+                <van-icon name="location-o" size="32rpx" color="#FF6B35"/>
+                <text class="info-title">就餐地点</text>
+            </view>
+            <view class="info-content">
+                <text class="info-text">就餐地址:北京市海淀区农大南路厢黄旗万树园小区东门旁上地街道养老照料中心</text>
             </view>
         </view>
     </view>

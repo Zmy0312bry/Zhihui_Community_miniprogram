@@ -1,7 +1,49 @@
 <view class="container">
-  <view class="title">资源地图</view>
-  <view class="content">
-    <!-- 此处为留白区域，后续可添加内容 -->
-    <view class="placeholder-text">功能开发中，敬请期待...</view>
-  </view>
+    <!-- 页面头部 -->
+    <view class="header">
+        <view class="header-bg">
+            <view class="header-decoration">
+                <view class="decoration-circle circle-1"></view>
+                <view class="decoration-circle circle-2"></view>
+                <view class="decoration-circle circle-3"></view>
+            </view>
+        </view>
+        <view class="header-content">
+            <text class="title">养老服务资源地图</text>
+            <text class="subtitle">为您提供便捷的养老服务机构信息</text>
+        </view>
+    </view>
+
+    <!-- 服务站列表 -->
+    <view class="service-list">
+        <view class="list-container">
+            <view wx:for="{{serviceCenters}}" wx:key="index" class="service-card" bindtap="callPhone" data-phone="{{item.phone}}">
+                <view class="card-header">
+                    <view class="card-icon">
+                        <van-icon name="shop-o" size="40rpx" color="#ffffffff"/>
+                    </view>
+                    <view class="card-title-section">
+                        <text class="card-title">{{item.name}}</text>
+                        <text class="card-address">{{item.address}}</text>
+                    </view>
+                </view>
+
+                <view class="card-content">
+                    <view class="service-info">
+                        <view class="info-item">
+                            <van-icon name="user-o" size="28rpx" color="#FF8C42"/>
+                            <text class="info-label">负责人：</text>
+                            <text class="info-text">{{item.manager}}</text>
+                        </view>
+
+                        <view class="info-item">
+                            <van-icon name="phone-o" size="28rpx" color="#FF8C42"/>
+                            <text class="info-label">联系电话：</text>
+                            <text class="info-text phone-text">{{item.phone}}</text>
+                        </view>
+                    </view>
+                </view>
+            </view>
+        </view>
+    </view>
 </view>

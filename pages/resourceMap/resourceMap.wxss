@@ -1,29 +1,291 @@
+/* 橙色暖色调主题样式 */
 .container {
-  padding: 20rpx;
-  height: 100vh;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  background-color: #f8f8f8;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #FFF8F0 0%, #FFFFFF 100%);
+}
+
+/* 页面头部样式 */
+.header {
+  position: relative;
+  height: 200rpx;
+  overflow: hidden;
+}
+
+.header-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, #FF6B35 0%, #FF8C42 50%, #FFA366 100%);
+  border-radius: 0 0 40rpx 40rpx;
+}
+
+.header-decoration {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  overflow: hidden;
+}
+
+.decoration-circle {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.circle-1 {
+  width: 120rpx;
+  height: 120rpx;
+  top: -60rpx;
+  right: -60rpx;
+}
+
+.circle-2 {
+  width: 80rpx;
+  height: 80rpx;
+  top: 40rpx;
+  right: 100rpx;
+}
+
+.circle-3 {
+  width: 60rpx;
+  height: 60rpx;
+  bottom: -30rpx;
+  left: 80rpx;
+}
+
+.header-content {
+  position: relative;
+  z-index: 2;
+  padding: 60rpx 40rpx 40rpx 40rpx;
+  text-align: center;
 }
 
 .title {
-  font-size: 36rpx;
+  display: block;
+  font-size: 40rpx;
   font-weight: bold;
-  margin-top: 40rpx;
-  margin-bottom: 40rpx;
+  color: white;
+  margin-bottom: 10rpx;
+  text-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.3);
 }
 
-.content {
-  width: 100%;
+.subtitle {
+  display: block;
+  font-size: 28rpx;
+  color: rgba(255, 255, 255, 0.9);
+  text-shadow: 0 1rpx 4rpx rgba(0, 0, 0, 0.2);
+}
+
+/* 服务站列表样式 */
+.service-list {
+  flex: 1;
+  padding: 30rpx 20rpx;
+}
+
+.list-container {
   display: flex;
   flex-direction: column;
+  gap: 30rpx;
+}
+
+.service-card {
+  background: white;
+  border-radius: 20rpx;
+  box-shadow: 0 8rpx 25rpx rgba(255, 107, 53, 0.15);
+  overflow: hidden;
+  transition: all 0.3s ease;
+  border: 2rpx solid transparent;
+}
+
+.service-card:active {
+  transform: translateY(-5rpx);
+  box-shadow: 0 12rpx 35rpx rgba(255, 107, 53, 0.25);
+  border-color: rgba(255, 107, 53, 0.3);
+}
+
+/* 卡片头部 */
+.card-header {
+  display: flex;
+  align-items: flex-start;
+  padding: 30rpx 25rpx 20rpx 25rpx;
+  background: linear-gradient(135deg, rgba(255, 107, 53, 0.05) 0%, rgba(255, 140, 66, 0.05) 100%);
+  border-bottom: 1rpx solid rgba(255, 107, 53, 0.1);
+}
+
+.card-icon {
+  width: 60rpx;
+  height: 60rpx;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #FF6B35, #FF8C42);
+  display: flex;
   align-items: center;
   justify-content: center;
+  margin-right: 20rpx;
+  flex-shrink: 0;
+  box-shadow: 0 4rpx 12rpx rgba(255, 107, 53, 0.3);
+}
+
+.card-title-section {
   flex: 1;
 }
 
-.placeholder-text {
+.card-title {
+  display: block;
   font-size: 32rpx;
-  color: #999;
+  font-weight: bold;
+  color: #333;
+  line-height: 1.4;
+  margin-bottom: 8rpx;
+}
+
+.card-address {
+  display: block;
+  font-size: 26rpx;
+  color: #666;
+  line-height: 1.3;
+}
+
+/* 卡片内容 */
+.card-content {
+  padding: 20rpx 25rpx;
+}
+
+.service-info {
+  display: flex;
+  flex-direction: column;
+  gap: 20rpx;
+}
+
+.info-item {
+  display: flex;
+  align-items: flex-start;
+  min-height: 60rpx;
+}
+
+.info-item .van-icon {
+  margin-right: 12rpx;
+  margin-top: 4rpx;
+  flex-shrink: 0;
+}
+
+.info-label {
+  font-size: 28rpx;
+  color: #FF6B35;
+  font-weight: 600;
+  margin-right: 8rpx;
+  flex-shrink: 0;
+  min-width: 140rpx;
+}
+
+.info-text {
+  flex: 1;
+  font-size: 28rpx;
+  color: #555;
+  line-height: 1.5;
+}
+
+.phone-text {
+  color: #FF6B35;
+  font-weight: 600;
+}
+
+/* 卡片底部 */
+.card-footer {
+  display: flex;
+  gap: 20rpx;
+  padding: 20rpx 25rpx 30rpx 25rpx;
+  background: linear-gradient(135deg, rgba(255, 107, 53, 0.02) 0%, rgba(255, 140, 66, 0.02) 100%);
+}
+
+.action-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20rpx 15rpx;
+  border-radius: 25rpx;
+  background: linear-gradient(135deg, #FF6B35, #FF8C42);
+  box-shadow: 0 4rpx 15rpx rgba(255, 107, 53, 0.3);
+  transition: all 0.3s ease;
+}
+
+.action-btn:active {
+  transform: translateY(2rpx);
+  box-shadow: 0 2rpx 8rpx rgba(255, 107, 53, 0.4);
+}
+
+.action-btn.secondary {
+  background: linear-gradient(135deg, #FFF5F0, #FFF8F5);
+  border: 2rpx solid rgba(255, 107, 53, 0.3);
+  box-shadow: 0 2rpx 8rpx rgba(255, 107, 53, 0.1);
+}
+
+.action-btn.secondary:active {
+  background: linear-gradient(135deg, #FFE8E0, #FFF0EB);
+  box-shadow: 0 1rpx 4rpx rgba(255, 107, 53, 0.2);
+}
+
+.action-btn .van-icon {
+  margin-right: 8rpx;
+}
+
+.btn-text {
+  font-size: 26rpx;
+  font-weight: 600;
+  color: white;
+}
+
+.action-btn.secondary .btn-text {
+  color: #FF6B35;
+}
+
+/* 底部提示 */
+.footer-tip {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 30rpx 40rpx;
+  background: linear-gradient(135deg, rgba(255, 107, 53, 0.05) 0%, rgba(255, 140, 66, 0.05) 100%);
+  margin: 0 20rpx 20rpx 20rpx;
+  border-radius: 20rpx;
+  border: 1rpx solid rgba(255, 107, 53, 0.1);
+}
+
+.footer-tip .van-icon {
+  margin-right: 12rpx;
+  flex-shrink: 0;
+}
+
+.tip-text {
+  font-size: 26rpx;
+  color: #FF6B35;
+  text-align: center;
+  line-height: 1.4;
+}
+
+/* 响应式设计 */
+@media (max-width: 750rpx) {
+  .card-footer {
+    flex-direction: column;
+    gap: 15rpx;
+  }
+
+  .action-btn {
+    padding: 18rpx 12rpx;
+  }
+
+  .info-label {
+    min-width: 120rpx;
+    font-size: 26rpx;
+  }
+
+  .info-text {
+    font-size: 26rpx;
+  }
 }
