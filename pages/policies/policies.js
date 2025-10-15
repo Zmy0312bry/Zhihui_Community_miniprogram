@@ -6,7 +6,8 @@ Page({
     // 展开状态
     expandedCategories: {
       care: false,
-      assessment: false
+      assessment: false,
+      welfare: false
     },
     
     // 触摸和滚动状态控制
@@ -54,6 +55,31 @@ Page({
         file: "pdf4.pdf",
         desc: "老年人能力评估相关实施办法",
         totalPages: 20
+      }
+    ],
+
+    // 老年人福利政策
+    welfarePolicies: [
+      {
+        id: 6,
+        title: "养老服务专项补贴政策",
+        file: app.getMediaUrl('fuwu.png'),
+        desc: "养老服务专项补贴相关政策内容",
+        totalPages: 1
+      },
+      {
+        id: 7,
+        title: "老年人福利服务政策",
+        file: app.getMediaUrl('fuwu.jpg'),
+        desc: "老年人福利服务相关政策内容",
+        totalPages: 1
+      },
+      {
+        id: 8,
+        title: "老年人福利补贴政策",
+        file: app.getMediaUrl('fuli.jpg'),
+        desc: "老年人福利补贴相关政策内容",
+        totalPages: 1
       }
     ],
 
@@ -117,11 +143,39 @@ Page({
     });
   },
 
-  // 查看PDF文档
+  // 查看PDF文档或图片
   viewPdfImages: function (e) {
     const file = e.currentTarget.dataset.file;
     const title = e.currentTarget.dataset.title;
     const totalPages = e.currentTarget.dataset.pages;
+    
+    // 检查是否为直接图片URL（以http开头）
+    if (file.startsWith('http')) {
+      // 直接图片URL的情况
+      console.log('查看图片文档:', file, title, totalPages);
+      
+      const imageList = [{
+        url: file,
+        page: 1
+      }];
+      
+      // 显示图片预览
+      this.setData({
+        showImageViewer: true,
+        currentPdfFile: file,
+        currentPdfTitle: title,
+        currentPdfTotalPages: parseInt(totalPages),
+        currentImageList: imageList,
+        loadedPages: 1,
+        scale: 1,
+        scaleDisplay: '100'
+      });
+      
+      console.log('图片预览已显示');
+      return;
+    }
+    
+    // PDF文件的情况
     const pdfNum = file.replace('.pdf', ''); // 获取pdf编号
     const baseDir = pdfNum; // 图片目录名
     
@@ -152,7 +206,7 @@ Page({
       scaleDisplay: '100'
     });
     
-    console.log('图片预览已显示');
+    console.log('PDF图片预览已显示');
   },
   
   // 加载更多图片

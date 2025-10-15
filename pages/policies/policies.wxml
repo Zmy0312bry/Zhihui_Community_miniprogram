@@ -83,6 +83,46 @@
                 </view>
             </view>
         </view>
+
+        <!-- 老年人福利政策 -->
+        <view class="category-section">
+            <view class="category-header" bindtap="toggleCategory" data-category="welfare">
+                <view class="category-icon">
+                    <van-icon name="gift-o" size="40rpx" color="#ffffffff"/>
+                </view>
+                <view class="category-info">
+                    <text class="category-title">老年人福利政策</text>
+                    <text class="category-desc">老年人福利补贴和服务相关政策文件</text>
+                </view>
+                <view class="expand-icon" wx:if="{{!expandedCategories.welfare}}">
+                    <van-icon name="arrow" size="28rpx" color="#FF6B35"/>
+                </view>
+                <view class="expand-icon" wx:else>
+                    <van-icon name="arrow-down" size="28rpx" color="#FF6B35"/>
+                </view>
+            </view>
+
+            <view class="category-content" wx:if="{{expandedCategories.welfare}}">
+                <view class="policy-item" wx:for="{{welfarePolicies}}" wx:key="id" bindtap="viewPdfImages" data-file="{{item.file}}" data-title="{{item.title}}" data-pages="{{item.totalPages}}">
+                    <view class="item-icon">
+                        <van-icon name="description" size="24rpx" color="#FF8C42"/>
+                    </view>
+                    <view class="item-content">
+                        <text class="item-title">{{item.title}}</text>
+                        <text class="item-desc">{{item.desc}} ({{item.totalPages}}页)</text>
+                    </view>
+                    <view class="item-arrow">
+                        <van-icon name="arrow" size="20rpx" color="#999"/>
+                    </view>
+                </view>
+            </view>
+        </view>
+    </view>
+
+    <!-- 分类提示 -->
+    <view class="category-tip" wx:if="{{!showImageViewer}}">
+        <van-icon name="info-o" size="28rpx" color="#FF8C42"/>
+        <text class="tip-text">点击分类可展开查看相关政策文件</text>
     </view>
 
     <!-- PDF预览区域 -->
@@ -150,11 +190,5 @@
             
             <!-- 移除右下角悬浮返回按钮 -->
         </view>
-    </view>
-
-    <!-- 底部提示 -->
-    <view class="footer-tip" wx:if="{{!showImageViewer}}">
-        <van-icon name="info-o" size="28rpx" color="#FF8C42"/>
-        <text class="tip-text">点击分类可展开查看相关政策文件</text>
     </view>
 </view>

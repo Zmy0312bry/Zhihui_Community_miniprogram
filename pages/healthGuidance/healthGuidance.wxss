@@ -1,3 +1,4 @@
+/* 橙色暖色调主题样式 */
 .container {
   display: flex;
   flex-direction: column;
@@ -5,42 +6,478 @@
   background: linear-gradient(135deg, #FFF8F0 0%, #FFFFFF 100%);
 }
 
+/* 页面头部样式 */
 .header {
-  padding: 40rpx;
+  position: relative;
+  height: 200rpx;
+  overflow: hidden;
+}
+
+.header-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, #FF6B35 0%, #FF8C42 50%, #FFA366 100%);
+  border-radius: 0 0 40rpx 40rpx;
+}
+
+.header-decoration {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  overflow: hidden;
+}
+
+.decoration-circle {
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.circle-1 {
+  width: 120rpx;
+  height: 120rpx;
+  top: -60rpx;
+  right: -60rpx;
+}
+
+.circle-2 {
+  width: 80rpx;
+  height: 80rpx;
+  top: 40rpx;
+  right: 100rpx;
+}
+
+.circle-3 {
+  width: 60rpx;
+  height: 60rpx;
+  bottom: -30rpx;
+  left: 80rpx;
+}
+
+.header-content {
+  position: relative;
+  z-index: 2;
+  padding: 60rpx 40rpx 40rpx 40rpx;
+}
+
+.nav-bar {
+  display: flex;
+  align-items: center;
+}
+
+.back-btn {
+  width: 80rpx;
+  height: 80rpx;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 20rpx;
+  transition: all 0.3s ease;
+}
+
+.back-btn:active {
+  background: rgba(255, 255, 255, 0.3);
+  transform: scale(0.95);
+}
+
+.title-section {
+  flex: 1;
   text-align: center;
-  background: linear-gradient(45deg, #9C27B0, #BA68C8);
-  color: white;
 }
 
 .title {
-  font-size: 36rpx;
+  display: block;
+  font-size: 40rpx;
   font-weight: bold;
+  color: white;
+  margin-bottom: 10rpx;
+  text-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.3);
 }
 
+.subtitle {
+  display: block;
+  font-size: 28rpx;
+  color: rgba(255, 255, 255, 0.9);
+  text-shadow: 0 1rpx 4rpx rgba(0, 0, 0, 0.2);
+}
+
+/* 内容区域 */
 .content {
   flex: 1;
-  padding: 40rpx;
+  padding: 30rpx 20rpx;
 }
 
-.tips-section, .advice-section {
-  margin-bottom: 40rpx;
+/* 通用板块样式 */
+.tips-section, .advice-section, .cpr-section, .alzheimer-section {
+  margin-bottom: 30rpx;
   background: white;
   border-radius: 20rpx;
-  padding: 30rpx;
-  box-shadow: 0 8rpx 25rpx rgba(0, 0, 0, 0.1);
+  box-shadow: 0 8rpx 25rpx rgba(255, 107, 53, 0.15);
+  overflow: hidden;
+  border: 2rpx solid transparent;
+}
+
+.tips-section:active, .advice-section:active, .cpr-section:active, .alzheimer-section:active {
+  transform: translateY(-2rpx);
+  box-shadow: 0 12rpx 35rpx rgba(255, 107, 53, 0.25);
+  border-color: rgba(255, 107, 53, 0.3);
+}
+
+/* 板块头部 */
+.section-header {
+  display: flex;
+  align-items: center;
+  padding: 25rpx 30rpx;
+  background: linear-gradient(135deg, rgba(255, 107, 53, 0.05) 0%, rgba(255, 140, 66, 0.05) 100%);
+  border-bottom: 1rpx solid rgba(255, 107, 53, 0.1);
+}
+
+.section-header .van-icon {
+  margin-right: 15rpx;
+  flex-shrink: 0;
 }
 
 .section-title {
   font-size: 32rpx;
+  color: #FF6B35;
   font-weight: bold;
-  color: #333;
-  margin-bottom: 20rpx;
-  display: block;
+  flex: 1;
 }
 
-.tips-content, .advice-content {
+.section-title {
+  font-size: 32rpx;
+  color: #FF6B35;
+  font-weight: bold;
+}
+
+/* 心肺复苏指导样式 */
+.cpr-grid {
+  padding: 25rpx 30rpx;
+  display: flex;
+  flex-direction: column;
+  gap: 20rpx;
+}
+
+.cpr-card {
+  background: linear-gradient(135deg, rgba(255, 107, 53, 0.02) 0%, rgba(255, 140, 66, 0.02) 100%);
+  border-radius: 15rpx;
+  padding: 20rpx;
+  border: 1rpx solid rgba(255, 107, 53, 0.1);
+  transition: all 0.3s ease;
+}
+
+.cpr-card:active {
+  background: linear-gradient(135deg, rgba(255, 107, 53, 0.05) 0%, rgba(255, 140, 66, 0.05) 100%);
+  transform: scale(0.98);
+}
+
+.cpr-image-container {
+  width: 100%;
+  height: 400rpx;
+  border-radius: 15rpx;
+  overflow: hidden;
+  margin-bottom: 15rpx;
+  box-shadow: 0 4rpx 15rpx rgba(255, 107, 53, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f8f8f8;
+}
+
+.cpr-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  transition: transform 0.3s ease;
+}
+
+.cpr-card:active .cpr-image {
+  transform: scale(1.02);
+}
+
+.cpr-info {
+  text-align: center;
+}
+
+.cpr-title {
+  display: block;
+  font-size: 30rpx;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 8rpx;
+}
+
+.cpr-desc {
+  display: block;
+  font-size: 26rpx;
+  color: #FF6B35;
+  font-weight: 600;
+}
+
+/* 阿尔茨海默症板块样式 */
+.alzheimer-card {
+  padding: 30rpx;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+.alzheimer-icon {
+  width: 100rpx;
+  height: 100rpx;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #FF6B35, #FF8C42);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 25rpx;
+  flex-shrink: 0;
+  box-shadow: 0 6rpx 20rpx rgba(255, 107, 53, 0.3);
+}
+
+.alzheimer-info {
+  flex: 1;
+}
+
+.alzheimer-title {
+  display: block;
+  font-size: 32rpx;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 10rpx;
+  line-height: 1.4;
+}
+
+.alzheimer-desc {
+  display: block;
   font-size: 28rpx;
   color: #666;
-  line-height: 1.6;
-  white-space: pre-line;
+  margin-bottom: 15rpx;
+  line-height: 1.4;
+}
+
+.alzheimer-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.meta-text {
+  font-size: 26rpx;
+  color: #FF6B35;
+  font-weight: 600;
+}
+
+.alzheimer-meta .van-icon {
+  margin-left: 10rpx;
+}
+
+/* 图片预览样式 */
+.image-viewer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.9);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.viewer-image {
+  max-width: 90vw;
+  max-height: 80vh;
+  object-fit: contain;
+  border-radius: 20rpx;
+  transition: transform 0.3s ease;
+}
+
+.viewer-title {
+  margin-top: 20rpx;
+  color: white;
+  font-size: 32rpx;
+  text-align: center;
+  font-weight: bold;
+}
+
+/* 缩放控制 */
+.zoom-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 30rpx;
+  gap: 20rpx;
+}
+
+.zoom-btn {
+  width: 80rpx;
+  height: 80rpx;
+  border-radius: 50%;
+  background-color: rgba(255, 107, 53, 0.8);
+  color: #fff;
+  font-size: 36rpx;
+  font-weight: bold;
+  border: 2rpx solid rgba(255, 107, 53, 1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.zoom-btn:active {
+  background-color: rgba(255, 107, 53, 1);
+  transform: scale(0.95);
+}
+
+.zoom-text {
+  color: #FF6B35;
+  font-size: 28rpx;
+  font-weight: bold;
+  min-width: 100rpx;
+  text-align: center;
+}
+
+/* 阿尔茨海默症幻灯片预览样式 */
+.alzheimer-viewer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.95);
+  display: flex;
+  flex-direction: column;
+  z-index: 9999;
+}
+
+.alzheimer-viewer-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 30rpx 40rpx;
+  background: linear-gradient(135deg, rgba(255, 107, 53, 0.9) 0%, rgba(255, 140, 66, 0.9) 100%);
+  border-bottom: 1rpx solid rgba(255, 255, 255, 0.2);
+}
+
+.back-btn {
+  display: flex;
+  align-items: center;
+  padding: 15rpx 20rpx;
+  border-radius: 25rpx;
+  background: rgba(255, 255, 255, 0.2);
+  transition: all 0.3s ease;
+}
+
+.back-btn:active, .back-btn-hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: scale(0.95);
+}
+
+.back-btn .van-icon {
+  margin-right: 8rpx;
+}
+
+.back-text {
+  color: white;
+  font-size: 28rpx;
+  font-weight: 600;
+}
+
+.viewer-title-section {
+  flex: 1;
+  text-align: center;
+}
+
+.viewer-title {
+  display: block;
+  color: white;
+  font-size: 32rpx;
+  font-weight: bold;
+  margin-bottom: 5rpx;
+}
+
+.viewer-page-info {
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 26rpx;
+}
+
+.alzheimer-viewer-content {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20rpx;
+  overflow: hidden;
+}
+
+.alzheimer-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border-radius: 15rpx;
+  transition: transform 0.3s ease;
+}
+
+.alzheimer-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 30rpx 40rpx;
+  background: linear-gradient(135deg, rgba(255, 107, 53, 0.9) 0%, rgba(255, 140, 66, 0.9) 100%);
+  border-top: 1rpx solid rgba(255, 255, 255, 0.2);
+}
+
+.nav-btn {
+  width: 100rpx;
+  height: 100rpx;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  border: 2rpx solid rgba(255, 255, 255, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+}
+
+.nav-btn:active:not(:disabled) {
+  background: rgba(255, 255, 255, 0.3);
+  transform: scale(0.95);
+}
+
+.nav-btn:disabled {
+  opacity: 0.5;
+}
+
+/* 响应式设计 */
+@media (max-width: 750rpx) {
+  .cpr-grid {
+    gap: 15rpx;
+  }
+
+  .cpr-image-container {
+    height: 350rpx;
+  }
+
+  .alzheimer-card {
+    padding: 25rpx;
+  }
+
+  .alzheimer-icon {
+    width: 80rpx;
+    height: 80rpx;
+  }
+
+  .alzheimer-title {
+    font-size: 30rpx;
+  }
 }

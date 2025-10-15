@@ -433,6 +433,30 @@
 
 /* 已移除悬浮返回按钮样式 */
 
+/* 分类提示 */
+.category-tip {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 30rpx 20rpx;
+  margin: 20rpx 0;
+  background: rgba(255, 140, 66, 0.08);
+  border-radius: 12rpx;
+  margin-left: 20rpx;
+  margin-right: 20rpx;
+}
+
+.category-tip .van-icon {
+  margin-right: 12rpx;
+  flex-shrink: 0;
+}
+
+.category-tip .tip-text {
+  font-size: 26rpx;
+  color: #FF8C42;
+  font-weight: 500;
+}
+
 /* 响应式设计 */
 @media (max-width: 750rpx) {
   .category-title {
