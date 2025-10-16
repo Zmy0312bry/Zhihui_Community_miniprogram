@@ -25,7 +25,7 @@
             autosize
             border="{{false}}"
             class="feedback-content"
-            bind:input="onContentInput"
+            bind:change="onContentInput"
         />
     </view>
 
@@ -40,7 +40,7 @@
             placeholder="手机号或邮箱，方便我们联系您"
             border="{{false}}"
             class="contact-field"
-            bind:input="onContactInput"
+            bind:change="onContactInput"
         />
     </view>
 
