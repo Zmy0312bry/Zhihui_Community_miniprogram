@@ -17,7 +17,7 @@
     <!-- 服务站列表 -->
     <view class="service-list">
         <view class="list-container">
-            <view wx:for="{{healthCenters}}" wx:key="index" class="service-card" bindtap="callPhone" data-phone="{{item.phone}}">
+            <view wx:for="{{healthCenters}}" wx:key="index" class="service-card">
                 <view class="card-header">
                     <view class="card-icon">
                         <van-icon name="shop-o" size="40rpx" color="#ffffffff"/>
@@ -55,7 +55,7 @@
                         <van-icon name="phone" size="24rpx" color="white"/>
                         <text class="btn-text">立即拨打</text>
                     </view>
-                    <view class="action-btn secondary" bindtap="showLocation" data-address="{{item.address}}">
+                    <view class="action-btn secondary" bindtap="showLocation" data-index="{{index}}">
                         <van-icon name="location-o" size="24rpx" color="#FF6B35"/>
                         <text class="btn-text">查看位置</text>
                     </view>
@@ -67,6 +67,6 @@
     <!-- 底部提示 -->
     <view class="footer-tip">
         <van-icon name="info-o" size="28rpx" color="#FF8C42"/>
-        <text class="tip-text">点击卡片可直接拨打电话，获取更多服务信息</text>
+        <text class="tip-text">点击"立即拨打"按钮可拨打电话，"查看位置"可导航到卫生中心</text>
     </view>
 </view>

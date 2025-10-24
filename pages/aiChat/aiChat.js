@@ -28,7 +28,6 @@ Page({
         app: app, // 添加app对象到data中，用于在wxml中访问app.getMediaUrl
         dialogueId: 0,
         dialogue_list: [], // 保留占位符数据
-        open: false,
         answer_loading: false,
         answerDesc: '',
         typePage: 'AI助手',
@@ -571,41 +570,20 @@ Page({
     
 
     
+
+    
     /**
-     * 新建对话
+     * 打开侧边栏 - 改为直接新建对话
      */
-    creatChat: function(){
+    openAddChat: function(){
+        // 直接创建新对话，清空当前对话内容
         this.setData({
             chatList: [],
             answerDesc: "",
             loading: false,
-            dialogueId: Date.now() // 使用时间戳作为新对话ID
-        });
-        
-        this.cancelChat();
-    },
-    
-    /**
-     * 关闭侧边栏
-     */
-    cancelChat(){
-        this.setData({
-            open: false
-        });
-    },
-    
-    /**
-     * 打开侧边栏
-     */
-    openAddChat: function(){
-        if(this.data.open){
-            this.cancelChat();
-            return;
-        }
-        
-        // 只打开侧边栏，不加载历史记录
-        this.setData({
-            open: true
+            dialogueId: Date.now(), // 使用时间戳作为新对话ID
+            title: '', // 清空输入框
+            voiceText: '' // 清空语音文本
         });
     },
     

@@ -192,28 +192,3 @@
     <view bindtap="openAddChat" class="add-chat-btn" style="bottom: {{inputAreaHeight + 90}}px;">
         <text>+</text>
     </view>
-
-
-    <!-- 侧边栏 -->
-<view class="page">
-    <view class="page-top {{open ? 'page-top-show' : ''}}">
-        <view class="pageTitle">
-            对话历史
-        </view>
-        <view class="page-scroll">
-            <view class="empty-history">
-                <view class="empty-text">暂无历史对话</view>
-            </view>
-            <view bindtap="creatChat" class="new-chat-btn">
-                <view class="plus-icon">+</view>
-                <text>新对话</text>
-            </view>
-        </view>
-        <view style="width: 100%;">
-            <view bindtap="creatChat" class="creat-chat-btn">{{'新建对话'}}</view>
-        </view>
-        <view class="close-icon" bindtap="cancelChat">
-            <image src="{{app.getMediaUrl('left.png')}}" mode="aspectFit"></image>
-        </view>
-    </view>
-</view>

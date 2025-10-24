@@ -168,6 +168,16 @@
   min-height: 60rpx;
 }
 
+.phone-row {
+  display: flex;
+  flex-direction: column;
+  gap: 16rpx;
+}
+
+.phone-row .info-item {
+  min-height: auto;
+}
+
 .info-item .van-icon {
   margin-right: 12rpx;
   margin-top: 4rpx;
@@ -193,6 +203,17 @@
 .phone-text {
   color: #FF6B35;
   font-weight: 600;
+}
+
+.phone-container {
+  display: flex;
+  flex-direction: column;
+  gap: 12rpx;
+}
+
+.phone-item-2 {
+  padding-left: 40rpx;
+  min-height: auto;
 }
 
 /* 卡片底部 */

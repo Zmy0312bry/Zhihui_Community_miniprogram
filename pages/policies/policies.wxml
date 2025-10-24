@@ -130,9 +130,12 @@
         <view class="image-viewer">
             <view class="viewer-header">
                 <view class="back-btn" bindtap="closeImageViewer" hover-class="back-btn-hover">
-                    <van-icon name="arrow-left" size="36rpx" color="#FFFFFF"/>
-                    <text class="back-text">返回目录</text>
-                </view>
+                        <van-icon name="arrow-left" size="36rpx" color="#FFFFFF"/>
+                        <view class="back-text">
+                            <text>返回</text>
+                            <text>目录</text>
+                        </view>
+                    </view>
                 <view class="viewer-title-section">
                     <text class="viewer-title">{{currentPdfTitle}}</text>
                     <text class="viewer-page-info">{{loadedPages}}/{{currentPdfTotalPages}}页</text>
@@ -147,19 +150,19 @@
                 show-scrollbar="{{true}}"
                 scroll-with-animation="{{true}}"
                 bindscrolltolower="handleScrollToLower"
-                bind:touchstart="handleScrollTouchStart"
-                bind:touchmove="handleScrollTouchMove"
-                bind:touchend="handleScrollTouchEnd"
-                bind:touchcancel="handleScrollTouchCancel">
+                bind:touchstart="handleTouchStart"
+                bind:touchmove="handleTouchMove"
+                bind:touchend="handleTouchEnd"
+                bind:touchcancel="handleTouchCancel">
                 <view class="image-container">
                     <block wx:for="{{currentImageList}}" wx:key="page">
                         <view class="image-wrapper pdf-page">
                             <view class="page-number">第{{item.page}}页/共{{currentPdfTotalPages}}页</view>
                             <view class="image-zoom-container"
-                                bind:touchstart="handleImageTouchStart"
-                                bind:touchmove="handleImageTouchMove"
-                                bind:touchend="handleImageTouchEnd"
-                                bind:touchcancel="handleImageTouchCancel">
+                                bind:touchstart="handleTouchStart"
+                                bind:touchmove="handleTouchMove"
+                                bind:touchend="handleTouchEnd"
+                                bind:touchcancel="handleTouchCancel">
                                 <image 
                                     class="pdf-image" 
                                     src="{{item.url}}" 
@@ -185,7 +188,10 @@
             
             <view class="image-controls">
                 <view class="scale-info">缩放: {{scaleDisplay}}%</view>
-                <view class="zoom-tips">提示: 用两指手势可缩放PDF文档</view>
+                <view class="zoom-tips" wx:if="{{showPdfViewer}}">
+                    <van-icon name="info-o" size="24rpx" color="#FF6B35"/>
+                    <text class="tip-label">双指拖拽可缩放</text>
+                </view>
             </view>
             
             <!-- 移除右下角悬浮返回按钮 -->

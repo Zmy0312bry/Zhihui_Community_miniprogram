@@ -1,11 +1,108 @@
 .container {
     min-height: 100vh;
     background-color: #f8f8f8;
+    display: flex;
+    flex-direction: column;
 }
 
 .header {
-    background-color: white;
-    box-shadow: 0 2rpx 10rpx rgba(0, 0, 0, 0.1);
+    position: relative;
+    overflow: hidden;
+}
+
+.header-top {
+    background: linear-gradient(135deg, #FF6B35 0%, #FF8C42 50%, #FFA366 100%);
+    padding: 70rpx 30rpx 20rpx 30rpx;
+    display: flex;
+    align-items: center;
+    z-index: 10;
+    position: relative;
+}
+
+.back-btn {
+    display: flex;
+    align-items: center;
+    gap: 8rpx;
+    padding: 10rpx 0;
+}
+
+.back-text {
+    font-size: 28rpx;
+    color: white;
+    font-weight: 500;
+}
+
+.header-bg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, #FF6B35 0%, #FF8C42 50%, #FFA366 100%);
+    border-radius: 0 0 40rpx 40rpx;
+}
+
+.header-decoration {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    overflow: hidden;
+}
+
+.decoration-circle {
+    position: absolute;
+    border-radius: 50%;
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+.circle-1 {
+    width: 120rpx;
+    height: 120rpx;
+    top: -60rpx;
+    right: -60rpx;
+}
+
+.circle-2 {
+    width: 80rpx;
+    height: 80rpx;
+    top: 40rpx;
+    right: 100rpx;
+}
+
+.circle-3 {
+    width: 60rpx;
+    height: 60rpx;
+    bottom: -30rpx;
+    left: 80rpx;
+}
+
+.header-content {
+    position: relative;
+    z-index: 2;
+    padding: 40rpx 40rpx 60rpx 40rpx;
+    text-align: center;
+    min-height: 160rpx;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.title {
+    display: block;
+    font-size: 40rpx;
+    font-weight: bold;
+    color: white;
+    margin-bottom: 10rpx;
+    text-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.3);
+}
+
+.subtitle {
+    display: block;
+    font-size: 28rpx;
+    color: rgba(255, 255, 255, 0.9);
+    text-shadow: 0 1rpx 4rpx rgba(0, 0, 0, 0.2);
 }
 
 /* 温馨提示样式 */
@@ -37,102 +134,125 @@
     line-height: 1.4;
 }
 
-.community-selector {
-    background-color: white;
-    margin-bottom: 20rpx;
-}
-
-/* 就餐信息样式 */
-.info-section {
-    margin: 0 20rpx 20rpx 20rpx;
-}
-
-.info-card {
-    background-color: white;
-    border-radius: 20rpx;
-    box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.1);
-    margin-bottom: 20rpx;
-    overflow: hidden;
-}
-
-.info-header {
-    display: flex;
-    align-items: center;
-    padding: 25rpx 30rpx;
-    background: linear-gradient(135deg, rgba(255, 107, 53, 0.05) 0%, rgba(255, 140, 66, 0.05) 100%);
-    border-bottom: 1rpx solid rgba(255, 107, 53, 0.1);
-}
-
-.info-header .van-icon {
-    margin-right: 15rpx;
-    flex-shrink: 0;
-}
-
-.info-title {
-    font-size: 32rpx;
-    color: #FF6B35;
-    font-weight: bold;
-}
-
-.info-content {
-    padding: 25rpx 30rpx;
-}
-
-.info-content .info-text {
-    font-size: 28rpx;
-    color: #555;
-    line-height: 1.6;
-    text-align: justify;
-}
-
-.menu-list {
-    padding: 30rpx;
-}
-
+/* 日期显示 */
 .menu-date {
     font-size: 32rpx;
     color: #333;
     font-weight: bold;
     text-align: center;
-    margin-bottom: 30rpx;
+    margin: 20rpx 20rpx;
     padding: 20rpx;
     background-color: white;
     border-radius: 20rpx;
     box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.1);
 }
 
-/* 分类样式 */
-.category {
+/* 社区分类样式 */
+.meals-categories {
+    margin: 0 20rpx 20rpx 20rpx;
+}
+
+.community-section {
     background-color: white;
-    margin-bottom: 20rpx;
     border-radius: 20rpx;
+    margin-bottom: 30rpx;
     box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.1);
     overflow: hidden;
 }
 
-.category-header {
+/* 社区标题样式 - 类似政策法规的分类头 */
+.community-title {
     display: flex;
-    justify-content: space-between;
     align-items: center;
     padding: 30rpx;
-    border-bottom: 1rpx solid #f0f0f0;
-}
-
-.category-title {
+    background: linear-gradient(135deg, #FF6B35 0%, #FF8C42 100%);
+    color: white;
     font-size: 32rpx;
-    color: #333;
     font-weight: bold;
 }
 
-.category-content {
+.community-title .van-icon {
+    margin-right: 15rpx;
+    flex-shrink: 0;
+}
+
+/* 菜单列表 */
+.menus-list {
+    padding: 0;
+}
+
+/* 菜单分类项 */
+.menu-category {
+    border-bottom: 1rpx solid rgba(255, 107, 53, 0.08);
+}
+
+.menu-category:last-child {
+    border-bottom: none;
+}
+
+/* 菜单展开头 - 类似政策法规的分类头 */
+.menu-header {
+    display: flex;
+    align-items: center;
+    padding: 25rpx 30rpx;
+    background-color: #f9f9f9;
+    transition: all 0.3s ease;
+}
+
+.menu-header:active {
+    background-color: rgba(255, 107, 53, 0.05);
+}
+
+.menu-icon {
+    width: 50rpx;
+    height: 50rpx;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #FF6B35 0%, #FF8C42 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 20rpx;
+    flex-shrink: 0;
+}
+
+.menu-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.menu-title {
+    display: block;
+    font-size: 32rpx;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 8rpx;
+    line-height: 1.2;
+}
+
+.menu-desc {
+    display: block;
+    font-size: 24rpx;
+    color: #999;
+    line-height: 1.2;
+}
+
+.expand-icon {
+    margin-left: 15rpx;
+    flex-shrink: 0;
+}
+
+/* 菜单内容 */
+.menu-content {
     padding: 30rpx;
+    background-color: rgba(255, 107, 53, 0.02);
 }
 
 .menu-image {
     width: 100%;
-    height: 400rpx; /* 2:1 比例 */
+    height: 400rpx;
     border-radius: 20rpx;
-    object-fit: cover;
+    object-fit: contain;
     transition: all 0.3s ease;
 }
 
@@ -140,70 +260,212 @@
     transform: scale(0.98);
 }
 
+/* 就餐信息样式 */
+.info-section {
+    padding: 20rpx 0 0 0;
+    background-color: rgba(255, 107, 53, 0.02);
+    border-top: 1rpx solid rgba(255, 107, 53, 0.1);
+}
+
+.info-card {
+    margin: 0 30rpx 20rpx 30rpx;
+    background-color: white;
+    border-radius: 15rpx;
+    overflow: hidden;
+    border: 1rpx solid rgba(255, 107, 53, 0.1);
+}
+
+.info-header {
+    display: flex;
+    align-items: center;
+    padding: 20rpx 25rpx;
+    background: linear-gradient(135deg, rgba(255, 107, 53, 0.08) 0%, rgba(255, 140, 66, 0.08) 100%);
+    border-bottom: 1rpx solid rgba(255, 107, 53, 0.08);
+    transition: all 0.3s ease;
+}
+
+.info-header:active {
+    background: linear-gradient(135deg, rgba(255, 107, 53, 0.15) 0%, rgba(255, 140, 66, 0.15) 100%);
+}
+
+.info-icon {
+    width: 40rpx;
+    height: 40rpx;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #FF6B35 0%, #FF8C42 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 12rpx;
+    flex-shrink: 0;
+}
+
+.info-header-content {
+    flex: 1;
+    display: flex;
+    align-items: center;
+}
+
+.info-title {
+    font-size: 28rpx;
+    color: #333;
+    font-weight: 600;
+}
+
+.info-content {
+    padding: 20rpx 25rpx;
+    background-color: rgba(255, 107, 53, 0.02);
+}
+
+.info-content .info-text {
+    font-size: 26rpx;
+    color: #666;
+    line-height: 1.6;
+    text-align: justify;
+}
+
+/* 分类提示 */
+.category-tip {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 30rpx 20rpx;
+    margin: 0 20rpx 20rpx 20rpx;
+    background: rgba(255, 140, 66, 0.08);
+    border-radius: 12rpx;
+}
+
+.category-tip .van-icon {
+    margin-right: 12rpx;
+    flex-shrink: 0;
+}
+
+.category-tip .tip-text {
+    font-size: 26rpx;
+    color: #FF8C42;
+    font-weight: 500;
+}
+
 /* 图片预览样式 */
 .image-viewer {
     position: fixed;
     top: 0;
     left: 0;
-    width: 100vw;
-    height: 100vh;
-    background-color: rgba(0, 0, 0, 0.8);
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.85);
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: space-between;
     align-items: center;
     z-index: 9999;
+    overflow: hidden;
 }
 
-.viewer-image {
-    max-width: 90vw;
-    max-height: 80vh;
+/* 返回按钮 - 固定在左上方 */
+.close-btn {
+    position: fixed;
+    top: 100rpx;
+    left: 60rpx;
+    width: 80rpx;
+    height: 80rpx;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(0, 0, 0, 0.6);
+    border-radius: 50%;
+    z-index: 10000;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.close-btn:active {
+    background-color: rgba(0, 0, 0, 0.8);
+}
+
+/* 顶部标题栏 */
+.viewer-header {
+    width: 100%;
+    padding: 20rpx 20rpx;
+    flex-shrink: 0;
+    background: linear-gradient(to bottom, rgba(0, 0, 0, 0.3), transparent);
+}
+
+/* 中间图片容器 - 自适应缩放 */
+.viewer-content {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    padding: 0 20rpx;
+    overflow: hidden;
+}
+
+.viewer-image-box {
+    width: 100%;
+    height: 100%;
     object-fit: contain;
     border-radius: 20rpx;
-    transition: transform 0.3s ease;
+    transform-origin: center center;
+}
+
+/* 底部控制栏 */
+.viewer-bottom {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15rpx;
+    padding: 20rpx 20rpx;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.3), transparent);
+    width: 100%;
+    flex-shrink: 0;
 }
 
 .viewer-title {
-    margin-top: 20rpx;
     color: white;
     font-size: 32rpx;
     text-align: center;
     font-weight: bold;
+    line-height: 1.4;
 }
 
-/* 缩放控制 */
-.zoom-controls {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-top: 30rpx;
-    gap: 20rpx;
-}
-
-.zoom-btn {
-    width: 80rpx;
-    height: 80rpx;
-    border-radius: 50%;
-    background-color: rgba(255, 107, 53, 0.8);
-    color: #fff;
-    font-size: 36rpx;
-    font-weight: bold;
-    border: 2rpx solid rgba(255, 107, 53, 1);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.3s ease;
-}
-
-.zoom-btn:active {
-    background-color: rgba(255, 107, 53, 1);
-    transform: scale(0.95);
-}
-
+/* 缩放百分比显示 */
 .zoom-text {
     color: #FF6B35;
     font-size: 28rpx;
     font-weight: bold;
-    min-width: 100rpx;
+    background-color: rgba(255, 255, 255, 0.9);
+    padding: 12rpx 24rpx;
+    border-radius: 30rpx;
     text-align: center;
+}
+
+/* 双指缩放提示 */
+.pinch-tip {
+    display: flex;
+    align-items: center;
+    gap: 12rpx;
+    background-color: rgba(255, 255, 255, 0.95);
+    padding: 16rpx 28rpx;
+    border-radius: 30rpx;
+    box-shadow: 0 4rpx 15rpx rgba(0, 0, 0, 0.3);
+    animation: slideUp 0.4s ease;
+}
+
+.pinch-tip .tip-label {
+    font-size: 26rpx;
+    color: #FF6B35;
+    font-weight: 600;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(30rpx);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }

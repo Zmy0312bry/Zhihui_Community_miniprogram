@@ -1,7 +1,25 @@
 <view class="container">
     <!-- 页面头部 -->
     <view class="header">
-        <van-nav-bar title="养老用餐" left-text="返回" left-arrow bind:click-left="goBack" />
+        <!-- 返回按钮 -->
+        <view class="header-top">
+            <view class="back-btn" bindtap="goBack">
+                <van-icon name="arrow-left" size="32rpx" color="white"/>
+                <text class="back-text">返回</text>
+            </view>
+        </view>
+
+        <view class="header-bg">
+            <view class="header-decoration">
+                <view class="decoration-circle circle-1"></view>
+                <view class="decoration-circle circle-2"></view>
+                <view class="decoration-circle circle-3"></view>
+            </view>
+        </view>
+        <view class="header-content">
+            <text class="title">养老用餐</text>
+            <text class="subtitle">社区养老用餐服务</text>
+        </view>
     </view>
 
     <!-- 温馨提示 -->
@@ -12,110 +30,119 @@
         </view>
     </view>
 
-    <!-- 社区选择器 -->
-    <view class="community-selector">
-        <van-dropdown-menu>
-            <van-dropdown-item value="{{selectedCommunity}}" options="{{communityOptions}}" bind:change="onCommunityChange" />
-        </van-dropdown-menu>
+    <!-- 日期显示 -->
+    <view class="menu-date">{{currentDate}} 食谱</view>
+
+    <!-- 社区食谱列表 -->
+    <view class="meals-categories">
+        <view wx:for="{{communities}}" wx:key="id" class="community-section" wx:for-item="community" wx:for-index="outerIndex">
+            <!-- 社区标题 -->
+            <view class="community-title">
+                <van-icon name="shop-o" size="40rpx" color="#ffffffff"/>
+                <text>{{community.name}}</text>
+            </view>
+
+            <!-- 菜单列表 -->
+            <view class="menus-list">
+                <view wx:for="{{community.menus}}" wx:key="id" class="menu-category">
+                    <!-- 菜单展开头 -->
+                    <view class="menu-header" bindtap="toggleMenu" data-community-id="{{community.id}}" data-menu-id="{{item.id}}">
+                        <view class="menu-icon">
+                            <van-icon name="star-o" size="32rpx" color="#ffffff"/>
+                        </view>
+                        <view class="menu-info">
+                            <text class="menu-title">{{item.title}}</text>
+                            <text class="menu-desc">{{item.desc}}</text>
+                        </view>
+                        <view class="expand-icon" wx:if="{{!item.expanded}}">
+                            <van-icon name="arrow" size="28rpx" color="#FF6B35"/>
+                        </view>
+                        <view class="expand-icon" wx:else>
+                            <van-icon name="arrow-down" size="28rpx" color="#FF6B35"/>
+                        </view>
+                    </view>
+
+                    <!-- 菜单内容 -->
+                    <view class="menu-content" wx:if="{{item.expanded}}">
+                        <image 
+                            src="{{item.image}}" 
+                            class="menu-image" 
+                            mode="aspectFit"
+                            bindtap="viewImage" 
+                            data-image="{{item.image}}" 
+                            data-title="{{item.title}}" 
+                        />
+                    </view>
+                </view>
+            </view>
+
+            <!-- 就餐信息 - 仅在通用芳华社区显示 -->
+            <view wx:if="{{community.info}}" class="info-section">
+                <view wx:for="{{community.info}}" wx:key="id" class="info-card">
+                    <!-- 信息卡头部 -->
+                    <view class="info-header" bindtap="toggleInfo" data-community-id="{{community.id}}" data-info-id="{{item.id}}">
+                        <view class="info-icon">
+                            <van-icon name="{{item.icon}}" size="28rpx" color="#ffffff"/>
+                        </view>
+                        <view class="info-header-content">
+                            <text class="info-title">{{item.title}}</text>
+                        </view>
+                        <view class="expand-icon" wx:if="{{!item.expanded}}">
+                            <van-icon name="arrow" size="24rpx" color="#FF6B35"/>
+                        </view>
+                        <view class="expand-icon" wx:else>
+                            <van-icon name="arrow-down" size="24rpx" color="#FF6B35"/>
+                        </view>
+                    </view>
+
+                    <!-- 信息卡内容 -->
+                    <view class="info-content" wx:if="{{item.expanded}}">
+                        <text class="info-text">{{item.content}}</text>
+                    </view>
+                </view>
+            </view>
+        </view>
     </view>
 
-    <!-- 食谱列表 -->
-    <view class="menu-list">
-        <view class="menu-date">{{currentDate}} 食谱</view>
-
-        <!-- 早餐分类 -->
-        <view class="category" wx:if="{{selectedCommunity != 1}}">
-            <view class="category-header" bindtap="toggleCategory" data-category="breakfast">
-                <text class="category-title">{{menus.breakfast.name}}</text>
-                <van-icon name="{{expandedCategories.breakfast ? 'arrow-up' : 'arrow-down'}}" />
-            </view>
-            <view class="category-content" wx:if="{{expandedCategories.breakfast}}">
-                <image src="{{menus.breakfast.image}}" class="menu-image" mode="aspectFill" bindtap="viewImage" data-image="{{menus.breakfast.image}}" data-title="{{menus.breakfast.name}}" />
-            </view>
-        </view>
-
-        <!-- 午餐分类 -->
-        <view class="category">
-            <view class="category-header" bindtap="toggleCategory" data-category="lunch">
-                <text class="category-title">{{menus.lunch.name}}</text>
-                <van-icon name="{{expandedCategories.lunch ? 'arrow-up' : 'arrow-down'}}" />
-            </view>
-            <view class="category-content" wx:if="{{expandedCategories.lunch}}">
-                <image src="{{menus.lunch.image}}" class="menu-image" mode="aspectFill" bindtap="viewImage" data-image="{{menus.lunch.image}}" data-title="{{menus.lunch.name}}" />
-            </view>
-        </view>
-
-        <!-- 晚餐分类 -->
-        <view class="category">
-            <view class="category-header" bindtap="toggleCategory" data-category="dinner">
-                <text class="category-title">{{menus.dinner.name}}</text>
-                <van-icon name="{{expandedCategories.dinner ? 'arrow-up' : 'arrow-down'}}" />
-            </view>
-            <view class="category-content" wx:if="{{expandedCategories.dinner}}">
-                <image src="{{menus.dinner.image}}" class="menu-image" mode="aspectFill" bindtap="viewImage" data-image="{{menus.dinner.image}}" data-title="{{menus.dinner.name}}" />
-            </view>
-        </view>
-    </view>
-
-    <!-- 就餐信息 - 仅在选择通用芳华上地街道养老照料中心时显示 -->
-    <view class="info-section" wx:if="{{selectedCommunity == 1}}">
-        <view class="info-card">
-            <view class="info-header">
-                <van-icon name="cash-on-deliver-o" size="32rpx" color="#FF6B35"/>
-                <text class="info-title">优惠信息</text>
-            </view>
-            <view class="info-content">
-                <text class="info-text">长者优惠：28元优惠套餐：15元区荤菜1份+9元区半荤菜1份+7元区素菜1份+主食+汤，60周岁及以上老年人注册政府平台信息后，支付满15元以上减1元，支付满20元以上减2元，支付满30元减3元，支付满50元减5元。建议自带餐盒，外带餐盒：套餐餐盒1元/个，汤碗0.5元/个。</text>
-            </view>
-        </view>
-
-        <view class="info-card">
-            <view class="info-header">
-                <van-icon name="clock-o" size="32rpx" color="#FF6B35"/>
-                <text class="info-title">就餐时间</text>
-            </view>
-            <view class="info-content">
-                <text class="info-text">周一至周五就餐时间:中餐：11：10-12:10，晚餐：17:00-17:30</text>
-            </view>
-        </view>
-
-        <view class="info-card">
-            <view class="info-header">
-                <van-icon name="orders-o" size="32rpx" color="#FF6B35"/>
-                <text class="info-title">就餐方式</text>
-            </view>
-            <view class="info-content">
-                <text class="info-text">线下：可堂食、可由机构人员送餐到家；线上：饿了么搜索"社区餐厅（上地店）"即可送餐到家，菜谱每周更新</text>
-            </view>
-        </view>
-
-        <view class="info-card">
-            <view class="info-header">
-                <van-icon name="location-o" size="32rpx" color="#FF6B35"/>
-                <text class="info-title">就餐地点</text>
-            </view>
-            <view class="info-content">
-                <text class="info-text">就餐地址:北京市海淀区农大南路厢黄旗万树园小区东门旁上地街道养老照料中心</text>
-            </view>
-        </view>
+    <!-- 分类提示 -->
+    <view class="category-tip" wx:if="{{!showImageViewer}}">
+        <van-icon name="info-o" size="28rpx" color="#FF6B35"/>
+        <text class="tip-text">点击菜单分类可展开查看详细食谱</text>
     </view>
 
     <!-- 图片预览 -->
-    <view class="image-viewer" wx:if="{{showImageViewer}}" bindtap="closeImageViewer">
-        <image 
-            src="{{currentImage}}" 
-            class="viewer-image" 
-            style="transform: scale({{scale}}) translate({{translateX}}px, {{translateY}}px);" 
-            catchtap="preventClose"
-            bindtouchstart="onTouchStart"
-            bindtouchmove="onTouchMove"
-            bindtouchend="onTouchEnd"
-        />
-        <view class="viewer-title">{{currentImageTitle}}</view>
-        <view class="zoom-controls" catchtap="preventClose">
-            <button class="zoom-btn zoom-out" catchtap="zoomOut">-</button>
-            <text class="zoom-text">{{zoomPercent}}%</text>
-            <button class="zoom-btn zoom-in" catchtap="zoomIn">+</button>
+    <view class="image-viewer" wx:if="{{showImageViewer}}">
+        <!-- 返回按钮 - 固定在左上方 -->
+        <view class="close-btn" bindtap="closeImageViewer">
+            <van-icon name="arrow-left" size="32rpx" color="white"/>
+        </view>
+        
+        <!-- 顶部信息 -->
+        <view class="viewer-header">
+            <view class="viewer-title">{{currentImageTitle}}</view>
+        </view>
+        
+        <!-- 中间图片容器 - 自适应居中 -->
+        <view class="viewer-content">
+            <image 
+                src="{{currentImage}}"
+                mode="aspectFit"
+                class="viewer-image-box"
+                style="transform: scale({{scale}}) translate({{translateX}}px, {{translateY}}px);"
+                bindtouchstart="onTouchStart"
+                bindtouchmove="onTouchMove"
+                bindtouchend="onTouchEnd"
+                bindtouchcancel="onTouchEnd"
+            />
+        </view>
+        
+        <!-- 底部控制栏 -->
+        <view class="viewer-bottom">
+            <view class="zoom-text">{{zoomPercent}}%</view>
+            <view class="pinch-tip">
+                <van-icon name="info-o" size="24rpx" color="#FF6B35"/>
+                <text class="tip-label">双指拖拽可缩放</text>
+            </view>
         </view>
     </view>
 </view>

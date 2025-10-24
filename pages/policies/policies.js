@@ -238,204 +238,76 @@ Page({
     console.log(`已加载 ${this.data.loadedPages} / ${this.data.currentPdfTotalPages} 页`);
   },
 
-  // ===== Scroll View 触摸事件处理 =====
-  handleScrollTouchStart: function(e) {
+  // ===== 统一的触摸处理逻辑（scroll-view 和 image-zoom-container 共用） =====
+  // 单一职责：根据触摸数量和距离判断操作类型，并执行相应处理
+  
+  handleTouchStart: function(e) {
     try {
-      if (!e || !e.touches) return;
+      if (!e || !e.touches || e.touches.length === 0) return;
+
+      // 清理上一个操作的状态
+      this.resetTouchState();
 
       const touchCount = e.touches.length;
 
-      // 重置所有状态
-      this.resetTouchState();
-
       if (touchCount === 1) {
-        // 单指触摸开始 - 记录起始位置，用于判断是否为滑动
+        // 单指触摸 - 记录起始坐标，等待 touchmove 判断是否滑动
+        this.touchMode = 'single';
         this.singleTouchStartY = e.touches[0].clientY;
         this.singleTouchStartX = e.touches[0].clientX;
+        this.lastSingleTouchY = e.touches[0].clientY;
         this.touchStartTime = Date.now();
-        this.isSingleTouch = true;
-
-        console.log('Scroll-view 单指触摸开始 - 准备滚动');
-      }
-      // 双指触摸由 image-zoom-container 处理
-    } catch (err) {
-      console.error('Scroll触摸开始处理错误:', err);
-      this.resetTouchState();
-    }
-  },
-
-  handleScrollTouchMove: function(e) {
-    try {
-      if (!e || !e.touches) return;
-
-      const touchCount = e.touches.length;
-
-      if (touchCount === 1) {
-        // 单指移动 - 可能是从图片容器传递过来的滑动
-        if (this.isSingleTouch && !this.isZooming) {
-          // 已经开始的单指触摸，继续处理
-          const currentY = e.touches[0].clientY;
-          const currentX = e.touches[0].clientX;
-          const deltaY = Math.abs(currentY - this.singleTouchStartY);
-          const deltaX = Math.abs(currentX - this.singleTouchStartX);
-
-          // 如果移动距离足够大，认为是滑动操作
-          if (deltaY > 5 || deltaX > 5) {
-            console.log('Scroll-view 单指滑动中 - 页面滚动');
-            // 让系统默认处理滚动
-            return;
-          }
-        } else if (!this.isZooming) {
-          // 新的单指触摸（可能来自图片容器），开始记录
-          this.singleTouchStartY = e.touches[0].clientY;
-          this.singleTouchStartX = e.touches[0].clientX;
-          this.touchStartTime = Date.now();
-          this.isSingleTouch = true;
-
-          console.log('Scroll-view 接收到新的单指触摸');
-        }
+        console.log('[Touch] 单指起始');
       } else if (touchCount === 2) {
-        // 双指移动 - 传递给缩放处理
-        return;
-      }
-    } catch (err) {
-      console.error('Scroll触摸移动处理错误:', err);
-    }
-  },
-
-  handleScrollTouchEnd: function(e) {
-    try {
-      if (this.isSingleTouch) {
-        // 单指操作结束
-        console.log('单指触摸结束');
-        this.resetTouchState();
-      }
-      // 缩放操作结束由 image-zoom-container 处理
-    } catch (err) {
-      console.error('Scroll触摸结束处理错误:', err);
-      this.resetTouchState();
-    }
-  },
-
-  handleScrollTouchCancel: function(e) {
-    try {
-      console.log('Scroll触摸操作取消');
-
-      // 重置所有状态
-      this.resetTouchState();
-
-      // 恢复滚动状态
-      this.setData({
-        isScrollEnabled: true,
-        isZooming: false
-      });
-    } catch (err) {
-      console.error('Scroll触摸取消处理错误:', err);
-      this.resetTouchState();
-    }
-  },
-
-  // ===== Image Container 触摸事件处理 =====
-  handleImageTouchStart: function(e) {
-    try {
-      if (!e || !e.touches) return;
-
-      const touchCount = e.touches.length;
-
-      // 重置所有状态
-      this.resetTouchState();
-
-      if (touchCount === 1) {
-        // 单指触摸 - 记录起始位置，用于判断是否为滑动
-        this.singleTouchStartY = e.touches[0].clientY;
-        this.singleTouchStartX = e.touches[0].clientX;
-        this.touchStartTime = Date.now();
-        this.isSingleTouch = true;
-
-        console.log('图片上单指触摸开始 - 准备滚动');
-      } else if (touchCount === 2) {
-        // 双指触摸 - 准备缩放
+        // 双指触摸 - 立即计算初始距离，准备缩放
         const touch1 = e.touches[0];
         const touch2 = e.touches[1];
-
-        if (!touch1 || !touch2) return;
 
         const distance = Math.sqrt(
           Math.pow(touch2.clientX - touch1.clientX, 2) +
           Math.pow(touch2.clientY - touch1.clientY, 2)
         );
 
-        // 只有距离足够大时才启动缩放
-        if (distance >= 30) {
+        // 只有距离足够大才认为有效的双指操作
+        if (distance >= 20) {
+          this.touchMode = 'pinch';
           this.startDistance = distance;
           this.startScale = this.data.scale;
-          this.isZooming = true;
-          this.isValidZoom = true;
 
           // 禁用滚动
-          this.setData({
-            isScrollEnabled: false,
-            isZooming: true
-          });
-
-          console.log('图片上双指缩放开始');
-
-          // 阻止事件冒泡，防止触发滚动
-          e.stopPropagation && e.stopPropagation();
+          this.setData({ isScrollEnabled: false });
+          console.log('[Touch] 双指缩放起始，距离:', distance);
         }
       }
     } catch (err) {
-      console.error('图片触摸开始处理错误:', err);
+      console.error('[Touch] touchstart 错误:', err);
       this.resetTouchState();
     }
   },
 
-  handleImageTouchMove: function(e) {
+  handleTouchMove: function(e) {
     try {
-      if (!e || !e.touches) return;
+      if (!e || !e.touches || e.touches.length === 0) return;
 
       const touchCount = e.touches.length;
 
-      if (touchCount === 1 && this.isSingleTouch && !this.isZooming) {
-        // 单指移动 - 检查是否为有效的滑动操作
+      // 单指模式：处理滚动
+      if (this.touchMode === 'single' && touchCount === 1) {
         const currentY = e.touches[0].clientY;
-        const currentX = e.touches[0].clientX;
-        const deltaY = Math.abs(currentY - this.singleTouchStartY);
-        const deltaX = Math.abs(currentX - this.singleTouchStartX);
+        const deltaY = currentY - this.singleTouchStartY;
 
-        // 如果移动距离足够大，认为是滑动操作
-        if (deltaY > 5 || deltaX > 5) {
-          // 使用小程序的页面滚动API来手动滚动
-          console.log('图片上单指滑动中 - 触发页面滚动');
-
-          // 计算滚动方向和距离
-          const scrollDelta = currentY - this.singleTouchStartY;
-
-          // 获取当前页面滚动位置
-          const query = wx.createSelectorQuery();
-          query.selectViewport().scrollOffset((res) => {
-            if (res) {
-              // 计算新的滚动位置
-              const newScrollTop = Math.max(0, res.scrollTop - scrollDelta);
-
-              // 执行滚动
-              wx.pageScrollTo({
-                scrollTop: newScrollTop,
-                duration: 0 // 无动画，立即滚动
-              });
-            }
-          }).exec();
-
-          // 更新起始位置以实现连续滚动
-          this.singleTouchStartY = currentY;
-          this.singleTouchStartX = currentX;
+        // 只有移动足够距离才认为是有效的滚动
+        if (Math.abs(deltaY) > 8) {
+          // 让 scroll-view 的原生滚动处理
+          // 此处我们只是记录状态，scroll-view 会自动处理
+          this.isSingleScrolling = true;
+          console.log('[Touch] 单指滑动中，deltaY:', deltaY);
         }
-      } else if (touchCount === 2 && this.isValidZoom && this.isZooming) {
-        // 双指移动 - 处理缩放
+      }
+      // 双指模式：处理缩放
+      else if (this.touchMode === 'pinch' && touchCount === 2) {
         const touch1 = e.touches[0];
         const touch2 = e.touches[1];
-
-        if (!touch1 || !touch2) return;
 
         const currentDistance = Math.sqrt(
           Math.pow(touch2.clientX - touch1.clientX, 2) +
@@ -448,7 +320,7 @@ Page({
         // 限制缩放范围
         newScale = Math.min(Math.max(newScale, this.data.minScale), this.data.maxScale);
 
-        // 计算百分比显示值
+        // 计算百分比
         const scalePercent = Math.round(newScale * 100).toString();
 
         this.setData({
@@ -456,200 +328,56 @@ Page({
           scaleDisplay: scalePercent
         });
 
-        // 阻止事件冒泡，防止触发滚动
+        // 阻止事件冒泡，防止页面滚动
         e.stopPropagation && e.stopPropagation();
+        console.log('[Touch] 双指缩放中，比例:', newScale.toFixed(2));
       }
-    } catch (err) {
-      console.error('图片触摸移动处理错误:', err);
-    }
-  },
-
-  handleImageTouchEnd: function(e) {
-    try {
-      if (this.isZooming && this.isValidZoom) {
-        // 缩放操作结束
-        console.log('图片上缩放操作结束');
-
-        // 立即重置缩放状态
-        this.isZooming = false;
-        this.isValidZoom = false;
-
-        // 延迟恢复滚动状态，避免误触
-        setTimeout(() => {
-          this.setData({
-            isScrollEnabled: true,
-            isZooming: false
-          });
-          console.log('滚动状态已恢复');
-        }, 150);
-      } else if (this.isSingleTouch) {
-        // 单指操作结束
-        console.log('图片上单指触摸结束');
+      // 如果触摸数量变化（从1变2或从2变1），重置状态
+      else if (this.touchMode && ((this.touchMode === 'single' && touchCount === 2) || (this.touchMode === 'pinch' && touchCount === 1))) {
+        console.log('[Touch] 触摸数量变化，重置操作');
         this.resetTouchState();
       }
-
-      // 阻止事件冒泡
-      e.stopPropagation && e.stopPropagation();
     } catch (err) {
-      console.error('图片触摸结束处理错误:', err);
-      this.resetTouchState();
+      console.error('[Touch] touchmove 错误:', err);
     }
   },
 
-  handleImageTouchCancel: function(e) {
+  handleTouchEnd: function(e) {
     try {
-      console.log('图片触摸操作取消');
-
-      // 重置所有状态
-      this.resetTouchState();
-
-      // 恢复滚动状态
-      this.setData({
-        isScrollEnabled: true,
-        isZooming: false
-      });
-
-      // 阻止事件冒泡
-      e.stopPropagation && e.stopPropagation();
-    } catch (err) {
-      console.error('图片触摸取消处理错误:', err);
-      this.resetTouchState();
-    }
-  },
-
-  // ===== Image Zoom Container 触摸事件处理 =====
-  handleZoomTouchStart: function(e) {
-    try {
-      if (!e || !e.touches || e.touches.length !== 2) return;
-
-      // 双指触摸 - 准备缩放
-      const touch1 = e.touches[0];
-      const touch2 = e.touches[1];
-
-      if (!touch1 || !touch2) return;
-
-      const distance = Math.sqrt(
-        Math.pow(touch2.clientX - touch1.clientX, 2) +
-        Math.pow(touch2.clientY - touch1.clientY, 2)
-      );
-
-      // 只有距离足够大时才启动缩放
-      if (distance >= 30) {
-        this.startDistance = distance;
-        this.startScale = this.data.scale;
-        this.isZooming = true;
-        this.isValidZoom = true;
-
-        // 禁用滚动
-        this.setData({
-          isScrollEnabled: false,
-          isZooming: true
-        });
-
-        console.log('双指缩放开始');
-
-        // 阻止事件冒泡，防止触发滚动
-        e.stopPropagation && e.stopPropagation();
-      }
-    } catch (err) {
-      console.error('缩放触摸开始处理错误:', err);
-      this.resetTouchState();
-    }
-  },
-
-  handleZoomTouchMove: function(e) {
-    try {
-      if (!e || !e.touches || e.touches.length !== 2) return;
-      if (!this.isValidZoom || !this.isZooming) return;
-
-      // 双指移动 - 处理缩放
-      const touch1 = e.touches[0];
-      const touch2 = e.touches[1];
-
-      if (!touch1 || !touch2) return;
-
-      const currentDistance = Math.sqrt(
-        Math.pow(touch2.clientX - touch1.clientX, 2) +
-        Math.pow(touch2.clientY - touch1.clientY, 2)
-      );
-
-      // 计算缩放比例
-      let newScale = this.startScale * (currentDistance / this.startDistance);
-
-      // 限制缩放范围
-      newScale = Math.min(Math.max(newScale, this.data.minScale), this.data.maxScale);
-
-      // 计算百分比显示值
-      const scalePercent = Math.round(newScale * 100).toString();
-
-      this.setData({
-        scale: newScale,
-        scaleDisplay: scalePercent
-      });
-
-      // 阻止事件冒泡，防止触发滚动
-      e.stopPropagation && e.stopPropagation();
-    } catch (err) {
-      console.error('缩放触摸移动处理错误:', err);
-    }
-  },
-
-  handleZoomTouchEnd: function(e) {
-    try {
-      if (this.isZooming && this.isValidZoom) {
-        // 缩放操作结束
-        console.log('缩放操作结束');
-
-        // 立即重置缩放状态
-        this.isZooming = false;
-        this.isValidZoom = false;
-
-        // 延迟恢复滚动状态，避免误触
-        setTimeout(() => {
-          this.setData({
-            isScrollEnabled: true,
-            isZooming: false
-          });
-          console.log('滚动状态已恢复');
-        }, 150); // 稍微增加延迟时间
+      if (this.touchMode === 'pinch') {
+        // 缩放操作结束，恢复滚动
+        console.log('[Touch] 双指缩放结束，恢复滚动');
+        this.setData({ isScrollEnabled: true });
+      } else if (this.touchMode === 'single') {
+        console.log('[Touch] 单指操作结束');
       }
 
-      // 阻止事件冒泡
-      e.stopPropagation && e.stopPropagation();
+      this.resetTouchState();
     } catch (err) {
-      console.error('缩放触摸结束处理错误:', err);
+      console.error('[Touch] touchend 错误:', err);
       this.resetTouchState();
     }
   },
 
-  handleZoomTouchCancel: function(e) {
+  handleTouchCancel: function(e) {
     try {
-      console.log('缩放触摸操作取消');
-
-      // 重置所有状态
-      this.resetTouchState();
-
+      console.log('[Touch] 触摸取消');
       // 恢复滚动状态
-      this.setData({
-        isScrollEnabled: true,
-        isZooming: false
-      });
-
-      // 阻止事件冒泡
-      e.stopPropagation && e.stopPropagation();
+      this.setData({ isScrollEnabled: true });
+      this.resetTouchState();
     } catch (err) {
-      console.error('缩放触摸取消处理错误:', err);
+      console.error('[Touch] touchcancel 错误:', err);
       this.resetTouchState();
     }
   },
 
   // 重置触摸状态
   resetTouchState: function() {
-    this.isSingleTouch = false;
-    this.isZooming = false;
-    this.isValidZoom = false;
+    this.touchMode = null; // 'single' | 'pinch' | null
+    this.isSingleScrolling = false;
     this.singleTouchStartY = 0;
     this.singleTouchStartX = 0;
+    this.lastSingleTouchY = 0;
     this.startDistance = 0;
     this.startScale = 1;
     this.touchStartTime = 0;

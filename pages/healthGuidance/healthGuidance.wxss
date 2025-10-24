@@ -63,32 +63,10 @@
   position: relative;
   z-index: 2;
   padding: 60rpx 40rpx 40rpx 40rpx;
-}
-
-.nav-bar {
-  display: flex;
-  align-items: center;
-}
-
-.back-btn {
-  width: 80rpx;
-  height: 80rpx;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.2);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-right: 20rpx;
-  transition: all 0.3s ease;
-}
-
-.back-btn:active {
-  background: rgba(255, 255, 255, 0.3);
-  transform: scale(0.95);
+  text-align: center;
 }
 
 .title-section {
-  flex: 1;
   text-align: center;
 }
 
@@ -158,11 +136,51 @@
 }
 
 /* 心肺复苏指导样式 */
-.cpr-grid {
-  padding: 25rpx 30rpx;
+
+/* CPR 选项卡 */
+.cpr-tabs {
   display: flex;
-  flex-direction: column;
-  gap: 20rpx;
+  flex-wrap: wrap;
+  gap: 15rpx;
+  padding: 25rpx 30rpx;
+  background: #f9f9f9;
+}
+
+.cpr-tab {
+  flex: 1;
+  min-width: 150rpx;
+  padding: 15rpx 20rpx;
+  background: white;
+  border: 2rpx solid #e0e0e0;
+  border-radius: 12rpx;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.cpr-tab:active {
+  transform: scale(0.98);
+}
+
+.cpr-tab.active {
+  background: linear-gradient(135deg, #FF6B35 0%, #FF8C42 100%);
+  border-color: #FF6B35;
+}
+
+.tab-label {
+  display: block;
+  font-size: 26rpx;
+  font-weight: 600;
+  color: #333;
+}
+
+.cpr-tab.active .tab-label {
+  color: white;
+}
+
+/* CPR 图片卡片显示 */
+.cpr-card-display {
+  padding: 0 30rpx 25rpx 30rpx;
 }
 
 .cpr-card {
@@ -189,6 +207,33 @@
   align-items: center;
   justify-content: center;
   background: #f8f8f8;
+  position: relative;
+  cursor: pointer;
+}
+
+.image-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.3);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.cpr-image-container:active .image-overlay {
+  opacity: 1;
+}
+
+.overlay-text {
+  color: white;
+  font-size: 24rpx;
+  margin-top: 10rpx;
 }
 
 .cpr-image {
@@ -310,41 +355,71 @@
   font-weight: bold;
 }
 
-/* 缩放控制 */
-.zoom-controls {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-top: 30rpx;
-  gap: 20rpx;
-}
-
-.zoom-btn {
-  width: 80rpx;
-  height: 80rpx;
-  border-radius: 50%;
-  background-color: rgba(255, 107, 53, 0.8);
-  color: #fff;
-  font-size: 36rpx;
-  font-weight: bold;
-  border: 2rpx solid rgba(255, 107, 53, 1);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.3s ease;
-}
-
-.zoom-btn:active {
-  background-color: rgba(255, 107, 53, 1);
-  transform: scale(0.95);
-}
-
+/* 缩放百分比显示 */
 .zoom-text {
+  margin-top: 30rpx;
   color: #FF6B35;
   font-size: 28rpx;
   font-weight: bold;
-  min-width: 100rpx;
+  background-color: rgba(255, 255, 255, 0.9);
+  padding: 12rpx 24rpx;
+  border-radius: 30rpx;
   text-align: center;
+}
+
+/* 双指缩放提示 (CPR) */
+.pinch-tip {
+  position: fixed;
+  bottom: 80rpx;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+  background-color: rgba(255, 255, 255, 0.95);
+  padding: 16rpx 28rpx;
+  border-radius: 30rpx;
+  box-shadow: 0 4rpx 15rpx rgba(0, 0, 0, 0.3);
+  animation: slideUp 0.4s ease;
+}
+
+.pinch-tip .tip-label {
+  font-size: 26rpx;
+  color: #FF6B35;
+  font-weight: 600;
+}
+
+/* 双指缩放提示 (阿尔茨海默症) */
+.alzheimer-pinch-tip {
+  position: absolute;
+  bottom: 30rpx;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+  background-color: rgba(255, 255, 255, 0.95);
+  padding: 16rpx 28rpx;
+  border-radius: 30rpx;
+  box-shadow: 0 4rpx 15rpx rgba(0, 0, 0, 0.3);
+  animation: slideUp 0.4s ease;
+}
+
+.alzheimer-pinch-tip .tip-label {
+  font-size: 26rpx;
+  color: #FF6B35;
+  font-weight: 600;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(30rpx);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
 }
 
 /* 阿尔茨海默症幻灯片预览样式 */
@@ -418,6 +493,7 @@
   justify-content: center;
   padding: 20rpx;
   overflow: hidden;
+  position: relative;
 }
 
 .alzheimer-image {
@@ -428,10 +504,43 @@
   transition: transform 0.3s ease;
 }
 
+/* 左右导航箭头按钮 */
+.nav-prev, .nav-next {
+  position: absolute;
+  width: 80rpx;
+  height: 80rpx;
+  border-radius: 50%;
+  background: rgba(255, 107, 53, 0.3);
+  border: 2rpx solid rgba(255, 107, 53, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  z-index: 100;
+}
+
+.nav-prev {
+  left: 30rpx;
+}
+
+.nav-next {
+  right: 30rpx;
+}
+
+.nav-prev:active:not(:disabled), .nav-next:active:not(:disabled) {
+  background: rgba(255, 107, 53, 0.5);
+  transform: scale(0.95);
+}
+
+.nav-prev:disabled, .nav-next:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
 .alzheimer-controls {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
   padding: 30rpx 40rpx;
   background: linear-gradient(135deg, rgba(255, 107, 53, 0.9) 0%, rgba(255, 140, 66, 0.9) 100%);
   border-top: 1rpx solid rgba(255, 255, 255, 0.2);
@@ -460,8 +569,9 @@
 
 /* 响应式设计 */
 @media (max-width: 750rpx) {
-  .cpr-grid {
-    gap: 15rpx;
+  .cpr-tab {
+    min-width: 120rpx;
+    font-size: 24rpx;
   }
 
   .cpr-image-container {
@@ -481,3 +591,4 @@
     font-size: 30rpx;
   }
 }
+

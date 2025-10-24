@@ -1,18 +1,62 @@
 <view class="container">
     <!-- 页面头部 -->
     <view class="header">
-        <van-nav-bar title="联系社区" left-text="返回" left-arrow bind:click-left="goBack" />
+        <!-- 返回按钮 -->
+        <view class="header-top">
+            <view class="back-btn" bindtap="goBack">
+                <van-icon name="arrow-left" size="32rpx" color="white"/>
+                <text class="back-text">返回</text>
+            </view>
+        </view>
+
+        <view class="header-bg">
+            <view class="header-decoration">
+                <view class="decoration-circle circle-1"></view>
+                <view class="decoration-circle circle-2"></view>
+                <view class="decoration-circle circle-3"></view>
+            </view>
+        </view>
+        <view class="header-content">
+            <text class="title">联系社区</text>
+            <text class="subtitle">上地街道各社区联系方式</text>
+        </view>
     </view>
 
     <!-- 社区列表 -->
     <view class="community-list">
-        <view class="community-item" wx:for="{{communityList}}" wx:key="id" bindtap="callCommunity" data-phone="{{item.phone}}">
-            <view class="community-info">
-                <text class="community-name">{{item.name}}</text>
-                <text class="community-address">{{item.address}}</text>
-                <text class="community-phone">联系电话：{{item.phone}}</text>
+        <view class="list-container">
+            <view class="community-card" wx:for="{{communityList}}" wx:key="id">
+                <view class="card-header">
+                    <view class="card-icon">
+                        <van-icon name="home-o" size="40rpx" color="#ffffffff"/>
+                    </view>
+                    <view class="card-title-section">
+                        <text class="card-title">{{item.name}}</text>
+                        <text class="card-address">{{item.address}}</text>
+                    </view>
+                </view>
+
+                <view class="card-content">
+                    <view class="info-item">
+                        <van-icon name="phone-o" size="28rpx" color="#FF8C42"/>
+                        <text class="info-label">联系电话：</text>
+                        <text class="info-text phone-text">{{item.phone}}</text>
+                    </view>
+                </view>
+
+                <view class="card-footer">
+                    <view class="action-btn" bindtap="callCommunity" data-phone="{{item.phone}}">
+                        <van-icon name="phone" size="24rpx" color="white"/>
+                        <text class="btn-text">立即拨打</text>
+                    </view>
+                </view>
             </view>
-            <van-icon name="phone-o" class="phone-icon" />
         </view>
+    </view>
+
+    <!-- 底部提示 -->
+    <view class="footer-tip">
+        <van-icon name="info-o" size="28rpx" color="#FF8C42"/>
+        <text class="tip-text">点击"立即拨打"按钮可直接联系社区</text>
     </view>
 </view>

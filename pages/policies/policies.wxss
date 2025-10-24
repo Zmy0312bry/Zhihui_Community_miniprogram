@@ -253,9 +253,12 @@
   font-weight: bold;
   color: white;
   text-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.3);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  /* allow title to wrap onto multiple lines */
+  overflow: visible;
+  text-overflow: unset;
+  white-space: normal;
+  word-break: break-word;
+  line-height: 1.2;
 }
 
 .viewer-page-info {
@@ -286,6 +289,11 @@
   font-size: 26rpx;
   margin-left: 8rpx;
   font-weight: bold;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  line-height: 34rpx; /* spacing between the two characters */
 }
 
 .viewer-content {
@@ -427,8 +435,28 @@
 }
 
 .zoom-tips {
-  font-size: 22rpx;
-  color: #999;
+  display: flex;
+  align-items: center;
+  gap: 8rpx;
+  font-size: 24rpx;
+  color: #FF6B35;
+  font-weight: 600;
+  animation: slideIn 0.4s ease;
+}
+
+.zoom-tips .tip-label {
+  font-size: 24rpx;
+  color: #FF6B35;
+  font-weight: 600;
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 /* 已移除悬浮返回按钮样式 */

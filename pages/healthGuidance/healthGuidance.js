@@ -3,8 +3,8 @@ const app = getApp();
 
 Page({
   data: {
-    // 心肺复苏指导图片
-    cprImages: [
+    // 心肺复苏类型选择
+    cprTypes: [
       {
         id: 1,
         title: "成人心肺复苏指导",
@@ -24,6 +24,7 @@ Page({
         desc: "适用于1岁以下婴儿"
       }
     ],
+    selectedCPRIndex: 0, // 选中的 CPR 类型索引
 
     // 阿尔茨海默症科普数据
     alzheimerData: {
@@ -39,23 +40,34 @@ Page({
     currentImageTitle: '',
     scale: 1,
     zoomPercent: 100,
+    
+    // CPR 触摸相关
+    cprTouchMode: null,
+    cprInitialPinchDistance: 0,
+    cprInitialScale: 1,
+    cprIsDragging: false,
+    cprDragStartX: 0,
+    cprDragStartY: 0,
+    cprTranslateX: 0,
+    cprTranslateY: 0,
 
     // 阿尔茨海默症幻灯片预览
     showAlzheimerViewer: false,
     alzheimerCurrentSlide: 1,
     alzheimerScale: 1,
     alzheimerZoomPercent: 100,
-
-    // 拖拽相关
-    isDragging: false,
-    dragStartX: 0,
-    dragStartY: 0,
-    translateX: 0,
-    translateY: 0,
-
-    // 两指缩放相关
-    initialDistance: 0,
-    initialScale: 1
+    
+    // 阿尔茨海默症触摸相关
+    alzheimerTouchMode: null,
+    alzheimerInitialPinchDistance: 0,
+    alzheimerInitialScale: 1,
+    alzheimerIsDragging: false,
+    alzheimerDragStartX: 0,
+    alzheimerDragStartY: 0,
+    alzheimerTranslateX: 0,
+    alzheimerTranslateY: 0,
+    alzheimerSwipeStartX: 0,
+    alzheimerSwipeStartY: 0
   },
 
   onLoad: function (options) {
@@ -63,11 +75,6 @@ Page({
   },
 
   onShow: function () {
-  },
-
-  // 返回上一页
-  goBack: function() {
-    wx.navigateBack();
   },
 
   // 初始化阿尔茨海默症幻灯片
@@ -85,20 +92,33 @@ Page({
     });
   },
 
-  // 查看心肺复苏图片
-  viewCPRImage: function (e) {
-    const image = e.currentTarget.dataset.image;
-    const title = e.currentTarget.dataset.title;
+  // 选择 CPR 类型
+  selectCPRType: function (e) {
+    const index = e.currentTarget.dataset.index;
+    this.setData({
+      selectedCPRIndex: index
+    });
+  },
+
+  // 查看选中的 CPR 图片
+  viewSelectedCPRImage: function () {
+    const selectedCPR = this.data.cprTypes[this.data.selectedCPRIndex];
+    if (!selectedCPR) return;
 
     this.setData({
       showImageViewer: true,
-      currentImage: image,
-      currentImageTitle: title,
-      scale: 1, // 默认铺满全屏
+      currentImage: selectedCPR.image,
+      currentImageTitle: selectedCPR.title,
+      scale: 1,
       zoomPercent: 100,
-      translateX: 0,
-      translateY: 0,
-      isDragging: false
+      cprTouchMode: null,
+      cprInitialPinchDistance: 0,
+      cprInitialScale: 1,
+      cprIsDragging: false,
+      cprDragStartX: 0,
+      cprDragStartY: 0,
+      cprTranslateX: 0,
+      cprTranslateY: 0
     });
   },
 
@@ -109,9 +129,16 @@ Page({
       alzheimerCurrentSlide: 1,
       alzheimerScale: 1,
       alzheimerZoomPercent: 100,
-      translateX: 0,
-      translateY: 0,
-      isDragging: false
+      alzheimerTouchMode: null,
+      alzheimerInitialPinchDistance: 0,
+      alzheimerInitialScale: 1,
+      alzheimerIsDragging: false,
+      alzheimerDragStartX: 0,
+      alzheimerDragStartY: 0,
+      alzheimerTranslateX: 0,
+      alzheimerTranslateY: 0,
+      alzheimerSwipeStartX: 0,
+      alzheimerSwipeStartY: 0
     });
   },
 
@@ -123,9 +150,14 @@ Page({
       currentImageTitle: '',
       scale: 1,
       zoomPercent: 100,
-      translateX: 0,
-      translateY: 0,
-      isDragging: false
+      cprTouchMode: null,
+      cprInitialPinchDistance: 0,
+      cprInitialScale: 1,
+      cprIsDragging: false,
+      cprDragStartX: 0,
+      cprDragStartY: 0,
+      cprTranslateX: 0,
+      cprTranslateY: 0
     });
   },
 
@@ -136,9 +168,16 @@ Page({
       alzheimerCurrentSlide: 1,
       alzheimerScale: 1,
       alzheimerZoomPercent: 100,
-      translateX: 0,
-      translateY: 0,
-      isDragging: false
+      alzheimerTouchMode: null,
+      alzheimerInitialPinchDistance: 0,
+      alzheimerInitialScale: 1,
+      alzheimerIsDragging: false,
+      alzheimerDragStartX: 0,
+      alzheimerDragStartY: 0,
+      alzheimerTranslateX: 0,
+      alzheimerTranslateY: 0,
+      alzheimerSwipeStartX: 0,
+      alzheimerSwipeStartY: 0
     });
   },
 
@@ -150,9 +189,10 @@ Page({
         alzheimerCurrentSlide: current - 1,
         alzheimerScale: 1,
         alzheimerZoomPercent: 100,
-        translateX: 0,
-        translateY: 0,
-        isDragging: false
+        alzheimerTranslateX: 0,
+        alzheimerTranslateY: 0,
+        alzheimerIsDragging: false,
+        alzheimerTouchMode: null
       });
     }
   },
@@ -166,9 +206,10 @@ Page({
         alzheimerCurrentSlide: current + 1,
         alzheimerScale: 1,
         alzheimerZoomPercent: 100,
-        translateX: 0,
-        translateY: 0,
-        isDragging: false
+        alzheimerTranslateX: 0,
+        alzheimerTranslateY: 0,
+        alzheimerIsDragging: false,
+        alzheimerTouchMode: null
       });
     }
   },
@@ -196,89 +237,187 @@ Page({
     }
   },
 
-  // 阿尔茨海默症缩放控制
-  alzheimerZoomIn: function () {
-    const currentScale = this.data.alzheimerScale;
-    if (currentScale < 3) {
-      const newScale = Math.min(currentScale + 0.2, 3);
-      this.setData({
-        alzheimerScale: newScale,
-        alzheimerZoomPercent: Math.round(newScale * 100)
-      });
-    }
-  },
-
-  alzheimerZoomOut: function () {
-    const currentScale = this.data.alzheimerScale;
-    if (currentScale > 0.3) {
-      const newScale = Math.max(currentScale - 0.2, 0.3);
-      this.setData({
-        alzheimerScale: newScale,
-        alzheimerZoomPercent: Math.round(newScale * 100)
-      });
-    }
-  },
-
-  // 触摸事件处理
-  onTouchStart: function (e) {
-    if (e.touches.length === 1) {
-      this.setData({
-        isDragging: true,
-        dragStartX: e.touches[0].clientX - this.data.translateX,
-        dragStartY: e.touches[0].clientY - this.data.translateY
-      });
-    } else if (e.touches.length === 2) {
-      // 两指触摸开始，记录初始距离和缩放比例
-      const touch1 = e.touches[0];
-      const touch2 = e.touches[1];
-      const distance = this.getDistance(touch1, touch2);
-      this.setData({
-        isDragging: false,
-        initialDistance: distance,
-        initialScale: this.data.scale
-      });
-    }
-  },
-
-  onTouchMove: function (e) {
-    if (e.touches.length === 1 && this.data.isDragging) {
-      // 单指拖拽
-      const translateX = e.touches[0].clientX - this.data.dragStartX;
-      const translateY = e.touches[0].clientY - this.data.dragStartY;
-      this.setData({
-        translateX: translateX,
-        translateY: translateY
-      });
-    } else if (e.touches.length === 2) {
-      // 两指缩放
-      const touch1 = e.touches[0];
-      const touch2 = e.touches[1];
-      const distance = this.getDistance(touch1, touch2);
-      const scale = (distance / this.data.initialDistance) * this.data.initialScale;
-
-      // 限制缩放范围在0.3-5倍之间
-      const clampedScale = Math.max(0.3, Math.min(scale, 5));
-
-      this.setData({
-        scale: clampedScale,
-        zoomPercent: Math.round(clampedScale * 100)
-      });
-    }
-  },
-
-  onTouchEnd: function () {
-    this.setData({
-      isDragging: false,
-      initialDistance: 0,
-      initialScale: 1
-    });
-  },
-
   // 计算两指间距离
   getDistance: function (touch1, touch2) {
     const dx = touch1.clientX - touch2.clientX;
     const dy = touch1.clientY - touch2.clientY;
     return Math.sqrt(dx * dx + dy * dy);
+  },
+
+  // ============== 心肺复苏 (CPR) 触摸处理 ==============
+  onCPRTouchStart: function (e) {
+    const touches = e.touches;
+
+    // 双指缩放
+    if (touches.length === 2) {
+      this.setData({
+        cprTouchMode: 'pinch',
+        cprInitialPinchDistance: this.getDistance(touches[0], touches[1]),
+        cprInitialScale: this.data.scale
+      });
+    }
+    // 单指拖拽（放大时才允许）
+    else if (touches.length === 1 && this.data.scale > 1) {
+      const touch = touches[0];
+      this.setData({
+        cprTouchMode: 'drag',
+        cprIsDragging: true,
+        cprDragStartX: touch.clientX - this.data.cprTranslateX,
+        cprDragStartY: touch.clientY - this.data.cprTranslateY
+      });
+    }
+  },
+
+  onCPRTouchMove: function (e) {
+    const touches = e.touches;
+
+    // 双指缩放处理
+    if (this.data.cprTouchMode === 'pinch' && touches.length === 2) {
+      const currentDistance = this.getDistance(touches[0], touches[1]);
+      const initialDistance = this.data.cprInitialPinchDistance;
+
+      if (initialDistance > 0) {
+        const ratio = currentDistance / initialDistance;
+        let newScale = this.data.cprInitialScale * ratio;
+
+        // 限制缩放范围：1x 到 8x（100% 到 800%）
+        if (newScale < 1) newScale = 1;
+        if (newScale > 8) newScale = 8;
+
+        this.setData({
+          scale: newScale,
+          zoomPercent: Math.round(newScale * 100)
+        });
+      }
+    }
+    // 单指拖拽处理（放大时允许拖拽）
+    else if (this.data.cprTouchMode === 'drag' && touches.length === 1 && this.data.cprIsDragging) {
+      const touch = touches[0];
+      const newTranslateX = touch.clientX - this.data.cprDragStartX;
+      const newTranslateY = touch.clientY - this.data.cprDragStartY;
+
+      // 限制拖拽范围
+      const maxTranslate = (this.data.scale - 1) * 100;
+      const limitedX = Math.max(-maxTranslate, Math.min(maxTranslate, newTranslateX));
+      const limitedY = Math.max(-maxTranslate, Math.min(maxTranslate, newTranslateY));
+
+      this.setData({
+        cprTranslateX: limitedX,
+        cprTranslateY: limitedY
+      });
+    }
+  },
+
+  onCPRTouchEnd: function (e) {
+    this.setData({
+      cprTouchMode: null,
+      cprIsDragging: false,
+      cprInitialPinchDistance: 0,
+      cprInitialScale: 1
+    });
+  },
+
+  // ============== 阿尔茨海默症触摸处理 ==============
+  onAlzheimerTouchStart: function (e) {
+    const touches = e.touches;
+
+    // 双指缩放
+    if (touches.length === 2) {
+      this.setData({
+        alzheimerTouchMode: 'pinch',
+        alzheimerInitialPinchDistance: this.getDistance(touches[0], touches[1]),
+        alzheimerInitialScale: this.data.alzheimerScale
+      });
+    }
+    // 单指拖拽（用于页面切换和拖动）
+    else if (touches.length === 1) {
+      const touch = touches[0];
+      this.setData({
+        alzheimerTouchMode: 'swipe',
+        alzheimerSwipeStartX: touch.clientX,
+        alzheimerSwipeStartY: touch.clientY,
+        alzheimerDragStartX: touch.clientX - this.data.alzheimerTranslateX,
+        alzheimerDragStartY: touch.clientY - this.data.alzheimerTranslateY,
+        alzheimerIsDragging: true
+      });
+    }
+  },
+
+  onAlzheimerTouchMove: function (e) {
+    const touches = e.touches;
+
+    // 双指缩放处理
+    if (this.data.alzheimerTouchMode === 'pinch' && touches.length === 2) {
+      const currentDistance = this.getDistance(touches[0], touches[1]);
+      const initialDistance = this.data.alzheimerInitialPinchDistance;
+
+      if (initialDistance > 0) {
+        const ratio = currentDistance / initialDistance;
+        let newScale = this.data.alzheimerInitialScale * ratio;
+
+        // 限制缩放范围：1x 到 8x（100% 到 800%）
+        if (newScale < 1) newScale = 1;
+        if (newScale > 8) newScale = 8;
+
+        this.setData({
+          alzheimerScale: newScale,
+          alzheimerZoomPercent: Math.round(newScale * 100)
+        });
+      }
+    }
+    // 单指拖拽处理
+    else if (this.data.alzheimerTouchMode === 'swipe' && touches.length === 1 && this.data.alzheimerIsDragging) {
+      const touch = touches[0];
+      const deltaX = touch.clientX - this.data.alzheimerSwipeStartX;
+      const deltaY = touch.clientY - this.data.alzheimerSwipeStartY;
+
+      // 如果当前图片已缩放，允许拖拽；否则检测左右滑动用于页面切换
+      if (this.data.alzheimerScale > 1) {
+        // 图片放大时，允许拖拽
+        const newTranslateX = touch.clientX - this.data.alzheimerDragStartX;
+        const newTranslateY = touch.clientY - this.data.alzheimerDragStartY;
+
+        // 限制拖拽范围
+        const maxTranslate = (this.data.alzheimerScale - 1) * 100;
+        const limitedX = Math.max(-maxTranslate, Math.min(maxTranslate, newTranslateX));
+        const limitedY = Math.max(-maxTranslate, Math.min(maxTranslate, newTranslateY));
+
+        this.setData({
+          alzheimerTranslateX: limitedX,
+          alzheimerTranslateY: limitedY
+        });
+      }
+    }
+  },
+
+  onAlzheimerTouchEnd: function (e) {
+    // 如果是单指滑动且未缩放，检测是否为左右翻页滑动
+    if (this.data.alzheimerTouchMode === 'swipe' && this.data.alzheimerScale === 1) {
+      const deltaX = e.changedTouches[0].clientX - this.data.alzheimerSwipeStartX;
+      const deltaY = e.changedTouches[0].clientY - this.data.alzheimerSwipeStartY;
+
+      // 检查是水平滑动（|deltaX| > |deltaY| 且 |deltaX| > 50px）
+      if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > 50) {
+        if (deltaX > 0) {
+          // 向右滑动，上一页
+          this.prevSlide();
+        } else {
+          // 向左滑动，下一页
+          this.nextSlide();
+        }
+      }
+    }
+
+    this.setData({
+      alzheimerTouchMode: null,
+      alzheimerIsDragging: false,
+      alzheimerInitialPinchDistance: 0,
+      alzheimerInitialScale: 1,
+      alzheimerSwipeStartX: 0,
+      alzheimerSwipeStartY: 0,
+      alzheimerTranslateX: 0,
+      alzheimerTranslateY: 0
+    });
   },
 
   // 防止点击穿透

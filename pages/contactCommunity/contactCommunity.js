@@ -96,26 +96,20 @@ Page({
         wx.navigateBack();
     },
 
-    // 拨打社区电话
+    // 拨打社区电话 - 直接拨打，无提示框
     callCommunity: function(e) {
         const phone = e.currentTarget.dataset.phone;
-        wx.showModal({
-            title: '拨打电话',
-            content: `是否拨打 ${phone}？`,
-            success: (res) => {
-                if (res.confirm) {
-                    wx.makePhoneCall({
-                        phoneNumber: phone,
-                        fail: (err) => {
-                            wx.showToast({
-                                title: '拨打失败',
-                                icon: 'error'
-                            });
-                        }
+        if (phone) {
+            wx.makePhoneCall({
+                phoneNumber: phone,
+                fail: function() {
+                    wx.showToast({
+                        title: '拨打电话失败',
+                        icon: 'none'
                     });
                 }
-            }
-        });
+            });
+        }
     },
 
     onLoad: function(options) {
