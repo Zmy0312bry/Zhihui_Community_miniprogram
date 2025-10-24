@@ -69,6 +69,60 @@
                 </view>
             </view>
         </view>
+
+        <!-- 健康知识云课堂 -->
+        <view class="video-library-section">
+            <view class="section-header">
+                <van-icon name="play-circle-o" size="48rpx" color="#FF6B35"/>
+                <text class="section-title">健康知识云课堂</text>
+            </view>
+
+            <!-- 章节选项卡 -->
+            <view class="chapter-tabs">
+                <view wx:for="{{videoLibrary.chapters}}" wx:key="id" class="chapter-tab {{selectedChapterIndex === index ? 'active' : ''}}" 
+                    bindtap="selectVideoChapter" data-index="{{index}}">
+                    <text class="tab-label">{{item.title}}</text>
+                </view>
+            </view>
+
+            <!-- 课程列表 -->
+            <view class="lessons-container">
+                <view wx:for="{{videoLibrary.chapters[selectedChapterIndex].lessons}}" wx:key="id" class="lesson-card" 
+                    bindtap="selectVideoLesson" data-lesson-id="{{item.id}}" data-lesson-name="{{item.name}}" data-video-url="{{item.videoUrl}}">
+                    <view class="lesson-header">
+                        <view class="lesson-icon">
+                            <van-icon name="play" size="32rpx" color="#FF6B35"/>
+                        </view>
+                        <view class="lesson-info">
+                            <text class="lesson-name">{{item.name}}</text>
+                            <text class="lesson-duration">时长：{{item.duration}}</text>
+                        </view>
+                        <van-icon name="arrow" size="28rpx" color="#FF6B35"/>
+                    </view>
+                </view>
+            </view>
+        </view>
+    </view>
+
+    <!-- 视频播放器 -->
+    <view class="video-player-overlay" wx:if="{{showVideoPlayer}}" bindtap="closeVideoPlayer">
+        <view class="video-player" catchtap>
+            <!-- 返回按钮 -->
+            <view class="player-close-btn" bindtap="closeVideoPlayer">
+                <van-icon name="close" size="36rpx" color="white"/>
+            </view>
+
+            <!-- 视频播放区域 -->
+            <video 
+                id="videoPlayer"
+                src="{{currentVideoUrl}}"
+                controls
+                enable-progress-gesture="true"
+                auto-pause-if-navigate="true"
+                show-center-play-btn="true"
+                class="video-element"
+            />
+        </view>
     </view>
 
     <!-- 心肺复苏图片预览 -->
