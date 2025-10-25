@@ -11,6 +11,7 @@
     "pages/feedback/feedback",
     "pages/policies/policies",
     "pages/serviceMap/serviceMap",
+    "pages/mapDetail/mapDetail",
     "pages/resourceMap/resourceMap",
     "pages/healthCenter/healthCenter",
     "pages/healthGuidance/healthGuidance",

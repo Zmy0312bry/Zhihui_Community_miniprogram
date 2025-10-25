@@ -335,7 +335,7 @@
 }
 
 .pdf-page {
-  height: 100vh; /* 使每一页正好填满一屏 */
+  /* 自适应高度，不使用固定 100vh */
   display: flex;
   justify-content: center;
   align-items: center;
@@ -344,6 +344,9 @@
   padding: 24rpx 0;
   box-sizing: border-box;
   position: relative;
+  /* 动态高度：根据图片内容自动调整 */
+  min-height: 400rpx;
+  transition: all 0.3s ease;
 }
 
 .page-number {
@@ -365,7 +368,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  overflow: hidden;
+  overflow: visible;
   position: relative;
   z-index: 20;
   /* 允许所有触摸操作，包括单指滑动和双指缩放 */
@@ -375,12 +378,11 @@
 }
 
 .pdf-image {
-  width: 94%; /* 留一些边距，使其看起来像PDF */
-  max-height: 92vh;
-  transition: transform 0.1s ease-out; /* 稍微加快过渡，减少滞后感 */
+  width: auto;
+  transition: transform 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94); /* 使用更自然的缓动函数 */
   transform-origin: center;
   display: block;
-  will-change: transform;
+  will-change: transform, width, height;
   background-color: white;
   box-shadow: 0 4rpx 30rpx rgba(0,0,0,0.25);
   /* 防止拖拽图片时出现原生拖拽效果 */

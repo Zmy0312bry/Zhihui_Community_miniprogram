@@ -96,7 +96,18 @@ Page({
     minScale: 0.3,
     maxScale: 3,
     isScrollEnabled: true, // 是否启用滚动
-    isZooming: false // 是否正在缩放中
+    isZooming: false, // 是否正在缩放中
+    
+    // 图片拖动和平移相关
+    translateX: 0, // 水平偏移
+    translateY: 0, // 竖直偏移
+    isDragging: false, // 是否正在拖动
+    
+    // 图片尺寸追踪
+    imageScales: {}, // 存储每张图片的原始宽高: { url: { width, height, containerWidth, containerHeight } }
+    imageDynamicHeights: {}, // 存储每张图片缩放后的动态高度: { url: height }
+    imageDynamicWidths: {}, // 存储每张图片缩放后的动态宽度: { url: width }
+    viewerContainerWidth: 0 // 记录视图容器宽度，供图片初始展示使用
   },
 
   onLoad: function (options) {
@@ -104,6 +115,16 @@ Page({
 
     // 初始化触摸相关变量
     this.resetTouchState();
+
+    // 预先计算图片容器宽度，供初始展示和兜底使用
+    try {
+      const systemInfo = wx.getSystemInfoSync();
+      const viewerContainerWidth = Math.floor(systemInfo.windowWidth * 0.94);
+      this.viewerContainerWidth = viewerContainerWidth;
+      this.setData({ viewerContainerWidth });
+    } catch (err) {
+      console.warn('获取系统信息失败，使用默认容器宽度', err);
+    }
 
     // 确保初始状态正确
     this.setData({
@@ -168,7 +189,12 @@ Page({
         currentImageList: imageList,
         loadedPages: 1,
         scale: 1,
-        scaleDisplay: '100'
+        scaleDisplay: '100',
+        translateX: 0,
+        translateY: 0,
+        imageScales: {},
+        imageDynamicHeights: {},
+        imageDynamicWidths: {}
       });
       
       console.log('图片预览已显示');
@@ -203,7 +229,12 @@ Page({
       currentImageList: imageList,
       loadedPages: initialLoadCount,
       scale: 1,
-      scaleDisplay: '100'
+      scaleDisplay: '100',
+      translateX: 0,
+      translateY: 0,
+      imageScales: {},
+      imageDynamicHeights: {},
+      imageDynamicWidths: {}
     });
     
     console.log('PDF图片预览已显示');
@@ -238,6 +269,69 @@ Page({
     console.log(`已加载 ${this.data.loadedPages} / ${this.data.currentPdfTotalPages} 页`);
   },
 
+  // ===== 图片尺寸追踪和缩放优化 =====
+  // 获取图片实际尺寸
+  handleImageLoad: function(e) {
+    try {
+      const { width, height } = e.detail;
+      const url = e.currentTarget.dataset.url;
+      
+      if (!url) {
+        console.warn('图片URL未找到');
+        return;
+      }
+
+      // 计算容器尺寸
+      wx.getSystemInfo({
+        success: (res) => {
+          const windowWidth = res.windowWidth;
+          const containerWidth = Math.floor(windowWidth * 0.94); // 94% 宽度，匹配 WXSS 中的设置
+          
+          // 计算按原宽度自适应显示时的实际高度
+          const containerHeight = Math.floor(containerWidth * (height / width));
+          
+          // 保存图片尺寸信息
+          const imageScales = this.data.imageScales || {};
+          imageScales[url] = {
+            originalWidth: width,
+            originalHeight: height,
+            containerWidth: containerWidth,
+            containerHeight: containerHeight,
+            aspectRatio: height / width
+          };
+          
+          // 【新增】初始化该图片的容器尺寸（用于 min-height 和图片原始宽度）
+          const imageDynamicHeights = this.data.imageDynamicHeights || {};
+          const imageDynamicWidths = this.data.imageDynamicWidths || {};
+          imageDynamicHeights[url] = containerHeight;
+          imageDynamicWidths[url] = containerWidth;
+          
+          this.setData({ 
+            imageScales,
+            imageDynamicHeights,
+            imageDynamicWidths
+          });
+          
+          console.log(`图片加载完成 [${url}]：原始尺寸 ${width}x${height}，容器尺寸 ${containerWidth}x${containerHeight}，初始高度 ${imageDynamicHeights[url]}`);
+        }
+      });
+    } catch (err) {
+      console.error('处理图片加载错误:', err);
+    }
+  },
+
+  // 处理图片加载错误
+  handleImageError: function(e) {
+    const url = e.currentTarget.dataset.url;
+    console.error('图片加载失败:', url, e.detail);
+    
+    wx.showToast({
+      title: '图片加载失败',
+      icon: 'error',
+      duration: 1000
+    });
+  },
+
   // ===== 统一的触摸处理逻辑（scroll-view 和 image-zoom-container 共用） =====
   // 单一职责：根据触摸数量和距离判断操作类型，并执行相应处理
   
@@ -251,13 +345,25 @@ Page({
       const touchCount = e.touches.length;
 
       if (touchCount === 1) {
-        // 单指触摸 - 记录起始坐标，等待 touchmove 判断是否滑动
-        this.touchMode = 'single';
-        this.singleTouchStartY = e.touches[0].clientY;
-        this.singleTouchStartX = e.touches[0].clientX;
-        this.lastSingleTouchY = e.touches[0].clientY;
-        this.touchStartTime = Date.now();
-        console.log('[Touch] 单指起始');
+        // 单指触摸 - 检查是否可以拖动
+        // 只有当图片被缩放后才允许拖动
+        if (this.data.scale > 1.05) {
+          // 图片已缩放，允许拖动
+          this.touchMode = 'drag';
+          this.dragStartX = e.touches[0].clientX;
+          this.dragStartY = e.touches[0].clientY;
+          this.dragStartTranslateX = this.data.translateX;
+          this.dragStartTranslateY = this.data.translateY;
+          console.log('[Touch] 单指拖动模式激活');
+        } else {
+          // 图片未缩放，可以滚动
+          this.touchMode = 'single';
+          this.singleTouchStartY = e.touches[0].clientY;
+          this.singleTouchStartX = e.touches[0].clientX;
+          this.lastSingleTouchY = e.touches[0].clientY;
+          this.touchStartTime = Date.now();
+          console.log('[Touch] 单指滚动模式');
+        }
       } else if (touchCount === 2) {
         // 双指触摸 - 立即计算初始距离，准备缩放
         const touch1 = e.touches[0];
@@ -291,8 +397,40 @@ Page({
 
       const touchCount = e.touches.length;
 
+      // 拖动模式：处理图片平移
+      if (this.touchMode === 'drag' && touchCount === 1) {
+        const currentX = e.touches[0].clientX;
+        const currentY = e.touches[0].clientY;
+        
+        const deltaX = currentX - this.dragStartX;
+        const deltaY = currentY - this.dragStartY;
+        
+        // 计算新的偏移量
+        let newTranslateX = this.dragStartTranslateX + deltaX;
+        let newTranslateY = this.dragStartTranslateY + deltaY;
+        
+        // 计算图片缩放后的实际尺寸和移动边界
+        // 获取容器宽度（假设屏幕宽度 - padding）
+        const containerWidth = wx.getSystemInfoSync().windowWidth * 0.94;
+        const scaledWidth = containerWidth * this.data.scale;
+        const maxTranslateX = (scaledWidth - containerWidth) / 2;
+        
+        // 限制水平拖动范围
+        newTranslateX = Math.min(Math.max(newTranslateX, -maxTranslateX), maxTranslateX);
+        
+        // 竖直方向：给予更多自由度
+        const maxTranslateY = 200; // 允许一定的竖直拖动
+        newTranslateY = Math.min(Math.max(newTranslateY, -maxTranslateY), maxTranslateY);
+        
+        this.setData({
+          translateX: newTranslateX,
+          translateY: newTranslateY
+        });
+        
+        console.log('[Touch] 拖动中，偏移:', { x: newTranslateX, y: newTranslateY });
+      }
       // 单指模式：处理滚动
-      if (this.touchMode === 'single' && touchCount === 1) {
+      else if (this.touchMode === 'single' && touchCount === 1) {
         const currentY = e.touches[0].clientY;
         const deltaY = currentY - this.singleTouchStartY;
 
@@ -314,8 +452,13 @@ Page({
           Math.pow(touch2.clientY - touch1.clientY, 2)
         );
 
-        // 计算缩放比例
-        let newScale = this.startScale * (currentDistance / this.startDistance);
+        // 计算缩放比例 - 使用平滑缩放因子
+        const scaleRatio = currentDistance / this.startDistance;
+        
+        // 应用缓动函数，使缩放更平滑自然
+        // 使用 0.85 作为敏感度因子，减少过度缩放
+        const smoothRatio = 1 + (scaleRatio - 1) * 0.85;
+        let newScale = this.startScale * smoothRatio;
 
         // 限制缩放范围
         newScale = Math.min(Math.max(newScale, this.data.minScale), this.data.maxScale);
@@ -325,7 +468,8 @@ Page({
 
         this.setData({
           scale: newScale,
-          scaleDisplay: scalePercent
+          scaleDisplay: scalePercent,
+          isZooming: true
         });
 
         // 阻止事件冒泡，防止页面滚动
@@ -344,10 +488,20 @@ Page({
 
   handleTouchEnd: function(e) {
     try {
-      if (this.touchMode === 'pinch') {
-        // 缩放操作结束，恢复滚动
+      if (this.touchMode === 'drag') {
+        // 拖动操作结束
+        console.log('[Touch] 拖动结束');
+      } else if (this.touchMode === 'pinch') {
+        // 缩放操作结束，恢复滚动并更新图片容器高度
         console.log('[Touch] 双指缩放结束，恢复滚动');
-        this.setData({ isScrollEnabled: true });
+        
+        // 计算缩放后的动态高度
+        this.updateImageDynamicHeights();
+        
+        this.setData({ 
+          isScrollEnabled: true,
+          isZooming: false
+        });
       } else if (this.touchMode === 'single') {
         console.log('[Touch] 单指操作结束');
       }
@@ -371,9 +525,20 @@ Page({
     }
   },
 
+  // 【新增】更新图片的动态尺寸（缩放后自适应）
+  updateImageDynamicHeights: function() {
+    try {
+      // 使用 transform: scale() 真实缩放，无需计算动态高度
+      // scale 数值会应用到容器和图片上
+      console.log('[缩放] 已应用 transform: scale()', this.data.scale);
+    } catch (err) {
+      console.error('[高度更新] 错误:', err);
+    }
+  },
+
   // 重置触摸状态
   resetTouchState: function() {
-    this.touchMode = null; // 'single' | 'pinch' | null
+    this.touchMode = null; // 'single' | 'pinch' | 'drag' | null
     this.isSingleScrolling = false;
     this.singleTouchStartY = 0;
     this.singleTouchStartX = 0;
@@ -381,13 +546,12 @@ Page({
     this.startDistance = 0;
     this.startScale = 1;
     this.touchStartTime = 0;
-  },
-  
-  // PDF页面加载错误处理
-  handleImageError: function(e) {
-    const index = e.currentTarget.dataset.index;
-    console.error(`PDF页面加载失败, 索引: ${index}`);
-    // 可以在此添加加载失败的处理逻辑
+    
+    // 拖动相关
+    this.dragStartX = 0;
+    this.dragStartY = 0;
+    this.dragStartTranslateX = 0;
+    this.dragStartTranslateY = 0;
   },
   
   // 监听滚动到底部事件，加载更多PDF页面
@@ -435,8 +599,13 @@ Page({
         loadedPages: 0,
         scale: 1,
         scaleDisplay: '100',
+        translateX: 0,
+        translateY: 0,
         isZooming: false,
-        isScrollEnabled: true
+  isScrollEnabled: true,
+  imageScales: {}, // 清理图片尺寸数据
+  imageDynamicHeights: {},
+  imageDynamicWidths: {} // 清理动态尺寸数据
       });
       
       console.log('成功关闭查看器');
@@ -447,7 +616,12 @@ Page({
       this.setData({
         showImageViewer: false,
         scale: 1,
-        isScrollEnabled: true
+        translateX: 0,
+        translateY: 0,
+        isScrollEnabled: true,
+        imageScales: {},
+        imageDynamicHeights: {},
+        imageDynamicWidths: {}
       });
     }
   },

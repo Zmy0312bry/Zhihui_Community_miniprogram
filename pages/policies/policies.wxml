@@ -156,7 +156,7 @@
                 bind:touchcancel="handleTouchCancel">
                 <view class="image-container">
                     <block wx:for="{{currentImageList}}" wx:key="page">
-                        <view class="image-wrapper pdf-page">
+                        <view class="image-wrapper pdf-page" style="transform: scale({{scale}}); transform-origin: top center; min-height: {{imageScales[item.url] ? imageScales[item.url].containerHeight : 400}}px;">
                             <view class="page-number">第{{item.page}}页/共{{currentPdfTotalPages}}页</view>
                             <view class="image-zoom-container"
                                 bind:touchstart="handleTouchStart"
@@ -166,9 +166,11 @@
                                 <image 
                                     class="pdf-image" 
                                     src="{{item.url}}" 
+                                    data-url="{{item.url}}"
                                     data-index="{{index}}" 
                                     mode="widthFix" 
-                                    style="transform: scale({{scale}});"
+                                    style="width: {{imageScales[item.url] ? imageScales[item.url].containerWidth : (viewerContainerWidth > 0 ? viewerContainerWidth : 10)}}px; height: auto; transform: translate({{translateX}}px, {{translateY}}px); transform-origin: center center; transition: transform 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94);"
+                                    bindload="handleImageLoad"
                                     binderror="handleImageError"
                                     catch:longpress="">
                                 </image>

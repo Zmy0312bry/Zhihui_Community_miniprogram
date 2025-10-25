@@ -10,47 +10,53 @@
         </view>
         <view class="header-content">
             <text class="title">服务地图</text>
-            <text class="subtitle">上地街道分布图</text>
+            <text class="subtitle">上地街道分布查询</text>
         </view>
     </view>
 
-    <!-- 地图展示区域 -->
-    <view class="map-container">
-        <view class="map-header">
-            <view class="map-title-section">
-                <van-icon name="location-o" size="32rpx" color="#FF6B35"/>
-                <text class="map-title">上地街道服务分布</text>
+    <!-- 地图栏目列表 -->
+    <view class="content-wrapper">
+        <!-- 第一个栏目 - 服务分布图 -->
+        <view class="map-card" bindtap="navigateToMapDetail" data-mapid="1">
+            <view class="card-header">
+                <van-icon name="location-o" size="36rpx" color="#FF6B35"/>
             </view>
-            <view class="map-info">
-                <text class="map-desc">点击查看详细位置和服务信息</text>
+            <view class="card-body">
+                <text class="card-title">{{map1.title}}</text>
+                <text class="card-desc">{{map1.desc}}</text>
+            </view>
+            <view class="card-thumbnail">
+                <image 
+                    src="{{map1.thumbnailUrl}}" 
+                    mode="aspectFill"
+                    lazy-load="true"
+                />
+            </view>
+            <view class="card-footer">
+                <text class="footer-text">点击查看详情</text>
+                <van-icon name="arrow" size="24rpx" color="#FF6B35"/>
             </view>
         </view>
 
-        <view class="map-content">
-            <scroll-view scroll-x="{{true}}" scroll-y="{{true}}" class="map-scroll">
-                <view class="map-wrapper"
-                      bindtouchstart="handleTouchStart"
-                      bindtouchmove="handleTouchMove"
-                      bindtouchend="handleTouchEnd"
-                      bindtouchcancel="handleTouchEnd">
-                    <image
-                        src="{{mapImageUrl}}"
-                        class="service-map"
-                        mode="widthFix"
-                        bindload="onMapLoad"
-                        binderror="onMapError"
-                        bindtap="onMapTap"
-                        style="transform: scale({{scale}}); transform-origin: center center; transition: transform 0.3s ease;"
-                    />
-                </view>
-            </scroll-view>
-        </view>
-
-        <!-- 缩放功能：双指缩放 + 重置按钮 -->
-        <view class="zoom-controls-horizontal">
-            <view class="zoom-btn zoom-reset" bindtap="resetZoom">
-                <van-icon name="replay" size="24rpx" color="#4CAF50"/>
-                <text class="zoom-text">重置</text>
+        <!-- 第二个栏目 - 服务名录 -->
+        <view class="map-card" bindtap="navigateToMapDetail" data-mapid="2">
+            <view class="card-header">
+                <van-icon name="orders-o" size="36rpx" color="#FF6B35"/>
+            </view>
+            <view class="card-body">
+                <text class="card-title">{{map2.title}}</text>
+                <text class="card-desc">{{map2.desc}}</text>
+            </view>
+            <view class="card-thumbnail">
+                <image 
+                    src="{{map2.thumbnailUrl}}" 
+                    mode="aspectFill"
+                    lazy-load="true"
+                />
+            </view>
+            <view class="card-footer">
+                <text class="footer-text">点击查看详情</text>
+                <van-icon name="arrow" size="24rpx" color="#FF6B35"/>
             </view>
         </view>
     </view>
@@ -58,6 +64,6 @@
     <!-- 底部提示 -->
     <view class="footer-tip">
         <van-icon name="info-o" size="28rpx" color="#FF6B35"/>
-        <text class="tip-text">使用双指进行地图缩放，点击重置按钮恢复默认大小</text>
+        <text class="tip-text">点击栏目卡片进入图片预览，双指缩放查看细节</text>
     </view>
 </view>

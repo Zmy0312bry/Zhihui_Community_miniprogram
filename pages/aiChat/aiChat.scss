@@ -51,12 +51,12 @@ scroll-view {
   left: 0;
   right: 0;
   padding: 24rpx 20rpx;
-  height: calc(20rpx + env(safe-area-inset-bottom));
+  height: auto; /* 改为auto，不使用 calc 避免动画 */
   background: linear-gradient(135deg, #FFF3E0 0%, #FFE0B2 50%, #FFCC80 100%);
   border-top: 1px solid rgba(76, 175, 80, 0.2);
   box-shadow: 0 -4px 20px rgba(76, 175, 80, 0.15);
   z-index: 100;
-  transition: height 0.3s ease;
+  transition: none; /* 禁用过渡，避免高度变化导致的动画 */
   min-height: 80px;
   border-radius: 25rpx 25rpx 0 0;
 }
@@ -112,13 +112,18 @@ scroll-view {
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: flex-start;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .voice-container {
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: flex-start; /* 明确指定顶部对齐 */
   margin-bottom: 20rpx;
+  width: 100%;
 }
 
 .voice-button {
@@ -130,74 +135,65 @@ scroll-view {
   align-items: center;
   justify-content: center;
   box-shadow: 0 8rpx 24rpx rgba(255, 152, 0, 0.4);
-  transition: all 0.3s ease;
+  transition: none; /* 禁用过渡，避免任何动画导致的位移 */
   position: relative;
+  flex-shrink: 0; /* 防止flex压缩 */
   
   &.recording {
-    animation: pulse 1.5s infinite;
+    /* 使用 box-shadow 脉冲效果替代 transform: scale，保持位置绝对不动 */
+    animation: shadowPulse 1.5s infinite;
     background: linear-gradient(135deg, #FF5722, #D32F2F);
-    box-shadow: 0 8rpx 24rpx rgba(255, 87, 34, 0.4);
     
-    &::before {
-      content: '';
-      position: absolute;
-      width: 140rpx;
-      height: 140rpx;
-      border-radius: 50%;
-      background: rgba(255, 87, 34, 0.3);
-      animation: ripple 1.5s infinite;
-    }
+    /* 移除::before伪元素以防止任何位置变化 */
+  }
+  
+  &.recording.pressed {
+    box-shadow: 0 2rpx 6rpx rgba(255, 87, 34, 0.3), inset 0 2rpx 4rpx rgba(0, 0, 0, 0.15);
+    background: linear-gradient(135deg, #D32F2F, #B71C1C);
   }
   
   &.pressed {
-    transform: scale(0.9);
-    background: linear-gradient(135deg, #FF9800, #F57C00);
-    box-shadow: 0 6rpx 20rpx rgba(255, 152, 0, 0.5);
-    
-    &::after {
-      content: '';
-      position: absolute;
-      width: 130rpx;
-      height: 130rpx;
-      border-radius: 50%;
-      background: rgba(255, 152, 0, 0.4);
-      animation: pressRipple 0.6s ease-out;
-    }
-  }
-  
-  &:active {
-    transform: scale(0.95);
+    /* 按压效果：只改阴影和背景颜色，绝对不移动位置 */
+    box-shadow: 0 2rpx 6rpx rgba(255, 152, 0, 0.3), inset 0 2rpx 4rpx rgba(0, 0, 0, 0.15);
+    background: linear-gradient(135deg, #F57C00, #E65100);
   }
 }
 
-@keyframes pulse {
+/* 确保 van-icon 在任何状态下都保持固定尺寸和位置 */
+.voice-button van-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin: 0 !important;
+  padding: 0 !important;
+  width: 32rpx;
+  height: 32rpx;
+}
+
+@keyframes shadowPulse {
   0%, 100% {
-    transform: scale(1);
+    box-shadow: 0 8rpx 24rpx rgba(255, 87, 34, 0.4);
   }
   50% {
-    transform: scale(1.05);
-  }
-}
-
-@keyframes ripple {
-  0% {
-    transform: scale(1);
-    opacity: 1;
-  }
-  100% {
-    transform: scale(1.3);
-    opacity: 0;
+    box-shadow: 0 12rpx 32rpx rgba(255, 87, 34, 0.6);
   }
 }
 
 .voice-status {
   margin-top: 16rpx;
+  min-height: 28rpx; /* 固定高度，防止文字变化导致容器高度变化 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
   
   text {
     font-size: 28rpx;
     color: #FF9800;
     text-align: center;
     font-weight: 500;
+    white-space: nowrap; /* 防止文字换行 */
   }
 }
 

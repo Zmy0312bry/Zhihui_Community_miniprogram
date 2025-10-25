@@ -49,27 +49,6 @@
             </view>
         </view>
 
-        <!-- 阿尔茨海默症科普与预防 -->
-        <view class="alzheimer-section">
-            <view class="section-header">
-                <van-icon name="orders-o" size="48rpx" color="#FF6B35"/>
-                <text class="section-title">阿尔茨海默症的科普与预防</text>
-            </view>
-            <view class="alzheimer-card" bindtap="viewAlzheimerSlides">
-                <view class="alzheimer-icon">
-                    <van-icon name="description" size="60rpx" color="#ffffffff"/>
-                </view>
-                <view class="alzheimer-info">
-                    <text class="alzheimer-title">阿尔茨海默症科普与预防指南</text>
-                    <text class="alzheimer-desc">包含24页详细的科普内容和预防建议</text>
-                    <view class="alzheimer-meta">
-                        <text class="meta-text">共{{alzheimerData.totalSlides}}页</text>
-                        <van-icon name="arrow" size="24rpx" color="#FF6B35"/>
-                    </view>
-                </view>
-            </view>
-        </view>
-
         <!-- 健康知识云课堂 -->
         <view class="video-library-section">
             <view class="section-header">
@@ -98,6 +77,27 @@
                             <text class="lesson-duration">时长：{{item.duration}}</text>
                         </view>
                         <van-icon name="arrow" size="28rpx" color="#FF6B35"/>
+                    </view>
+                </view>
+            </view>
+        </view>
+
+        <!-- 阿尔茨海默症科普与预防 -->
+        <view class="alzheimer-section">
+            <view class="section-header">
+                <van-icon name="orders-o" size="48rpx" color="#FF6B35"/>
+                <text class="section-title">阿尔茨海默症的科普与预防</text>
+            </view>
+            <view class="alzheimer-card" bindtap="viewAlzheimerSlides">
+                <view class="alzheimer-icon">
+                    <van-icon name="description" size="60rpx" color="#ffffffff"/>
+                </view>
+                <view class="alzheimer-info">
+                    <text class="alzheimer-title">阿尔茨海默症科普与预防指南</text>
+                    <text class="alzheimer-desc">包含24页详细的科普内容和预防建议</text>
+                    <view class="alzheimer-meta">
+                        <text class="meta-text">共{{alzheimerData.totalSlides}}页</text>
+                        <van-icon name="arrow" size="24rpx" color="#FF6B35"/>
                     </view>
                 </view>
             </view>

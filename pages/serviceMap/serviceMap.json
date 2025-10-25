@@ -1,4 +1,7 @@
 {
   "navigationBarTitleText": "服务地图",
-  "usingComponents": {}
+  "usingComponents": {
+    "van-icon": "@vant/weapp/icon/index",
+    "van-loading": "@vant/weapp/loading/index"
+  }
 }

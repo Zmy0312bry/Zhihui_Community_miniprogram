@@ -231,14 +231,15 @@ Page({
 
     // 开始语音录音（触摸开始）
     startVoiceRecording() {
-        if (this.data.isRecording) {
-            return; // 如果已经在录音中，忽略
-        }
-        
-        // 设置按钮按住状态
+        // 立即设置按钮按住状态，体现按下的视觉反馈
         this.setData({
             isVoiceButtonPressed: true
         });
+        
+        // 如果已经在录音中，忽略
+        if (this.data.isRecording) {
+            return;
+        }
         
         // 开始录音识别，配置最大30秒，中文识别
         startRecording(this.data.recorderManager, {
@@ -261,14 +262,15 @@ Page({
 
     // 停止语音录音（触摸结束）
     stopVoiceRecording() {
-        if (!this.data.isRecording) {
-            return; // 如果没有在录音中，忽略
-        }
-        
-        // 清除按钮按住状态
+        // 立即清除按钮按住状态
         this.setData({
             isVoiceButtonPressed: false
         });
+        
+        // 如果没有在录音中，忽略
+        if (!this.data.isRecording) {
+            return;
+        }
         
         // 停止录音识别
         stopRecording(this.data.recorderManager);
@@ -276,14 +278,15 @@ Page({
 
     // 取消语音录音（触摸取消）
     cancelVoiceRecording() {
-        if (!this.data.isRecording) {
-            return; // 如果没有在录音中，忽略
-        }
-        
-        // 清除按钮按住状态
+        // 立即清除按钮按住状态
         this.setData({
             isVoiceButtonPressed: false
         });
+        
+        // 如果没有在录音中，忽略
+        if (!this.data.isRecording) {
+            return;
+        }
         
         // 停止录音识别
         stopRecording(this.data.recorderManager);

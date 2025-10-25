@@ -1,0 +1,68 @@
+<view class="container">
+    <!-- 页面头部 -->
+    <view class="header">
+        <view class="header-content">
+            <view class="header-top">
+                <view class="back-btn" bindtap="goBack">
+                    <van-icon name="arrow-left" size="28rpx" color="white"/>
+                </view>
+                <text class="header-title">{{mapInfo.title}}</text>
+                <view class="back-btn" style="visibility: hidden;"></view>
+            </view>
+            <view class="header-desc">{{mapInfo.desc}}</view>
+        </view>
+    </view>
+
+    <!-- 地图显示区域 -->
+    <view class="map-viewer">
+        <!-- 加载中的覆盖层 -->
+        <view class="loading-overlay" wx:if="{{loading}}">
+            <van-loading color="#FF6B35" size="24px"></van-loading>
+            <text class="loading-text">图片加载中...</text>
+        </view>
+
+        <view class="map-content">
+            <scroll-view 
+                scroll-x="{{true}}" 
+                scroll-y="{{true}}" 
+                class="map-scroll"
+                scroll-into-view="map-image"
+            >
+                <view 
+                    class="map-wrapper"
+                    id="map-image"
+                    bindtouchstart="handleTouchStart"
+                    bindtouchmove="handleTouchMove"
+                    bindtouchend="handleTouchEnd"
+                    bindtouchcancel="handleTouchEnd"
+                >
+                    <image
+                        src="{{mapInfo.imageUrl}}"
+                        class="map-image"
+                        mode="widthFix"
+                        bindload="onImageLoad"
+                        binderror="onImageError"
+                        style="width: {{displayWidth > 0 ? displayWidth : 'auto'}}px; height: {{displayHeight > 0 ? displayHeight : 'auto'}}px; transform: translate({{translateX}}px, {{translateY}}px); transition: transform 0.1s ease;"
+                    />
+                </view>
+            </scroll-view>
+
+            <!-- 缩放控制区 -->
+            <view class="scale-control" wx:if="{{mapLoaded}}">
+                <view class="scale-display">
+                    <text class="scale-text">{{scalePercent}}%</text>
+                </view>
+                
+                <view class="reset-btn" bindtap="resetZoom">
+                    <van-icon name="replay" size="20rpx" color="white"/>
+                </view>
+            </view>
+        </view>
+    </view>
+
+    <!-- 底部提示 -->
+    <view class="footer-tip" wx:if="{{mapLoaded}}">
+        <van-icon name="info-o" size="28rpx" color="#FF6B35"/>
+        <text class="tip-text">双指缩放、拖拽查看细节</text>
+    </view>
+</view>
