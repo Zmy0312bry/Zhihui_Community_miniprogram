@@ -31,24 +31,42 @@ Page({
       chapters: [
         {
           id: 1,
-          title: "常见疾病防治",
-          desc: "了解常见疾病的预防和应对方法",
+          title: "高血压防治",
+          desc: "高血压的西医与中医防治知识",
           lessons: [
-            { id: 1, name: "高血压的预防与控制", duration: "12:35", videoUrl: "https://shangdi.bjseeyoung.com/media/video/1-1.mp4" },
-            { id: 2, name: "糖尿病患者的健康管理", duration: "15:20", videoUrl: "https://shangdi.bjseeyoung.com/media/video/1-1.mp4" },
-            { id: 3, name: "冠心病的早期识别", duration: "18:45", videoUrl: "https://shangdi.bjseeyoung.com/media/video/1-1.mp4" },
-            { id: 4, name: "骨质疏松症的预防", duration: "14:10", videoUrl: "https://shangdi.bjseeyoung.com/media/video/1-1.mp4" }
+            { id: 2, name: "高血压的概述", duration: "07:59", videoUrl: "https://shangdi.bjseeyoung.com/media/video/2.mp4" },
+            { id: 3, name: "高血压的中医防治", duration: "08:47", videoUrl: "https://shangdi.bjseeyoung.com/media/video/3.mp4" },
+            { id: 10, name: "高血压运动指南", duration: "24:35", videoUrl: "https://shangdi.bjseeyoung.com/media/video/10.mp4" }
           ]
         },
         {
           id: 2,
-          title: "健康生活方式",
-          desc: "培养健康的生活习惯",
+          title: "糖尿病防治",
+          desc: "糖尿病的西医与中医防治知识",
           lessons: [
-            { id: 5, name: "科学运动与健身指导", duration: "16:50", videoUrl: "https://shangdi.bjseeyoung.com/media/video/1-1.mp4" },
-            { id: 6, name: "营养均衡饮食指南", duration: "13:25", videoUrl: "https://shangdi.bjseeyoung.com/media/video/1-1.mp4" },
-            { id: 7, name: "睡眠质量改善技巧", duration: "11:40", videoUrl: "https://shangdi.bjseeyoung.com/media/video/1-1.mp4" },
-                        { id: 8, name: "压力管理与心理调适", duration: "17:15", videoUrl: "https://shangdi.bjseeyoung.com/media/video/1-1.mp4" }
+            { id: 9, name: "糖尿病概述", duration: "06:44", videoUrl: "https://shangdi.bjseeyoung.com/media/video/9.mp4" },
+            { id: 1, name: "糖尿病的西医防治", duration: "08:48", videoUrl: "https://shangdi.bjseeyoung.com/media/video/1.mp4" },
+            { id: 8, name: "糖尿病的中医防治", duration: "08:37", videoUrl: "https://shangdi.bjseeyoung.com/media/video/8.mp4" },
+            { id: 12, name: "中医对糖尿病的认识", duration: "06:27", videoUrl: "https://shangdi.bjseeyoung.com/media/video/12.mp4" }
+          ]
+        },
+        {
+          id: 3,
+          title: "高血脂防治",
+          desc: "高血脂的西医与中医防治知识",
+          lessons: [
+            { id: 4, name: "高血脂的概述", duration: "06:50", videoUrl: "https://shangdi.bjseeyoung.com/media/video/4.mp4" },
+            { id: 5, name: "高血脂的中医防治", duration: "06:55", videoUrl: "https://shangdi.bjseeyoung.com/media/video/5.mp4" },
+            { id: 11, name: "中医对高血脂的认识", duration: "06:23", videoUrl: "https://shangdi.bjseeyoung.com/media/video/11.mp4" }
+          ]
+        },
+        {
+          id: 4,
+          title: "健康生活指导",
+          desc: "慢性病防治与生活方式指导",
+          lessons: [
+            { id: 6, name: "慢性病中西医防治概述", duration: "11:19", videoUrl: "https://shangdi.bjseeyoung.com/media/video/6.mp4" },
+            { id: 7, name: "如何调节手机微信字体大小", duration: "02:41", videoUrl: "https://shangdi.bjseeyoung.com/media/video/7.mp4" }
           ]
         }
       ]
@@ -58,6 +76,8 @@ Page({
     showVideoPlayer: false, // 是否显示视频播放器
     currentVideoTitle: '', // 当前视频标题
     currentVideoUrl: '', // 当前视频URL
+    videoLoading: false, // 视频是否正在加载
+    videoElement: null, // 视频元素引用
 
     // 阿尔茨海默症科普数据
     alzheimerData: {
@@ -139,22 +159,41 @@ Page({
     const lessonId = e.currentTarget.dataset.lessonId;
     const lessonName = e.currentTarget.dataset.lessonName;
     const videoUrl = e.currentTarget.dataset.videoUrl;
+    
     this.setData({
       selectedLessonId: lessonId,
       currentVideoTitle: lessonName,
       currentVideoUrl: videoUrl,
-      showVideoPlayer: true
+      showVideoPlayer: true,
+      videoLoading: true
     });
+    
+    // 延迟获取视频元素
+    setTimeout(() => {
+      this.videoElement = wx.createVideoContext('videoPlayer', this);
+    }, 100);
   },
 
   // 关闭视频播放器
   closeVideoPlayer: function () {
+    // 先暂停视频，避免 play/pause 冲突
+    if (this.videoElement) {
+      try {
+        this.videoElement.pause();
+      } catch (e) {
+        console.warn('暂停视频失败:', e);
+      }
+    }
+    
     this.setData({
       showVideoPlayer: false,
       selectedLessonId: null,
       currentVideoTitle: '',
-      currentVideoUrl: ''
+      currentVideoUrl: '',
+      videoLoading: false
     });
+    
+    this.videoElement = null;
   },
 
   // 选择 CPR 类型
@@ -482,6 +521,41 @@ Page({
       alzheimerSwipeStartY: 0,
       alzheimerTranslateX: 0,
       alzheimerTranslateY: 0
+    });
+  },
+
+  // ============== 视频事件处理 ==============
+  // 视频元数据加载完成
+  onVideoLoadedMetadata: function (e) {
+    console.log('视频元数据加载完成', e);
+    this.setData({ videoLoading: false });
+  },
+
+  // 视频可播放的数据已加载
+  onVideoLoadedData: function (e) {
+    console.log('视频数据加载完成', e);
+    this.setData({ videoLoading: false });
+  },
+
+  // 视频播放开始
+  onVideoPlay: function (e) {
+    console.log('视频开始播放');
+    this.setData({ videoLoading: false });
+  },
+
+  // 视频暂停
+  onVideoPause: function (e) {
+    console.log('视频暂停');
+  },
+
+  // 视频加载失败
+  onVideoError: function (e) {
+    console.error('视频加载失败:', e.detail.errMsg);
+    this.setData({ videoLoading: false });
+    wx.showToast({
+      title: '视频加载失败，请检查网络',
+      icon: 'none',
+      duration: 2000
     });
   },
 

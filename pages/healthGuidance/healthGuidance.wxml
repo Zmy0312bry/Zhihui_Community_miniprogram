@@ -112,16 +112,33 @@
                 <van-icon name="close" size="36rpx" color="white"/>
             </view>
 
+            <!-- 加载状态 -->
+            <view class="video-loading" wx:if="{{videoLoading}}">
+                <van-loading type="circular" color="#FF6B35" />
+                <text class="loading-text">视频加载中...</text>
+            </view>
+
             <!-- 视频播放区域 -->
             <video 
                 id="videoPlayer"
                 src="{{currentVideoUrl}}"
                 controls
-                enable-progress-gesture="true"
-                auto-pause-if-navigate="true"
-                show-center-play-btn="true"
+                enable-progress-gesture
+                auto-pause-if-navigate
+                show-center-play-btn
+                object-fit="contain"
+                bindloadedmetadata="onVideoLoadedMetadata"
+                bindloadeddata="onVideoLoadedData"
+                binderror="onVideoError"
+                bindplay="onVideoPlay"
+                bindpause="onVideoPause"
                 class="video-element"
             />
+            
+            <!-- 视频标题 -->
+            <view class="video-title-bar">
+                <text class="video-title">{{currentVideoTitle}}</text>
+            </view>
         </view>
     </view>
 

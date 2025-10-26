@@ -7,7 +7,8 @@ Page({
     expandedCategories: {
       care: false,
       assessment: false,
-      welfare: false
+      welfare: false,
+      subsidyList: false  // 补贴专栏展开状态
     },
     
     // 触摸和滚动状态控制
@@ -36,7 +37,11 @@ Page({
         title: "海淀区民政局关于印发《海淀区养老家庭照护床位建设管理实施细则》",
         file: "pdf5.pdf",
         desc: "养老家庭照护床位建设管理实施细则",
-        totalPages: 12
+        totalPages: 12,
+        relatedLink: {
+          title: "《海淀区养老家庭照护床位建设管理实施细则》",
+          url: "https://zyk.bjhd.gov.cn/zwdt/zcjd/202408/t20240821_4666403.shtml"
+        }
       }
     ],
 
@@ -54,7 +59,11 @@ Page({
         title: "北京市老年人能力评估实施办法",
         file: "pdf4.pdf",
         desc: "老年人能力评估相关实施办法",
-        totalPages: 20
+        totalPages: 20,
+        relatedLink: {
+          title: "北京市老年人能力评估实施办法",
+          url: "https://mzj.beijing.gov.cn/art/2022/8/25/art_10688_1398.html"
+        }
       }
     ],
 
@@ -83,6 +92,35 @@ Page({
       }
     ],
 
+    // 办事指南链接（直接跳转）
+    servicesGuide: {
+      title: "老年人津贴办事指南",
+      desc: "快速了解津贴办理流程",
+      url: "https://banshi.beijing.gov.cn/pubtask/task/1/110108000000/6d2eb720-30ae-4774-8d77-77b2699c96c0.html?locationCode=110108000000#Guide-btn"
+    },
+
+    // 补贴专栏子项目
+    subsidyItems: [
+      {
+        id: 1,
+        title: "失能老年人护理补贴",
+        desc: "为失能老年人提供护理补贴相关政策",
+        url: "https://banshi.beijing.gov.cn/pubtask/task/1/110108000000/a9c07314-8af5-42ff-b0d1-ea7ff870f654.html?locationCode=110108000000#Guide-btn"
+      },
+      {
+        id: 2,
+        title: "困难老年人养老服务补贴",
+        desc: "为困难老年人提供养老服务补贴政策",
+        url: "https://banshi.beijing.gov.cn/pubtask/task/1/110108000000/1f397221-3db4-4dfd-89d2-9f3483d2774e.html?locationCode=110108000000"
+      },
+      {
+        id: 3,
+        title: "高龄老年人津贴",
+        desc: "为高龄老年人提供专项津贴政策",
+        url: "https://banshi.beijing.gov.cn/pubtask/task/1/110108000000/6d2eb720-30ae-4774-8d77-77b2699c96c0.html?locationCode=110108000000#Guide-btn"
+      }
+    ],
+
     // PDF文档预览相关
     showImageViewer: false,
     currentPdfFile: '',
@@ -97,6 +135,8 @@ Page({
     maxScale: 3,
     isScrollEnabled: true, // 是否启用滚动
     isZooming: false, // 是否正在缩放中
+    showRelatedLink: false, // 是否显示相关链接
+    relatedLink: null, // 相关链接数据
     
     // 图片拖动和平移相关
     translateX: 0, // 水平偏移
@@ -169,6 +209,7 @@ Page({
     const file = e.currentTarget.dataset.file;
     const title = e.currentTarget.dataset.title;
     const totalPages = e.currentTarget.dataset.pages;
+    const relatedLink = e.currentTarget.dataset.relatedLink;
     
     // 检查是否为直接图片URL（以http开头）
     if (file.startsWith('http')) {
@@ -194,7 +235,9 @@ Page({
         translateY: 0,
         imageScales: {},
         imageDynamicHeights: {},
-        imageDynamicWidths: {}
+        imageDynamicWidths: {},
+        showRelatedLink: false,
+        relatedLink: null
       });
       
       console.log('图片预览已显示');
@@ -234,7 +277,9 @@ Page({
       translateY: 0,
       imageScales: {},
       imageDynamicHeights: {},
-      imageDynamicWidths: {}
+      imageDynamicWidths: {},
+      showRelatedLink: !!relatedLink, // 如果有相关链接，显示
+      relatedLink: relatedLink || null
     });
     
     console.log('PDF图片预览已显示');
@@ -630,5 +675,66 @@ Page({
   preventClose: function () {
     // 不再需要阻止事件冒泡
     return false;
+  },
+
+  // 打开外部链接（在 webview 中渲染）
+  openExternalLink: function (e) {
+    const url = e.currentTarget.dataset.url;
+    if (!url) {
+      wx.showToast({
+        title: '链接地址无效',
+        icon: 'none'
+      });
+      return;
+    }
+    
+    console.log('打开链接:', url);
+    
+    // 先复制链接到剪贴板
+    wx.setClipboardData({
+      data: url,
+      success: () => {
+        // 复制成功，显示提示
+        wx.showToast({
+          title: '链接已复制',
+          icon: 'success',
+          duration: 500
+        });
+        
+        // 延迟 0.5 秒后跳转到 webview
+        setTimeout(() => {
+          wx.navigateTo({
+            url: `/pages/webview/webview?url=${encodeURIComponent(url)}`,
+            success: () => {
+              console.log('成功跳转到 webview 页面');
+            },
+            fail: (err) => {
+              console.error('跳转失败:', err);
+              wx.showToast({
+                title: '打开链接失败',
+                icon: 'none'
+              });
+            }
+          });
+        }, 500);
+      },
+      fail: (err) => {
+        console.error('复制链接失败:', err);
+        // 复制失败也继续跳转
+        wx.navigateTo({
+          url: `/pages/webview/webview?url=${encodeURIComponent(url)}`,
+          success: () => {
+            console.log('成功跳转到 webview 页面');
+          },
+          fail: (err) => {
+            console.error('跳转失败:', err);
+            wx.showToast({
+              title: '打开链接失败',
+              icon: 'none'
+            });
+          }
+        });
+      }
+    });
   }
 });

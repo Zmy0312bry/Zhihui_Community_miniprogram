@@ -205,6 +205,179 @@
   opacity: 0.6;
 }
 
+/* ===== 快速链接样式 ===== */
+.quick-link-divider {
+  height: 1rpx;
+  background: linear-gradient(to right, transparent, rgba(255, 107, 53, 0.2), transparent);
+  margin: 20rpx 25rpx;
+}
+
+.quick-link-item {
+  display: flex;
+  align-items: center;
+  padding: 20rpx 25rpx;
+  background: linear-gradient(135deg, rgba(255, 107, 53, 0.06) 0%, rgba(255, 140, 66, 0.06) 100%);
+  border: 1rpx solid rgba(255, 107, 53, 0.15);
+  border-radius: 12rpx;
+  margin: 0 15rpx 15rpx 15rpx;
+  transition: all 0.3s ease;
+}
+
+.quick-link-item:active {
+  background: linear-gradient(135deg, rgba(255, 107, 53, 0.12) 0%, rgba(255, 140, 66, 0.12) 100%);
+  transform: translateY(-2rpx);
+  box-shadow: 0 4rpx 12rpx rgba(255, 107, 53, 0.15);
+}
+
+.quick-link-icon {
+  width: 44rpx;
+  height: 44rpx;
+  border-radius: 50%;
+  background: rgba(255, 107, 53, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 15rpx;
+  flex-shrink: 0;
+}
+
+.quick-link-content {
+  flex: 1;
+}
+
+.quick-link-title {
+  display: block;
+  font-size: 26rpx;
+  font-weight: 600;
+  color: #FF6B35;
+  margin-bottom: 4rpx;
+}
+
+.quick-link-desc {
+  display: block;
+  font-size: 22rpx;
+  color: #999;
+}
+
+.quick-link-arrow {
+  margin-left: 10rpx;
+  opacity: 0.8;
+}
+
+/* ===== 补贴专栏样式 ===== */
+.subsidy-section {
+  margin: 15rpx 15rpx 0 15rpx;
+  border: 1rpx solid rgba(255, 107, 53, 0.2);
+  border-radius: 12rpx;
+  background: rgba(255, 255, 255, 0.8);
+  overflow: hidden;
+}
+
+.subsidy-header {
+  display: flex;
+  align-items: center;
+  padding: 18rpx 20rpx;
+  background: linear-gradient(135deg, rgba(255, 107, 53, 0.08) 0%, rgba(255, 140, 66, 0.08) 100%);
+  border-bottom: 1rpx solid rgba(255, 107, 53, 0.1);
+  transition: all 0.3s ease;
+}
+
+.subsidy-header:active {
+  background: linear-gradient(135deg, rgba(255, 107, 53, 0.12) 0%, rgba(255, 140, 66, 0.12) 100%);
+}
+
+.subsidy-icon {
+  width: 36rpx;
+  height: 36rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 12rpx;
+  flex-shrink: 0;
+}
+
+.subsidy-info {
+  flex: 1;
+}
+
+.subsidy-title {
+  display: block;
+  font-size: 26rpx;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 2rpx;
+}
+
+.subsidy-desc {
+  display: block;
+  font-size: 22rpx;
+  color: #999;
+}
+
+.subsidy-expand-icon {
+  margin-left: 8rpx;
+  opacity: 0.7;
+  transition: transform 0.3s ease;
+}
+
+/* 补贴项目列表 */
+.subsidy-list {
+  padding: 12rpx 0;
+}
+
+.subsidy-item {
+  display: flex;
+  align-items: center;
+  padding: 16rpx 20rpx;
+  border-bottom: 1rpx solid rgba(255, 107, 53, 0.06);
+  transition: all 0.3s ease;
+}
+
+.subsidy-item:last-child {
+  border-bottom: none;
+}
+
+.subsidy-item:active {
+  background: rgba(255, 107, 53, 0.04);
+  padding-left: 24rpx;
+}
+
+.subsidy-item-icon {
+  width: 32rpx;
+  height: 32rpx;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 12rpx;
+  flex-shrink: 0;
+  opacity: 0.7;
+}
+
+.subsidy-item-content {
+  flex: 1;
+}
+
+.subsidy-item-title {
+  display: block;
+  font-size: 24rpx;
+  font-weight: 500;
+  color: #333;
+  margin-bottom: 2rpx;
+  line-height: 1.3;
+}
+
+.subsidy-item-desc {
+  display: block;
+  font-size: 22rpx;
+  color: #999;
+  line-height: 1.2;
+}
+
+.subsidy-item-arrow {
+  margin-left: 8rpx;
+  opacity: 0.5;
+}
+
 /* PDF预览区域 */
 .image-viewer-overlay {
   position: fixed;
@@ -294,6 +467,64 @@
   justify-content: center;
   align-items: center;
   line-height: 34rpx; /* spacing between the two characters */
+}
+
+/* ===== 相关链接栏样式 ===== */
+.related-link-bar {
+  background: white;
+  border-bottom: 1rpx solid rgba(255, 107, 53, 0.15);
+  padding: 20rpx;
+  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.08);
+}
+
+.related-link-content {
+  display: flex;
+  align-items: center;
+  padding: 16rpx 20rpx;
+  background: linear-gradient(135deg, rgba(255, 107, 53, 0.08) 0%, rgba(255, 140, 66, 0.08) 100%);
+  border: 1rpx solid rgba(255, 107, 53, 0.15);
+  border-radius: 12rpx;
+  transition: all 0.3s ease;
+}
+
+.related-link-content:active {
+  background: linear-gradient(135deg, rgba(255, 107, 53, 0.12) 0%, rgba(255, 140, 66, 0.12) 100%);
+  transform: translateY(-2rpx);
+  box-shadow: 0 4rpx 12rpx rgba(255, 107, 53, 0.15);
+}
+
+.related-link-icon {
+  width: 40rpx;
+  height: 40rpx;
+  border-radius: 50%;
+  background: rgba(255, 107, 53, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-right: 12rpx;
+}
+
+.related-link-text {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4rpx;
+}
+
+.related-link-title {
+  display: block;
+  font-size: 26rpx;
+  font-weight: 600;
+  color: #333;
+  line-height: 1.3;
+}
+
+.related-link-arrow {
+  display: block;
+  font-size: 22rpx;
+  color: #FF6B35;
+  font-weight: 500;
 }
 
 .viewer-content {

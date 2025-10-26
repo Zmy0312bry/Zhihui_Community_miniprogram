@@ -1,0 +1,24 @@
+<view class="container">
+    <!-- 页面头部返回按钮 -->
+    <view class="header">
+        <view class="back-btn" bindtap="goBack">
+            <van-icon name="arrow-left" size="32rpx" color="white"/>
+            <text class="back-text">返回</text>
+        </view>
+    </view>
+
+    <!-- 加载状态 -->
+    <view class="loading-container" wx:if="{{loading}}">
+        <van-loading type="circular" color="#FF6B35"/>
+        <text class="loading-text">页面加载中...</text>
+    </view>
+
+    <!-- Web 视图 -->
+    <web-view
+        src="{{url}}"
+        bindload="handleLoad"
+        binderror="handleError"
+        class="webview-element"
+        wx:if="{{url}}"
+    />
+</view>

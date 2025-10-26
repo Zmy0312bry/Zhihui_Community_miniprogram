@@ -35,7 +35,7 @@
             </view>
 
             <view class="category-content" wx:if="{{expandedCategories.care}}">
-                <view class="policy-item" wx:for="{{carePolicies}}" wx:key="id" bindtap="viewPdfImages" data-file="{{item.file}}" data-title="{{item.title}}" data-pages="{{item.totalPages}}">
+                <view class="policy-item" wx:for="{{carePolicies}}" wx:key="id" bindtap="viewPdfImages" data-file="{{item.file}}" data-title="{{item.title}}" data-pages="{{item.totalPages}}" data-related-link="{{item.relatedLink}}">
                     <view class="item-icon">
                         <van-icon name="description" size="24rpx" color="#FF8C42"/>
                     </view>
@@ -69,7 +69,7 @@
             </view>
 
             <view class="category-content" wx:if="{{expandedCategories.assessment}}">
-                <view class="policy-item" wx:for="{{assessmentPolicies}}" wx:key="id" bindtap="viewPdfImages" data-file="{{item.file}}" data-title="{{item.title}}" data-pages="{{item.totalPages}}">
+                <view class="policy-item" wx:for="{{assessmentPolicies}}" wx:key="id" bindtap="viewPdfImages" data-file="{{item.file}}" data-title="{{item.title}}" data-pages="{{item.totalPages}}" data-related-link="{{item.relatedLink}}">
                     <view class="item-icon">
                         <van-icon name="description" size="24rpx" color="#FF8C42"/>
                     </view>
@@ -103,6 +103,7 @@
             </view>
 
             <view class="category-content" wx:if="{{expandedCategories.welfare}}">
+                <!-- 政策文件列表 -->
                 <view class="policy-item" wx:for="{{welfarePolicies}}" wx:key="id" bindtap="viewPdfImages" data-file="{{item.file}}" data-title="{{item.title}}" data-pages="{{item.totalPages}}">
                     <view class="item-icon">
                         <van-icon name="description" size="24rpx" color="#FF8C42"/>
@@ -113,6 +114,58 @@
                     </view>
                     <view class="item-arrow">
                         <van-icon name="arrow" size="20rpx" color="#999"/>
+                    </view>
+                </view>
+
+                <!-- 快速链接分隔线 -->
+                <view class="quick-link-divider"></view>
+
+                <!-- 办事指南快速链接 -->
+                <view class="quick-link-item" bindtap="openExternalLink" data-url="{{servicesGuide.url}}">
+                    <view class="quick-link-icon">
+                        <van-icon name="link-o" size="24rpx" color="#FF6B35"/>
+                    </view>
+                    <view class="quick-link-content">
+                        <text class="quick-link-title">{{servicesGuide.title}}</text>
+                        <text class="quick-link-desc">{{servicesGuide.desc}}</text>
+                    </view>
+                    <view class="quick-link-arrow">
+                        <van-icon name="share" size="20rpx" color="#FF8C42"/>
+                    </view>
+                </view>
+
+                <!-- 补贴专栏 -->
+                <view class="subsidy-section">
+                    <view class="subsidy-header" bindtap="toggleCategory" data-category="subsidyList">
+                        <view class="subsidy-icon">
+                            <van-icon name="bag-o" size="28rpx" color="#FF6B35"/>
+                        </view>
+                        <view class="subsidy-info">
+                            <text class="subsidy-title">补贴专栏</text>
+                            <text class="subsidy-desc">点击展开查看补贴详情</text>
+                        </view>
+                        <view class="subsidy-expand-icon" wx:if="{{!expandedCategories.subsidyList}}">
+                            <van-icon name="arrow" size="24rpx" color="#FF8C42"/>
+                        </view>
+                        <view class="subsidy-expand-icon" wx:else>
+                            <van-icon name="arrow-up" size="24rpx" color="#FF8C42"/>
+                        </view>
+                    </view>
+
+                    <!-- 补贴项目列表 -->
+                    <view class="subsidy-list" wx:if="{{expandedCategories.subsidyList}}">
+                        <view class="subsidy-item" wx:for="{{subsidyItems}}" wx:key="id" bindtap="openExternalLink" data-url="{{item.url}}">
+                            <view class="subsidy-item-icon">
+                                <van-icon name="link-o" size="26rpx" color="#FF6B35"/>
+                            </view>
+                            <view class="subsidy-item-content">
+                                <text class="subsidy-item-title">{{item.title}}</text>
+                                <text class="subsidy-item-desc">{{item.desc}}</text>
+                            </view>
+                            <view class="subsidy-item-arrow">
+                                <van-icon name="arrow" size="18rpx" color="#FF8C42"/>
+                            </view>
+                        </view>
                     </view>
                 </view>
             </view>
@@ -139,6 +192,19 @@
                 <view class="viewer-title-section">
                     <text class="viewer-title">{{currentPdfTitle}}</text>
                     <text class="viewer-page-info">{{loadedPages}}/{{currentPdfTotalPages}}页</text>
+                </view>
+            </view>
+
+            <!-- 相关链接栏（可随页面滑动） -->
+            <view class="related-link-bar" wx:if="{{showRelatedLink && relatedLink}}">
+                <view class="related-link-content" bindtap="openExternalLink" data-url="{{relatedLink.url}}">
+                    <view class="related-link-icon">
+                        <van-icon name="link-o" size="24rpx" color="#FF6B35"/>
+                    </view>
+                    <view class="related-link-text">
+                        <text class="related-link-title">{{relatedLink.title}}</text>
+                        <text class="related-link-arrow">点击查看原文 →</text>
+                    </view>
                 </view>
             </view>
 
