@@ -677,7 +677,7 @@ Page({
     return false;
   },
 
-  // 打开外部链接（在 webview 中渲染）
+  // 打开外部链接（仅复制链接并提示）
   openExternalLink: function (e) {
     const url = e.currentTarget.dataset.url;
     if (!url) {
@@ -687,52 +687,25 @@ Page({
       });
       return;
     }
-    
-    console.log('打开链接:', url);
-    
-    // 先复制链接到剪贴板
+
+    console.log('复制链接:', url);
+
+    // 复制链接到剪贴板
     wx.setClipboardData({
       data: url,
       success: () => {
         // 复制成功，显示提示
         wx.showToast({
-          title: '链接已复制',
-          icon: 'success',
-          duration: 500
+          title: '链接已复制，请到浏览器打开',
+          icon: 'none', // 使用 'none' 以便显示更长的文本
+          duration: 2500 // 持续2.5秒，让用户有足够时间阅读
         });
-        
-        // 延迟 0.5 秒后跳转到 webview
-        setTimeout(() => {
-          wx.navigateTo({
-            url: `/pages/webview/webview?url=${encodeURIComponent(url)}`,
-            success: () => {
-              console.log('成功跳转到 webview 页面');
-            },
-            fail: (err) => {
-              console.error('跳转失败:', err);
-              wx.showToast({
-                title: '打开链接失败',
-                icon: 'none'
-              });
-            }
-          });
-        }, 500);
       },
       fail: (err) => {
         console.error('复制链接失败:', err);
-        // 复制失败也继续跳转
-        wx.navigateTo({
-          url: `/pages/webview/webview?url=${encodeURIComponent(url)}`,
-          success: () => {
-            console.log('成功跳转到 webview 页面');
-          },
-          fail: (err) => {
-            console.error('跳转失败:', err);
-            wx.showToast({
-              title: '打开链接失败',
-              icon: 'none'
-            });
-          }
+        wx.showToast({
+          title: '复制失败，请重试',
+          icon: 'none'
         });
       }
     });
