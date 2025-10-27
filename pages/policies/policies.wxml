@@ -209,47 +209,51 @@
             </view>
 
             <scroll-view
-                class="viewer-content"
-                scroll-y="{{isScrollEnabled}}"
+                class="pdf-viewer-scroll"
+                scroll-y="{{!isImageZoomed}}"
                 enhanced="{{true}}"
                 fast-deceleration="{{true}}"
-                show-scrollbar="{{true}}"
+                show-scrollbar="{{false}}"
                 scroll-with-animation="{{true}}"
-                bindscrolltolower="handleScrollToLower"
-                bind:touchstart="handleTouchStart"
-                bind:touchmove="handleTouchMove"
-                bind:touchend="handleTouchEnd"
-                bind:touchcancel="handleTouchCancel">
-                <view class="image-container">
+                bindscrolltolower="handleScrollToLower">
+                
+                <view class="pdf-container">
                     <block wx:for="{{currentImageList}}" wx:key="page">
-                        <view class="image-wrapper pdf-page" style="transform: scale({{scale}}); transform-origin: top center; min-height: {{imageScales[item.url] ? imageScales[item.url].containerHeight : 400}}px;">
-                            <view class="page-number">第{{item.page}}页/共{{currentPdfTotalPages}}页</view>
-                            <view class="image-zoom-container"
-                                bind:touchstart="handleTouchStart"
-                                bind:touchmove="handleTouchMove"
-                                bind:touchend="handleTouchEnd"
-                                bind:touchcancel="handleTouchCancel">
-                                <image 
-                                    class="pdf-image" 
-                                    src="{{item.url}}" 
-                                    data-url="{{item.url}}"
-                                    data-index="{{index}}" 
-                                    mode="widthFix" 
-                                    style="width: {{imageScales[item.url] ? imageScales[item.url].containerWidth : (viewerContainerWidth > 0 ? viewerContainerWidth : 10)}}px; height: auto; transform: translate({{translateX}}px, {{translateY}}px); transform-origin: center center; transition: transform 0.15s cubic-bezier(0.25, 0.46, 0.45, 0.94);"
-                                    bindload="handleImageLoad"
-                                    binderror="handleImageError"
-                                    catch:longpress="">
-                                </image>
+                        <view class="pdf-page-wrapper" data-page="{{item.page}}">
+                            <!-- 页码显示 -->
+                            <view class="page-indicator">
+                                <text>第{{item.page}}页 / 共{{currentPdfTotalPages}}页</text>
+                            </view>
+                            
+                            <!-- 图片容器 -->
+                            <view class="pdf-image-container"
+                                  data-index="{{index}}" 
+                                  data-url="{{item.url}}"
+                                  bind:touchstart="onImageTouchStart"
+                                  bind:touchmove="onImageTouchMove" 
+                                  bind:touchend="onImageTouchEnd"
+                                  bind:touchcancel="onImageTouchCancel">
+                                
+                                <image class="pdf-image" 
+                                       src="{{item.url}}"
+                                       data-url="{{item.url}}"
+                                       data-index="{{index}}"
+                                       mode="widthFix"
+                                       style="transform: scale({{imageScale}}) translate({{translateX}}px, {{translateY}}px); transform-origin: center center;"
+                                       bindload="onImageLoad"
+                                       binderror="onImageError" />
                             </view>
                         </view>
                     </block>
                     
-                    <view class="loading-more" wx:if="{{loadedPages < currentPdfTotalPages}}">
-                        <van-loading color="#FF6B35" size="24px">加载更多PDF页面...</van-loading>
+                    <!-- 加载更多 -->
+                    <view class="loading-indicator" wx:if="{{loadedPages < currentPdfTotalPages}}">
+                        <van-loading color="#FF6B35" size="24px">加载更多页面...</van-loading>
                     </view>
                     
-                    <view class="end-of-document" wx:if="{{loadedPages >= currentPdfTotalPages}}">
-                        <text>— PDF文档结束 —</text>
+                    <!-- 文档结束 -->
+                    <view class="document-end" wx:if="{{loadedPages >= currentPdfTotalPages}}">
+                        <text>— 文档结束 —</text>
                     </view>
                 </view>
             </scroll-view>
