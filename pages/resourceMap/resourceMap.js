@@ -8,8 +8,8 @@ Page({
         manager: "张海花",
         phone: "17746533264",
         phone2: null,
-        latitude: 40.0635,
-        longitude: 116.3185
+        latitude: 40.030484,
+        longitude: 116.312284
       },
       {
         name: "上地街道养老服务中心",
@@ -17,8 +17,8 @@ Page({
         manager: "刘庆涛",
         phone: "13241086095",
         phone2: "82721989",
-        latitude: 40.0672,
-        longitude: 116.3108
+        latitude: 40.030504,
+        longitude: 116.302135
       },
       {
         name: "通用康养风华北京上地街道养老照料中心",
@@ -26,8 +26,8 @@ Page({
         manager: "张朝侠",
         phone: "13466555356",
         phone2: null,
-        latitude: 40.0598,
-        longitude: 116.3246
+        latitude: 40.025992,
+        longitude: 116.292510
       },
       {
         name: "上地南路社区养老服务驿站",
@@ -35,8 +35,8 @@ Page({
         manager: "李赞颖",
         phone: "18610629965",
         phone2: null,
-        latitude: 40.0651,
-        longitude: 116.3195
+        latitude: 40.034321,
+        longitude: 116.317126
       },
       {
         name: "树村社区养老服务驿站",
@@ -44,8 +44,8 @@ Page({
         manager: "李殷祺",
         phone: "18614026617",
         phone2: null,
-        latitude: 40.0594,
-        longitude: 116.3265
+        latitude: 40.031107,
+        longitude: 116.303431
       },
       {
         name: "东馨园社区养老服务驿站",
@@ -53,8 +53,8 @@ Page({
         manager: "蒋妍",
         phone: "18610629965",
         phone2: null,
-        latitude: 40.0624,
-        longitude: 116.3042
+        latitude: 40.041896,
+        longitude: 116.287905
       }
     ]
   },

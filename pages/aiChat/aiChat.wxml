@@ -17,6 +17,9 @@
 
     <!--内容区域-->
     <view class="bottom-height content-view">
+        <!-- 水印背景层 -->
+        <view class="watermark-layer"></view>
+        
         <scroll-view
             class="scroll-text"
             type="list"
@@ -50,6 +53,9 @@
                             </view>
                         </view>
                     </view>
+                    <view class="ai-disclaimer">
+                        <text>本服务基于AI技术生成内容，结果仅供参考。请勿将其作为医疗、法律或其他专业建议。对于重要决定，建议咨询专业人士。</text>
+                    </view>
                 </view>
                 
                 <!-- 对话内容 -->
@@ -64,17 +70,21 @@
                                     <view class="item-img">
                                         <image src="{{mediaUrls.icowwn}}" mode="aspectFit" class="item-photo ai-avatar"/>
                                     </view>
-                                    <view class="item-content ai-content" bindtap="playTextToSpeech" data-content="{{item.content}}" data-index="{{index}}">
-                                        <wemark md="{{item.content}}" highlight type="wemark"></wemark>
-                                        <view class="copy-button" data-content="{{item.content}}"
-                                              bindtap="copyChatContent">
-                                            <image src="{{mediaUrls.copy}}" mode="aspectFit"/>
+                                    <view>
+                                        <view class="item-content ai-content" bindtap="playTextToSpeech" data-content="{{item.content}}" data-index="{{index}}">
+                                            <wemark md="{{item.content}}" highlight type="wemark"></wemark>
+                                            <view class="copy-button" data-content="{{item.content}}"
+                                                  bindtap="copyChatContent">
+                                                <image src="{{mediaUrls.copy}}" mode="aspectFit"/>
+                                            </view>
+                                            <!-- 语音播放提示 -->
+                                            <view class="tts-hint {{item.ttsHintClass}}" bindtap="playTextToSpeech" data-content="{{item.content}}" data-index="{{index}}">
+                                                <van-icon name="{{item.ttsIconName}}" size="14"/>
+                                                <text>{{item.ttsHintText}}</text>
+                                            </view>
                                         </view>
-                                        <!-- 语音播放提示 -->
-                                        <view class="tts-hint {{item.ttsHintClass}}" bindtap="playTextToSpeech" data-content="{{item.content}}" data-index="{{index}}">
-                                            <van-icon name="{{item.ttsIconName}}" size="14"/>
-                                            <text>{{item.ttsHintText}}</text>
-                                        </view>
+                                        <!-- AI内容提示 -->
+                                        <view class="ai-content-hint">此内容为AI技术生成，仅供参考</view>
                                     </view>
                                 </view>
                             </view>
@@ -97,21 +107,25 @@
                             <view class="item-img">
                                 <image src="{{mediaUrls.icowwn}}" mode="aspectFit" class="item-photo ai-avatar"/>
                             </view>
-                            <view class="item-content ai-content" wx:if="{{answerDesc}}" bindtap="playTextToSpeech" data-content="{{answerDesc}}">
-                                <view class="typing-indicator" wx:if="{{!answerDesc}}">
-                                    <view class="typing-dot"></view>
-                                    <view class="typing-dot"></view>
-                                    <view class="typing-dot"></view>
+                            <view>
+                                <view class="item-content ai-content" wx:if="{{answerDesc}}" bindtap="playTextToSpeech" data-content="{{answerDesc}}">
+                                    <view class="typing-indicator" wx:if="{{!answerDesc}}">
+                                        <view class="typing-dot"></view>
+                                        <view class="typing-dot"></view>
+                                        <view class="typing-dot"></view>
+                                    </view>
+                                    <wemark md="{{answerDesc}}" highlight type="wemark"></wemark>
+                                    <view class="copy-button" wx:if="{{answerDesc}}" data-content="{{answerDesc}}" bindtap="copyChatContent">
+                                        <image src="{{mediaUrls.copy}}" mode="aspectFit"/>
+                                    </view>
+                                    <!-- 语音播放提示 -->
+                                    <view class="tts-hint" wx:if="{{answerDesc}}" bindtap="playTextToSpeech" data-content="{{answerDesc}}">
+                                        <van-icon name="volume-o" size="14"/>
+                                        <text>点击播放语音</text>
+                                    </view>
                                 </view>
-                                <wemark md="{{answerDesc}}" highlight type="wemark"></wemark>
-                                <view class="copy-button" wx:if="{{answerDesc}}" data-content="{{answerDesc}}" bindtap="copyChatContent">
-                                    <image src="{{mediaUrls.copy}}" mode="aspectFit"/>
-                                </view>
-                                <!-- 语音播放提示 -->
-                                <view class="tts-hint" wx:if="{{answerDesc}}" bindtap="playTextToSpeech" data-content="{{answerDesc}}">
-                                    <van-icon name="volume-o" size="14"/>
-                                    <text>点击播放语音</text>
-                                </view>
+                                <!-- AI内容提示 -->
+                                <view class="ai-content-hint" wx:if="{{answerDesc}}">此内容为AI技术生成，仅供参考</view>
                             </view>
                         </view>
                     </view>
