@@ -520,7 +520,7 @@ scroll-view {
   position: relative;
   padding: 20rpx 24rpx;
   border-radius: 18rpx;
-  max-width: 80%;
+  max-width: 92%;
   word-break: break-all;
 }
 
@@ -529,11 +529,29 @@ scroll-view {
   background-color: #e8f5e9;
   margin-right: 16rpx;
   box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.05);
-  
   wemark {
-    font-size: 34rpx; /* 增大AI回复的字体大小 */
+    font-size: 32rpx;
     color: #333;
     line-height: 1.6;
+  }
+}
+
+.ai-content-icon {
+  position: absolute;
+  right: 18rpx;
+  bottom: 18rpx;
+  z-index: 2;
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-end;
+  image {
+    width: 40rpx;
+    height: 40rpx;
+    opacity: 0.7;
+    transition: opacity 0.2s;
+  }
+  &:active image {
+    opacity: 1;
   }
 }
 

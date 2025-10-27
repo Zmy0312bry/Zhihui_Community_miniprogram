@@ -7,8 +7,8 @@ const config = {
         // DashScope配置
         dashScopeConfig: {
             apiUrl: 'https://dashscope.aliyuncs.com/api/v1/apps',
-            apiKey: 'sk-7785abb1cf484e2db39b0f502297b9de', // 替换为实际的API密钥
-            appId: 'f2a0a2d2d4b044c09d9c6f952bf7fa8d', // 替换为实际的APP_ID
+            apiKey: 'sk-949ffaf61c4541a287192a3563395679', // 替换为实际的API密钥
+            appId: '34121b95972b4b0ab77b1b1365660f96', // 替换为实际的APP_ID
         }
     },
     //体验版
@@ -16,8 +16,8 @@ const config = {
         // DashScope配置
         dashScopeConfig: {
             apiUrl: 'https://dashscope.aliyuncs.com/api/v1/apps',
-            apiKey: 'sk-7785abb1cf484e2db39b0f502297b9de', // 替换为实际的API密钥
-            appId: 'f2a0a2d2d4b044c09d9c6f952bf7fa8d', // 替换为实际的APP_ID
+            apiKey: 'sk-949ffaf61c4541a287192a3563395679', // 替换为实际的API密钥
+            appId: '34121b95972b4b0ab77b1b1365660f96', // 替换为实际的APP_ID
         }
     },
     //正式版
@@ -25,8 +25,8 @@ const config = {
         // DashScope配置
         dashScopeConfig: {
             apiUrl: 'https://dashscope.aliyuncs.com/api/v1/apps',
-            apiKey: 'sk-7785abb1cf484e2db39b0f502297b9de', // 替换为实际的API密钥
-            appId: 'f2a0a2d2d4b044c09d9c6f952bf7fa8d', // 替换为实际的APP_ID
+            apiKey: 'sk-949ffaf61c4541a287192a3563395679', // 替换为实际的API密钥
+            appId: '34121b95972b4b0ab77b1b1365660f96', // 替换为实际的APP_ID
         }
     }
 }[wx.getAccountInfoSync().miniProgram.envVersion];

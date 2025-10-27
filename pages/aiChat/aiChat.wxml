@@ -73,14 +73,14 @@
                                     <view>
                                         <view class="item-content ai-content" bindtap="playTextToSpeech" data-content="{{item.content}}" data-index="{{index}}">
                                             <wemark md="{{item.content}}" highlight type="wemark"></wemark>
-                                            <view class="copy-button" data-content="{{item.content}}"
-                                                  bindtap="copyChatContent">
-                                                <image src="{{mediaUrls.copy}}" mode="aspectFit"/>
-                                            </view>
                                             <!-- 语音播放提示 -->
                                             <view class="tts-hint {{item.ttsHintClass}}" bindtap="playTextToSpeech" data-content="{{item.content}}" data-index="{{index}}">
                                                 <van-icon name="{{item.ttsIconName}}" size="14"/>
                                                 <text>{{item.ttsHintText}}</text>
+                                            </view>
+                                            <!-- 右下角 aspectFit 图标 -->
+                                            <view class="ai-content-icon">
+                                                <image src="{{mediaUrls.copy}}" mode="aspectFit" bindtap="copyChatContent" data-content="{{item.content}}"/>
                                             </view>
                                         </view>
                                         <!-- AI内容提示 -->
@@ -115,13 +115,14 @@
                                         <view class="typing-dot"></view>
                                     </view>
                                     <wemark md="{{answerDesc}}" highlight type="wemark"></wemark>
-                                    <view class="copy-button" wx:if="{{answerDesc}}" data-content="{{answerDesc}}" bindtap="copyChatContent">
-                                        <image src="{{mediaUrls.copy}}" mode="aspectFit"/>
-                                    </view>
                                     <!-- 语音播放提示 -->
                                     <view class="tts-hint" wx:if="{{answerDesc}}" bindtap="playTextToSpeech" data-content="{{answerDesc}}">
                                         <van-icon name="volume-o" size="14"/>
                                         <text>点击播放语音</text>
+                                    </view>
+                                    <!-- 右下角 aspectFit 图标 -->
+                                    <view class="ai-content-icon">
+                                        <image src="{{mediaUrls.copy}}" mode="aspectFit" bindtap="copyChatContent" data-content="{{answerDesc}}"/>
                                     </view>
                                 </view>
                                 <!-- AI内容提示 -->
