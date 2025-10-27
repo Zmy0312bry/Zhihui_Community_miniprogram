@@ -208,65 +208,69 @@
                 </view>
             </view>
 
-            <scroll-view
-                class="pdf-viewer-scroll"
-                scroll-y="{{!isImageZoomed}}"
-                enhanced="{{true}}"
-                fast-deceleration="{{true}}"
-                show-scrollbar="{{false}}"
-                scroll-with-animation="{{true}}"
-                bindscrolltolower="handleScrollToLower">
+            <!-- 触摸层：处理缩放和拖拽 -->
+            <view class="pdf-touch-layer"
+                  bind:touchstart="onTouchStart"
+                  bind:touchmove="onTouchMove"
+                  bind:touchend="onTouchEnd"
+                  bind:touchcancel="onTouchCancel">
                 
-                <view class="pdf-container">
-                    <block wx:for="{{currentImageList}}" wx:key="page">
-                        <view class="pdf-page-wrapper" data-page="{{item.page}}">
-                            <!-- 页码显示 -->
-                            <view class="page-indicator">
-                                <text>第{{item.page}}页 / 共{{currentPdfTotalPages}}页</text>
+                <scroll-view
+                    class="pdf-viewer-scroll"
+                    scroll-y="{{true}}"
+                    enhanced="{{true}}"
+                    fast-deceleration="{{true}}"
+                    show-scrollbar="{{false}}"
+                    scroll-with-animation="{{true}}"
+                    bindscrolltolower="handleScrollToLower"
+                    style="height: 100%;">>>>
+                    
+                    <!-- 整体缩放容器 -->
+                    <view class="pdf-scale-container"
+                          style="transform: scale({{scale}}) translate({{translateX}}px, {{translateY}}px); transform-origin: center top;">
+                        
+                        <view class="pdf-container">
+                            <block wx:for="{{currentImageList}}" wx:key="page">
+                                <view class="pdf-page-wrapper" data-page="{{item.page}}">
+                                    <!-- 页码显示 -->
+                                    <view class="page-indicator">
+                                        <text>第{{item.page}}页 / 共{{currentPdfTotalPages}}页</text>
+                                    </view>
+                                    
+                                    <!-- 图片容器 -->
+                                    <view class="pdf-image-container">
+                                        <image class="pdf-image" 
+                                               src="{{item.url}}"
+                                               data-url="{{item.url}}"
+                                               data-index="{{index}}"
+                                               mode="widthFix"
+                                               bindload="handleImageLoad"
+                                               binderror="handleImageError" />
+                                    </view>
+                                </view>
+                            </block>
+                            
+                            <!-- 加载更多 -->
+                            <view class="loading-indicator" wx:if="{{loadedPages < currentPdfTotalPages}}">
+                                <van-loading color="#FF6B35" size="24px">加载更多页面...</van-loading>
                             </view>
                             
-                            <!-- 图片容器 -->
-                            <view class="pdf-image-container"
-                                  data-index="{{index}}" 
-                                  data-url="{{item.url}}"
-                                  bind:touchstart="onImageTouchStart"
-                                  bind:touchmove="onImageTouchMove" 
-                                  bind:touchend="onImageTouchEnd"
-                                  bind:touchcancel="onImageTouchCancel">
-                                
-                                <image class="pdf-image" 
-                                       src="{{item.url}}"
-                                       data-url="{{item.url}}"
-                                       data-index="{{index}}"
-                                       mode="widthFix"
-                                       style="transform: scale({{imageScale}}) translate({{translateX}}px, {{translateY}}px); transform-origin: center center;"
-                                       bindload="onImageLoad"
-                                       binderror="onImageError" />
+                            <!-- 文档结束 -->
+                            <view class="document-end" wx:if="{{loadedPages >= currentPdfTotalPages}}">
+                                <text>— 文档结束 —</text>
                             </view>
                         </view>
-                    </block>
-                    
-                    <!-- 加载更多 -->
-                    <view class="loading-indicator" wx:if="{{loadedPages < currentPdfTotalPages}}">
-                        <van-loading color="#FF6B35" size="24px">加载更多页面...</van-loading>
                     </view>
-                    
-                    <!-- 文档结束 -->
-                    <view class="document-end" wx:if="{{loadedPages >= currentPdfTotalPages}}">
-                        <text>— 文档结束 —</text>
-                    </view>
-                </view>
-            </scroll-view>
-            
-            <view class="image-controls">
-                <view class="scale-info">缩放: {{scaleDisplay}}%</view>
-                <view class="zoom-tips" wx:if="{{showPdfViewer}}">
-                    <van-icon name="info-o" size="24rpx" color="#FF6B35"/>
-                    <text class="tip-label">双指拖拽可缩放</text>
-                </view>
+                </scroll-view>
             </view>
             
-            <!-- 移除右下角悬浮返回按钮 -->
+            <view class="image-controls">
+                <view class="scale-tips">
+                    <van-icon name="photo" size="24rpx" color="#FF6B35"/>
+                    <text class="tip-label">双指缩放，单指拖拽</text>
+                    <text class="scale-info">{{Math.round(scale * 100)}}%</text>
+                </view>
+            </view>
         </view>
     </view>
 </view>

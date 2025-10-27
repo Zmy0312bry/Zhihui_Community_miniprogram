@@ -792,13 +792,43 @@
   box-shadow: 0 -2rpx 10rpx rgba(0, 0, 0, 0.1);
 }
 
-.scale-info {
-  font-size: 24rpx;
-  color: #666;
-  margin-bottom: 4rpx;
+/* PDF缩放容器 */
+.pdf-scale-container {
+  transition: transform 0.2s ease-out;
+  transform-origin: center top;
+  width: 100%;
+  min-height: 100%;
+  overflow: visible;
 }
 
-.zoom-tips {
+/* PDF触摸层 */
+.pdf-touch-layer {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+
+/* PDF滚动容器 */
+.pdf-viewer-scroll {
+  height: 100%;
+  overflow-y: auto;
+}
+
+/* PDF容器 */
+.pdf-container {
+  width: 100%;
+  padding: 0 3%;
+}
+
+/* PDF页面包装器 */
+.pdf-page-wrapper {
+  margin-bottom: 40rpx;
+  position: relative;
+}
+
+/* 缩放提示信息 */
+.scale-tips {
   display: flex;
   align-items: center;
   gap: 8rpx;
@@ -808,10 +838,20 @@
   animation: slideIn 0.4s ease;
 }
 
-.zoom-tips .tip-label {
+.scale-tips .tip-label {
   font-size: 24rpx;
   color: #FF6B35;
   font-weight: 600;
+}
+
+.scale-tips .scale-info {
+  margin-left: auto;
+  background: rgba(255, 107, 53, 0.1);
+  padding: 4rpx 12rpx;
+  border-radius: 12rpx;
+  font-size: 22rpx;
+  color: #FF6B35;
+  font-weight: bold;
 }
 
 @keyframes slideIn {
