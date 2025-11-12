@@ -22,14 +22,23 @@
 .back-btn {
     display: flex;
     align-items: center;
-    gap: 8rpx;
-    padding: 10rpx 0;
+    padding: 15rpx 20rpx;
+    border-radius: 25rpx;
+    background: rgba(255, 255, 255, 0.2);
+    transition: all 0.3s ease;
+}
+
+.back-btn:active,
+.back-btn-hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: scale(0.95);
 }
 
 .back-text {
     font-size: 28rpx;
     color: white;
-    font-weight: 500;
+    font-weight: 600;
+    margin-left: 8rpx;
 }
 
 .header-bg {
@@ -174,6 +183,29 @@
 .community-title .van-icon {
     margin-right: 15rpx;
     flex-shrink: 0;
+}
+
+/* 导航按钮 */
+.navigate-btn {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 8rpx;
+    padding: 12rpx 20rpx;
+    background: rgba(255, 255, 255, 0.25);
+    border-radius: 20rpx;
+    transition: all 0.3s ease;
+}
+
+.navigate-btn:active {
+    background: rgba(255, 255, 255, 0.35);
+    transform: scale(0.95);
+}
+
+.navigate-text {
+    color: white;
+    font-size: 26rpx;
+    font-weight: 600;
 }
 
 /* 菜单列表 */

@@ -265,6 +265,13 @@ Page({
     });
   },
 
+  // 返回上一页
+  goBack: function () {
+    wx.navigateBack({
+      delta: 1
+    });
+  },
+
   // 关闭阿尔茨海默症预览
   closeAlzheimerViewer: function () {
     this.setData({

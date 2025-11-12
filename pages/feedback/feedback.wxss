@@ -1,3 +1,4 @@
+/* 容器样式 */
 .container {
     min-height: 100vh;
     background-color: #f8f8f8;
@@ -5,6 +6,7 @@
     flex-direction: column;
 }
 
+/* 页面头部样式 */
 .header {
     position: relative;
     overflow: hidden;
@@ -63,7 +65,7 @@
 .decoration-circle {
     position: absolute;
     border-radius: 50%;
-    background-color: rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.1);
 }
 
 .circle-1 {
@@ -114,152 +116,61 @@
     text-shadow: 0 1rpx 4rpx rgba(0, 0, 0, 0.2);
 }
 
-/* 社区列表容器 */
-.community-list {
-    padding: 30rpx;
-}
-
-.list-container {
-    display: flex;
-    flex-direction: column;
-}
-
-/* 社区卡片 */
-.community-card {
-    background-color: white;
-    border-radius: 20rpx;
-    margin-bottom: 20rpx;
-    box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.1);
-    overflow: hidden;
-    transition: all 0.3s ease;
-}
-
-.community-card:active {
-    transform: translateY(-2rpx);
-    box-shadow: 0 6rpx 25rpx rgba(0, 0, 0, 0.15);
-}
-
-.card-header {
-    display: flex;
-    align-items: center;
-    padding: 30rpx;
-    background: linear-gradient(135deg, rgba(255, 107, 53, 0.08) 0%, rgba(255, 140, 66, 0.08) 100%);
-    border-bottom: 1rpx solid rgba(255, 107, 53, 0.1);
-}
-
-.card-icon {
-    width: 60rpx;
-    height: 60rpx;
-    border-radius: 50%;
-    background: linear-gradient(135deg, #FF6B35 0%, #FF8C42 100%);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-right: 20rpx;
-    flex-shrink: 0;
-}
-
-.card-title-section {
+/* 反馈表单样式 */
+.feedback-container {
     flex: 1;
+    padding: 30rpx 20rpx;
     display: flex;
     flex-direction: column;
 }
 
-.card-title {
-    display: block;
+.feedback-section {
+    background: white;
+    border-radius: 20rpx;
+    margin-bottom: 25rpx;
+    padding: 30rpx;
+    box-shadow: 0 4rpx 20rpx rgba(255, 107, 53, 0.1);
+}
+
+.section-title {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20rpx;
     font-size: 32rpx;
     font-weight: bold;
     color: #333;
-    margin-bottom: 8rpx;
-    line-height: 1.3;
 }
 
-.card-address {
-    display: block;
-    font-size: 26rpx;
-    color: #999;
-    line-height: 1.2;
-}
-
-/* 卡片内容 */
-.card-content {
-    padding: 25rpx 30rpx;
-}
-
-.info-item {
-    display: flex;
-    align-items: center;
-    font-size: 28rpx;
-}
-
-.info-item .van-icon {
+.section-title .van-icon {
     margin-right: 12rpx;
     flex-shrink: 0;
 }
 
-.info-label {
-    color: #666;
-    margin-right: 8rpx;
-}
-
-.info-text {
-    color: #333;
-    font-weight: 500;
-}
-
-.phone-text {
-    color: #FF6B35;
-}
-
-/* 卡片底部操作按钮 */
-.card-footer {
+/* 反馈类型样式 */
+.feedback-types {
     display: flex;
-    padding: 0;
+    gap: 30rpx;
 }
 
-.action-btn {
+.feedback-types van-radio {
     flex: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 25rpx;
-    background: linear-gradient(135deg, #FF6B35 0%, #FF8C42 100%);
-    color: white;
-    transition: all 0.3s ease;
 }
 
-.action-btn:active {
-    opacity: 0.9;
+/* 输入框样式 */
+.feedback-content {
+    min-height: 200rpx;
 }
 
-.action-btn .van-icon {
-    margin-right: 8rpx;
+.contact-field {
+    height: auto;
 }
 
-.btn-text {
-    font-size: 28rpx;
-    font-weight: 600;
-    color: white;
-}
-
-/* 底部提示 */
-.footer-tip {
-    display: flex;
-    align-items: center;
-    justify-content: center;
+/* 提交按钮区域 */
+.submit-section {
     padding: 30rpx 20rpx;
-    margin: 0 20rpx 20rpx 20rpx;
-    background: rgba(255, 140, 66, 0.08);
-    border-radius: 12rpx;
+    margin-top: auto;
 }
 
-.footer-tip .van-icon {
-    margin-right: 12rpx;
-    flex-shrink: 0;
-}
-
-.footer-tip .tip-text {
-    font-size: 26rpx;
-    color: #FF8C42;
-    font-weight: 500;
+.submit-section van-button {
+    font-size: 32rpx;
 }

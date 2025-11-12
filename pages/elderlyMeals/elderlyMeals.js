@@ -36,6 +36,9 @@ Page({
             {
                 id: 1,
                 name: '通用芳华上地街道养老照料中心',
+                latitude: 40.025922,
+                longitude: 116.292592,
+                address: '北京市海淀区农大南路厢黄旗万树园小区东门旁上地街道养老照料中心',
                 menus: [
                     { 
                         id: 'lunch_2', 
@@ -312,6 +315,34 @@ Page({
             isDragging: false,
             initialPinchDistance: 0,
             initialScale: 1
+        });
+    },
+
+    // 导航到养老中心位置
+    navigateToCommunity: function(e) {
+        const index = e.currentTarget.dataset.index;
+        const community = this.data.communities[index];
+        
+        if (!community.latitude || !community.longitude) {
+            wx.showToast({
+                title: '该养老中心位置信息不可用',
+                icon: 'none'
+            });
+            return;
+        }
+
+        wx.openLocation({
+            latitude: community.latitude,
+            longitude: community.longitude,
+            name: community.name,
+            address: community.address,
+            fail: (err) => {
+                console.error('打开地图失败:', err);
+                wx.showToast({
+                    title: '打开地图失败',
+                    icon: 'none'
+                });
+            }
         });
     },
 

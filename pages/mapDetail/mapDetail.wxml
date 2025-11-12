@@ -3,8 +3,9 @@
     <view class="header">
         <view class="header-content">
             <view class="header-top">
-                <view class="back-btn" bindtap="goBack">
-                    <van-icon name="arrow-left" size="28rpx" color="white"/>
+                <view class="back-btn" bindtap="goBack" hover-class="back-btn-hover">
+                    <van-icon name="arrow-left" size="36rpx" color="#FFFFFF"/>
+                    <text class="back-text">返回</text>
                 </view>
                 <text class="header-title">{{mapInfo.title}}</text>
                 <view class="back-btn" style="visibility: hidden;"></view>

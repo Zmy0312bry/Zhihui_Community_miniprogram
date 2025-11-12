@@ -1,8 +1,7 @@
 {
-  "navigationBarTitleText": "资源地图",
-  "navigationBarBackgroundColor": "#FF6B35",
-  "navigationBarTextStyle": "white",
   "usingComponents": {
+    "van-nav-bar": "@vant/weapp/nav-bar/index",
     "van-icon": "@vant/weapp/icon/index"
-  }
+  },
+  "navigationStyle": "custom"
 }

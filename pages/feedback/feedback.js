@@ -104,6 +104,13 @@ Page({
         });
     },
 
+    // 返回上一页
+    goBack() {
+        wx.navigateBack({
+            delta: 1
+        });
+    },
+
     onLoad() {
         // 页面加载时的初始化
     }

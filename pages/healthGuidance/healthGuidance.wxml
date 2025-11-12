@@ -1,6 +1,14 @@
 <view class="container">
     <!-- 页面头部 -->
     <view class="header">
+        <!-- 返回按钮 -->
+        <view class="header-top">
+            <view class="back-btn" bindtap="goBack" hover-class="back-btn-hover">
+                <van-icon name="arrow-left" size="36rpx" color="#FFFFFF"/>
+                <text class="back-text">返回</text>
+            </view>
+        </view>
+
         <view class="header-bg">
             <view class="header-decoration">
                 <view class="decoration-circle circle-1"></view>
@@ -18,37 +26,6 @@
 
     <!-- 健康指导内容 -->
     <view class="content">
-        <!-- 心肺复苏指导 -->
-        <view class="cpr-section">
-            <view class="section-header">
-                <van-icon name="certificate" size="48rpx" color="#FF6B35"/>
-                <text class="section-title">心肺复苏指导</text>
-            </view>
-            
-            <!-- CPR 类型选项卡 -->
-            <view class="cpr-tabs">
-                <view wx:for="{{cprTypes}}" wx:key="id" class="cpr-tab {{selectedCPRIndex === index ? 'active' : ''}}" 
-                    bindtap="selectCPRType" data-index="{{index}}">
-                    <text class="tab-label">{{item.title}}</text>
-                </view>
-            </view>
-            
-            <!-- CPR 图片卡片 - 选中后显示 -->
-            <view class="cpr-card-display">
-                <view class="cpr-image-container" bindtap="viewSelectedCPRImage">
-                    <image src="{{cprTypes[selectedCPRIndex].image}}" class="cpr-image" mode="aspectFit" />
-                    <view class="image-overlay">
-                        <van-icon name="enlarge" size="48rpx" color="#FF6B35"/>
-                        <text class="overlay-text">点击查看大图</text>
-                    </view>
-                </view>
-                <view class="cpr-info">
-                    <text class="cpr-title">{{cprTypes[selectedCPRIndex].title}}</text>
-                    <text class="cpr-desc">{{cprTypes[selectedCPRIndex].desc}}</text>
-                </view>
-            </view>
-        </view>
-
         <!-- 健康知识云课堂 -->
         <view class="video-library-section">
             <view class="section-header">
@@ -78,6 +55,37 @@
                         </view>
                         <van-icon name="arrow" size="28rpx" color="#FF6B35"/>
                     </view>
+                </view>
+            </view>
+        </view>
+
+        <!-- 心肺复苏指导 -->
+        <view class="cpr-section">
+            <view class="section-header">
+                <van-icon name="certificate" size="48rpx" color="#FF6B35"/>
+                <text class="section-title">心肺复苏指导</text>
+            </view>
+            
+            <!-- CPR 类型选项卡 -->
+            <view class="cpr-tabs">
+                <view wx:for="{{cprTypes}}" wx:key="id" class="cpr-tab {{selectedCPRIndex === index ? 'active' : ''}}" 
+                    bindtap="selectCPRType" data-index="{{index}}">
+                    <text class="tab-label">{{item.title}}</text>
+                </view>
+            </view>
+            
+            <!-- CPR 图片卡片 - 选中后显示 -->
+            <view class="cpr-card-display">
+                <view class="cpr-image-container" bindtap="viewSelectedCPRImage">
+                    <image src="{{cprTypes[selectedCPRIndex].image}}" class="cpr-image" mode="aspectFit" />
+                    <view class="image-overlay">
+                        <van-icon name="enlarge" size="48rpx" color="#FF6B35"/>
+                        <text class="overlay-text">点击查看大图</text>
+                    </view>
+                </view>
+                <view class="cpr-info">
+                    <text class="cpr-title">{{cprTypes[selectedCPRIndex].title}}</text>
+                    <text class="cpr-desc">{{cprTypes[selectedCPRIndex].desc}}</text>
                 </view>
             </view>
         </view>

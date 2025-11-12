@@ -3,8 +3,8 @@
     <view class="header">
         <!-- 返回按钮 -->
         <view class="header-top">
-            <view class="back-btn" bindtap="goBack">
-                <van-icon name="arrow-left" size="32rpx" color="white"/>
+            <view class="back-btn" bindtap="goBack" hover-class="back-btn-hover">
+                <van-icon name="arrow-left" size="36rpx" color="#FFFFFF"/>
                 <text class="back-text">返回</text>
             </view>
         </view>
@@ -40,6 +40,10 @@
             <view class="community-title">
                 <van-icon name="shop-o" size="40rpx" color="#ffffffff"/>
                 <text>{{community.name}}</text>
+                <view class="navigate-btn" wx:if="{{community.latitude && community.longitude}}" bindtap="navigateToCommunity" data-index="{{outerIndex}}">
+                    <van-icon name="location-o" size="28rpx" color="#FFFFFF"/>
+                    <text class="navigate-text">导航</text>
+                </view>
             </view>
 
             <!-- 菜单列表 -->

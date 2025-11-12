@@ -33,10 +33,20 @@ Page({
         file: "pdf5.pdf",
         desc: "养老家庭照护床位建设管理实施细则",
         totalPages: 12,
-        relatedLink: {
-          title: "《海淀区养老家庭照护床位建设管理实施细则》",
-          url: "https://zyk.bjhd.gov.cn/zwdt/zcjd/202408/t20240821_4666403.shtml"
-        }
+        relatedLinks: [
+          {
+            title: "《海淀区养老家庭照护床位建设管理实施细则》",
+            url: "https://zyk.bjhd.gov.cn/zwdt/zcjd/202408/t20240821_4666403.shtml"
+          },
+          {
+            title: "《北京市残疾人居家环境无障碍改造服务管理暂行办法》（京残发〔2020〕15 号）",
+            url: "https://www.bdpf.org.cn/cms68/web1459/subject/n1/n1459/n1508/n1509/n1511/n2544/c131951/content.html"
+          },
+          {
+            title: "《北京市老年人能力评估实施办法（试行）》（京民养老发〔2022〕214 号）",
+            url: "https://mzj.beijing.gov.cn/art/2022/8/25/art_10688_1398.html"
+          }
+        ]
       }
     ],
 
@@ -55,10 +65,12 @@ Page({
         file: "pdf4.pdf",
         desc: "老年人能力评估相关实施办法",
         totalPages: 20,
-        relatedLink: {
-          title: "北京市老年人能力评估实施办法",
-          url: "https://mzj.beijing.gov.cn/art/2022/8/25/art_10688_1398.html"
-        }
+        relatedLinks: [
+          {
+            title: "北京市老年人能力评估实施办法",
+            url: "https://mzj.beijing.gov.cn/art/2022/8/25/art_10688_1398.html"
+          }
+        ]
       }
     ],
 
@@ -139,9 +151,12 @@ Page({
     lastDistance: 0,
     lastScale: 1,
     hasMoved: false, // 是否发生了移动
-    
-    showRelatedLink: false, // 是否显示相关链接
-    relatedLink: null, // 相关链接数据
+
+    showRelatedLinks: false, // 是否显示相关链接
+    relatedLinks: [], // 相关链接数据
+    displayedRelatedLinks: [], // 实际渲染的链接列表
+    relatedLinksExpanded: false, // 是否展开全部链接
+    canToggleRelatedLinks: false, // 是否允许展开收起
   },
 
   onLoad: function (options) {
@@ -168,18 +183,18 @@ Page({
     const file = e.currentTarget.dataset.file;
     const title = e.currentTarget.dataset.title;
     const totalPages = e.currentTarget.dataset.pages;
-    const relatedLink = e.currentTarget.dataset.relatedLink;
-    
+    const relatedLinks = e.currentTarget.dataset.relatedLinks || [];
+
     // 检查是否为直接图片URL（以http开头）
     if (file.startsWith('http')) {
       // 直接图片URL的情况
       console.log('查看图片文档:', file, title, totalPages);
-      
+
       const imageList = [{
         url: file,
         page: 1
       }];
-      
+
       // 显示图片预览
       this.setData({
         showImageViewer: true,
@@ -191,24 +206,27 @@ Page({
         scale: 1,
         translateX: 0,
         translateY: 0,
-        showRelatedLink: false,
-        relatedLink: null
+        showRelatedLinks: false,
+        relatedLinks: [],
+        displayedRelatedLinks: [],
+        relatedLinksExpanded: false,
+        canToggleRelatedLinks: false
       });
-      
+
       console.log('图片预览已显示');
       return;
     }
-    
+
     // PDF文件的情况
     const pdfNum = file.replace('.pdf', ''); // 获取pdf编号
     const baseDir = pdfNum; // 图片目录名
-    
+
     console.log('查看PDF文档:', file, title, totalPages, baseDir);
-    
+
     // 初始化图片列表，先加载前4张或全部（如果总页数小于4）
     const initialLoadCount = Math.min(this.data.batchSize, totalPages);
-    let imageList = [];
-    
+    const imageList = [];
+
     for (let i = 1; i <= initialLoadCount; i++) {
       // 构建图片URL, 格式: pdf文件夹/pdf编号_页码.jpg
       const imageUrl = app.getFileUrl(`${baseDir}/${pdfNum}_${i}.jpg`);
@@ -217,7 +235,7 @@ Page({
         page: i
       });
     }
-    
+
     // 显示PDF预览
     this.setData({
       showImageViewer: true,
@@ -229,11 +247,37 @@ Page({
       scale: 1,
       translateX: 0,
       translateY: 0,
-      showRelatedLink: !!relatedLink, // 如果有相关链接，显示
-      relatedLink: relatedLink || null
+  showRelatedLinks: relatedLinks.length > 0,
+  relatedLinks,
+  relatedLinksExpanded: false,
+  canToggleRelatedLinks: relatedLinks.length > 1
     });
-    
+
+    this.updateRelatedLinksDisplay(relatedLinks, false);
+
     console.log('PDF图片预览已显示');
+  },
+
+  // 更新相关链接的展示列表
+  updateRelatedLinksDisplay(links, expanded) {
+    const list = Array.isArray(links) ? links : [];
+    const canToggle = list.length > 1;
+    const shouldExpand = canToggle ? !!expanded : false;
+    const displayedLinks = !canToggle || shouldExpand ? list : list.slice(0, 1);
+
+    this.setData({
+      displayedRelatedLinks: displayedLinks,
+      relatedLinksExpanded: shouldExpand,
+      canToggleRelatedLinks: canToggle,
+      showRelatedLinks: list.length > 0
+    });
+  },
+
+  // 切换相关链接展开/收起
+  toggleRelatedLinks() {
+    const { relatedLinks, relatedLinksExpanded } = this.data;
+    const nextExpanded = !relatedLinksExpanded;
+    this.updateRelatedLinksDisplay(relatedLinks, nextExpanded);
   },
   
   // 加载更多图片
@@ -577,6 +621,13 @@ Page({
       title: '图片加载失败',
       icon: 'error',
       duration: 1000
+    });
+  },
+
+  // 返回上一页
+  goBack() {
+    wx.navigateBack({
+      delta: 1
     });
   },
 

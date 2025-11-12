@@ -29,17 +29,23 @@
 .back-btn {
   display: flex;
   align-items: center;
-  justify-content: center;
-  width: 60rpx;
-  height: 60rpx;
+  padding: 15rpx 20rpx;
+  border-radius: 25rpx;
   background: rgba(255, 255, 255, 0.2);
-  border-radius: 50%;
   transition: all 0.3s ease;
 }
 
+.back-btn-hover,
 .back-btn:active {
-  background: rgba(255, 255, 255, 0.4);
-  transform: scale(0.9);
+  background: rgba(255, 255, 255, 0.3);
+  transform: scale(0.95);
+}
+
+.back-text {
+  color: white;
+  font-size: 28rpx;
+  margin-left: 8rpx;
+  font-weight: 600;
 }
 
 .header-title {

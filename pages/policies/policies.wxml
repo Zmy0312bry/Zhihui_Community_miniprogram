@@ -1,6 +1,14 @@
 <view class="container">
     <!-- 页面头部 -->
     <view class="header">
+        <!-- 返回按钮 -->
+        <view class="header-top">
+            <view class="back-btn" bindtap="goBack" hover-class="back-btn-hover">
+                <van-icon name="arrow-left" size="36rpx" color="#FFFFFF"/>
+                <text class="back-text">返回</text>
+            </view>
+        </view>
+
         <view class="header-bg">
             <view class="header-decoration">
                 <view class="decoration-circle circle-1"></view>
@@ -35,7 +43,7 @@
             </view>
 
             <view class="category-content" wx:if="{{expandedCategories.care}}">
-                <view class="policy-item" wx:for="{{carePolicies}}" wx:key="id" bindtap="viewPdfImages" data-file="{{item.file}}" data-title="{{item.title}}" data-pages="{{item.totalPages}}" data-related-link="{{item.relatedLink}}">
+                <view class="policy-item" wx:for="{{carePolicies}}" wx:key="id" bindtap="viewPdfImages" data-file="{{item.file}}" data-title="{{item.title}}" data-pages="{{item.totalPages}}" data-related-links="{{item.relatedLinks}}">
                     <view class="item-icon">
                         <van-icon name="description" size="24rpx" color="#FF8C42"/>
                     </view>
@@ -69,7 +77,7 @@
             </view>
 
             <view class="category-content" wx:if="{{expandedCategories.assessment}}">
-                <view class="policy-item" wx:for="{{assessmentPolicies}}" wx:key="id" bindtap="viewPdfImages" data-file="{{item.file}}" data-title="{{item.title}}" data-pages="{{item.totalPages}}" data-related-link="{{item.relatedLink}}">
+                <view class="policy-item" wx:for="{{assessmentPolicies}}" wx:key="id" bindtap="viewPdfImages" data-file="{{item.file}}" data-title="{{item.title}}" data-pages="{{item.totalPages}}" data-related-links="{{item.relatedLinks}}">
                     <view class="item-icon">
                         <van-icon name="description" size="24rpx" color="#FF8C42"/>
                     </view>
@@ -183,12 +191,9 @@
         <view class="image-viewer">
             <view class="viewer-header">
                 <view class="back-btn" bindtap="closeImageViewer" hover-class="back-btn-hover">
-                        <van-icon name="arrow-left" size="36rpx" color="#FFFFFF"/>
-                        <view class="back-text">
-                            <text>返回</text>
-                            <text>目录</text>
-                        </view>
-                    </view>
+                    <van-icon name="arrow-left" size="36rpx" color="#FFFFFF"/>
+                    <text class="back-text">返回</text>
+                </view>
                 <view class="viewer-title-section">
                     <text class="viewer-title">{{currentPdfTitle}}</text>
                     <text class="viewer-page-info">{{loadedPages}}/{{currentPdfTotalPages}}页</text>
@@ -196,17 +201,27 @@
             </view>
 
             <!-- 相关链接栏（可随页面滑动） -->
-            <view class="related-link-bar" wx:if="{{showRelatedLink && relatedLink}}">
-                <view class="related-link-content" bindtap="openExternalLink" data-url="{{relatedLink.url}}">
-                    <view class="related-link-icon">
-                        <van-icon name="link-o" size="24rpx" color="#FF6B35"/>
-                    </view>
-                    <view class="related-link-text">
-                        <text class="related-link-title">{{relatedLink.title}}</text>
-                        <text class="related-link-arrow">点击查看原文 →</text>
+            <block wx:if="{{showRelatedLinks && displayedRelatedLinks.length}}">
+                <view class="related-link-tip" wx:if="{{canToggleRelatedLinks}}">
+                    <van-icon name="info-o" size="26rpx" color="#FF6B35" />
+                    <text class="related-link-tip-text">可{{relatedLinksExpanded ? '收起' : '展开'}}查看更多外部链接，便于在浏览器打开原文。</text>
+                </view>
+                <view class="related-link-bar" wx:for="{{displayedRelatedLinks}}" wx:key="index">
+                    <view class="related-link-content" bindtap="openExternalLink" data-url="{{item.url}}">
+                        <view class="related-link-icon">
+                            <van-icon name="link-o" size="24rpx" color="#FF6B35"/>
+                        </view>
+                        <view class="related-link-text">
+                            <text class="related-link-title">{{item.title}}</text>
+                            <text class="related-link-arrow">点击查看原文 →</text>
+                        </view>
                     </view>
                 </view>
-            </view>
+                <view class="related-link-toggle" wx:if="{{canToggleRelatedLinks}}" bindtap="toggleRelatedLinks">
+                    <van-icon class="related-link-toggle-icon" name="{{relatedLinksExpanded ? 'arrow-up' : 'arrow-down'}}" size="28rpx" color="#FF6B35" />
+                    <text>{{relatedLinksExpanded ? '收起更多链接' : '展开更多链接'}}</text>
+                </view>
+            </block>
 
             <!-- 触摸层：处理缩放和拖拽 -->
             <view class="pdf-touch-layer"

@@ -9,8 +9,38 @@
 /* 页面头部样式 */
 .header {
   position: relative;
-  height: 200rpx;
   overflow: hidden;
+}
+
+.header-top {
+  background: linear-gradient(135deg, #FF6B35 0%, #FF8C42 50%, #FFA366 100%);
+  padding: 70rpx 30rpx 20rpx 30rpx;
+  display: flex;
+  align-items: center;
+  z-index: 10;
+  position: relative;
+}
+
+.back-btn {
+  display: flex;
+  align-items: center;
+  padding: 15rpx 20rpx;
+  border-radius: 25rpx;
+  background: rgba(255, 255, 255, 0.2);
+  transition: all 0.3s ease;
+}
+
+.back-btn:active,
+.back-btn-hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: scale(0.95);
+}
+
+.back-text {
+  font-size: 28rpx;
+  color: white;
+  font-weight: 600;
+  margin-left: 8rpx;
 }
 
 .header-bg {
@@ -62,8 +92,12 @@
 .header-content {
   position: relative;
   z-index: 2;
-  padding: 60rpx 40rpx 40rpx 40rpx;
+  padding: 40rpx 40rpx 60rpx 40rpx;
   text-align: center;
+  min-height: 160rpx;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .title {
