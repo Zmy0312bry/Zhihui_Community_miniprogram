@@ -8,6 +8,9 @@ Page({
             {
                 id: 0,
                 name: '上地街道养老服务中心',
+                latitude: 40.030504,
+                longitude: 116.302135,
+                address: '北京市海淀区裕景西路12号院12号楼',
                 menus: [
                     { 
                         id: 'breakfast', 
@@ -31,7 +34,22 @@ Page({
                         desc: '清淡易消化的晚餐'
                     }
                 ],
-                showInfo: false
+                info: [
+                    {
+                        id: 'location',
+                        icon: 'location-o',
+                        title: '就餐地点',
+                        content: '北京市海淀区裕景西路12号院12号楼',
+                        expanded: false
+                    },
+                    {
+                        id: 'time',
+                        icon: 'clock-o',
+                        title: '营业时间',
+                        content: '早上9：00-晚上19：00',
+                        expanded: false
+                    }
+                ]
             },
             {
                 id: 1,
