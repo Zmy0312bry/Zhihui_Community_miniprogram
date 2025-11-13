@@ -22,56 +22,60 @@
         </view>
     </view>
 
-    <!-- 地图栏目列表 -->
-    <view class="content-wrapper">
-        <!-- 第一个栏目 - 服务分布图 -->
-        <view class="map-card" bindtap="navigateToMapDetail" data-mapid="1">
-            <view class="card-header">
-                <van-icon name="location-o" size="36rpx" color="#FF6B35"/>
+    <!-- 内容区域 -->
+    <view class="content">
+        <!-- 社区列表 -->
+        <view wx:for="{{communities}}" wx:key="id" class="community-section">
+            <!-- 社区一级标题（可展开） -->
+            <view class="community-header" bindtap="toggleCommunity" data-index="{{index}}">
+                <view class="header-left">
+                    <van-icon name="location-o" size="32rpx" color="#FFFFFF"/>
+                    <text class="community-name">{{item.name}}</text>
+                </view>
+                <view class="expand-icon">
+                    <van-icon name="{{item.expanded ? 'arrow-down' : 'arrow'}}" size="28rpx" color="#FFFFFF"/>
+                </view>
             </view>
-            <view class="card-body">
-                <text class="card-title">{{map1.title}}</text>
-                <text class="card-desc">{{map1.desc}}</text>
-            </view>
-            <view class="card-thumbnail">
-                <image 
-                    src="{{map1.thumbnailUrl}}" 
-                    mode="aspectFill"
-                    lazy-load="true"
-                />
-            </view>
-            <view class="card-footer">
-                <text class="footer-text">点击查看详情</text>
-                <van-icon name="arrow" size="24rpx" color="#FF6B35"/>
+
+            <!-- 类别列表（社区展开时显示） -->
+            <view wx:if="{{item.expanded}}" class="categories-list">
+                <view wx:for="{{item.categories}}" wx:for-item="category" wx:for-index="catIndex" wx:key="id" class="category-item">
+                    <!-- 类别二级标题（可展开） -->
+                    <view class="category-header" bindtap="toggleCategory" data-community-index="{{index}}" data-category-index="{{catIndex}}">
+                        <view class="header-left">
+                            <van-icon name="shop-o" size="28rpx" color="#FF6B35"/>
+                            <text class="category-name">{{category.name}}</text>
+                        </view>
+                        <view class="expand-icon">
+                            <van-icon name="{{category.expanded ? 'arrow-down' : 'arrow'}}" size="24rpx" color="#FF6B35"/>
+                        </view>
+                    </view>
+
+                    <!-- 店铺列表（类别展开时显示） -->
+                    <view wx:if="{{category.expanded}}" class="shops-list">
+                        <view wx:for="{{category.shops}}" wx:for-item="shop" wx:for-index="shopIndex" wx:key="shopIndex" class="shop-card">
+                            <!-- 店铺名称 -->
+                            <view class="shop-name">{{shop.name}}</view>
+                            
+                            <!-- 店铺信息行 -->
+                            <view class="shop-info-row">
+                                <view class="info-label">地址：</view>
+                                <view class="info-content">{{shop.address}}</view>
+                            </view>
+
+                            <view class="shop-info-row">
+                                <view class="info-label">电话：</view>
+                                <view class="info-content">{{shop.phone}}</view>
+                            </view>
+
+                            <view class="shop-info-row">
+                                <view class="info-label">营业时间：</view>
+                                <view class="info-content">{{shop.hours}}</view>
+                            </view>
+                        </view>
+                    </view>
+                </view>
             </view>
         </view>
-
-        <!-- 第二个栏目 - 服务名录 -->
-        <view class="map-card" bindtap="navigateToMapDetail" data-mapid="2">
-            <view class="card-header">
-                <van-icon name="orders-o" size="36rpx" color="#FF6B35"/>
-            </view>
-            <view class="card-body">
-                <text class="card-title">{{map2.title}}</text>
-                <text class="card-desc">{{map2.desc}}</text>
-            </view>
-            <view class="card-thumbnail">
-                <image 
-                    src="{{map2.thumbnailUrl}}" 
-                    mode="aspectFill"
-                    lazy-load="true"
-                />
-            </view>
-            <view class="card-footer">
-                <text class="footer-text">点击查看详情</text>
-                <van-icon name="arrow" size="24rpx" color="#FF6B35"/>
-            </view>
-        </view>
-    </view>
-
-    <!-- 底部提示 -->
-    <view class="footer-tip">
-        <van-icon name="info-o" size="28rpx" color="#FF6B35"/>
-        <text class="tip-text">点击栏目卡片进入图片预览，双指缩放查看细节</text>
     </view>
 </view>
