@@ -53,13 +53,6 @@ Page({
     // 老年人能力评估政策
     assessmentPolicies: [
       {
-        id: 3,
-        title: "关于消化存量评估攻坚行动实施方案的通知",
-        file: "pdf2.pdf",
-        desc: "消化存量评估攻坚行动实施方案",
-        totalPages: 14
-      },
-      {
         id: 4,
         title: "北京市老年人能力评估实施办法",
         file: "pdf4.pdf",
